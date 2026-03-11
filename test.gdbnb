@@ -1,0 +1,24 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### デバッグ情報付きでコンパイルして実行する"
+    },
+    {
+      "kind": "code",
+      "value": "# GDBターミナルを起動する\n!start"
+    },
+    {
+      "kind": "code",
+      "value": "# デバッグ情報付きでコンパイルする (-g オプションがデバッグ情報付きコンパイルを指示する)\ngcc -g fact.c"
+    },
+    {
+      "kind": "code",
+      "value": "# ./a.out を実行（fact (5) = 120 と出れば成功）\n./a.out"
+    },
+    {
+      "kind": "code",
+      "value": "# file コマンドで a.out 中にデバッグ情報があることを確認\nfile ./a.out"
+    }
+  ]
+}

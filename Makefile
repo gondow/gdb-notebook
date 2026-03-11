@@ -1,0 +1,3 @@
+
+compile:
+	npm run compile
