@@ -54,6 +54,8 @@ export function activate (context: vscode.ExtensionContext) {
     */
     
     controller.executeHandler = async (cells, notebook) => {
+	let isRestarted = false;
+	
 	// ターミナルがなければまず作る
 	createGdbTerminal (notebook);
 
@@ -75,6 +77,7 @@ export function activate (context: vscode.ExtensionContext) {
 		if (line.startsWith ("#")) continue; // コメント行も飛ばす
 		if (line == "!restart" || line == "!start") {
 		    restartGdbTerminal (notebook, execution);
+		    isRestarted = true;
 		} else {
                     gdbTerminal!.sendText (cmd);
 		}
@@ -90,6 +93,17 @@ export function activate (context: vscode.ExtensionContext) {
 
 	    executionCounter++;
             execution.end (true);
+
+	    // 美しくないけど，セル出力を消去（チェックマークは消えない）
+	    if (isRestarted) {
+		notebook.getCells ().forEach (cell => {
+		    const execution = controller.createNotebookCellExecution (cell);
+		    execution.start ();
+		    // execution.replaceOutput ([]); // クリア
+		    execution.clearOutput (); // クリア
+		    execution.end (true);
+		});
+	    }
         }
     };
 
@@ -124,20 +138,19 @@ function createGdbTerminal (notebook: vscode.NotebookDocument) {
 }
 
 async function restartGdbTerminal (notebook: vscode.NotebookDocument,
-			     execution: vscode.NotebookCellExecution | undefined) {
+				   old_execution: vscode.NotebookCellExecution | undefined) {
     executionCounter = 1;
-    if (execution) {
-	notebook.getCells ().forEach (cell => {
-	    execution.replaceOutput ([]); // クリア
-	});
-    } else {
+    /*
+    if (!old_execution) {
 	notebook.getCells ().forEach (cell => {
 	    const execution = controller.createNotebookCellExecution (cell);
             execution.start ();
-	    execution.replaceOutput ([]); // クリア
+	    // execution.replaceOutput ([]); // クリア
+	    execution.clearOutput (); // クリア
 	    execution.end (true);
 	});
     }
+    */
 
     if (gdbTerminal) {
 	gdbTerminal.dispose();
