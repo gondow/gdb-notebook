@@ -2,23 +2,27 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### デバッグ情報付きでコンパイルして実行する"
+      "value": "### デバッグ情報付きでコンパイルして実行する\n- gcc に -g オプションをつけると，a.out にデバッグ情報が入る\n- gdb でデバッグする時は，gccに -g オプションをつける（行番号などの情報量が増えるから）\n"
     },
     {
       "kind": "code",
-      "value": "# GDBターミナルを起動する\n!start"
+      "value": "# GDBターミナルを再起動して，このノートブックをリセット\n!restart"
     },
     {
       "kind": "code",
-      "value": "# デバッグ情報付きでコンパイルする (-g オプションがデバッグ情報付きコンパイルを指示する)\ngcc -g fact.c"
+      "value": "# デバッグ情報付きでコンパイルする (-g オプションがデバッグ情報付きコンパイルを指示する)\n$ gcc -g fact.c"
     },
     {
       "kind": "code",
-      "value": "# ./a.out を実行（fact (5) = 120 と出れば成功）\n./a.out"
+      "value": "# コンパイルが成功すると a.out ファイルができている（ファイル一覧を出力するlsコマンドで確認）\n$ ls"
     },
     {
       "kind": "code",
-      "value": "# file コマンドで a.out 中にデバッグ情報があることを確認\nfile ./a.out"
+      "value": "# ./a.out を実行（fact (5) = 120 と出れば成功）\n$ ./a.out"
+    },
+    {
+      "kind": "code",
+      "value": "# gdb コマンドの例\n(gdb) break main"
     }
   ]
 }

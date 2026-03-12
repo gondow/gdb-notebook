@@ -55,7 +55,19 @@
 		    "group": "navigation@1"
 		}
 	    ]
-	}
+	},
+	"languages": [
+	    {
+		"id": "gdb_command",
+		"aliases": ["GDB command"],
+		"configuration": "./lang-config.json"
+	    },
+	    {
+		"id": "extension_command",
+		"aliases": ["extension command"],
+		"configuration": "./lang-config.json"
+	    }
+	]
     },
     "scripts": {
 	"vscode:prepublish": "npm run compile",

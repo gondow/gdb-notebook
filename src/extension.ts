@@ -20,7 +20,7 @@ export function activate (context: vscode.ExtensionContext) {
 	    const editor = vscode.window.activeNotebookEditor;
 	    const notebook = editor?.notebook;
 	    if (notebook) {
-		restartGdbTerminal (notebook, undefined);
+		restartGdbTerminal (notebook);
 	    }
 	})
     );
@@ -33,7 +33,7 @@ export function activate (context: vscode.ExtensionContext) {
 
     controller = vscode.notebooks.createNotebookController (
 	"gdb-controller", "gdb-notebook", "Gdb Controller");
-    controller.supportedLanguages = ["code", "markdown"];
+    controller.supportedLanguages = ["code", "markdown", "plaintext", "shellscript", "gdb_command", "extension_command"];
 
     /*
     controller.executeHandler = async (cells) => {
@@ -72,14 +72,20 @@ export function activate (context: vscode.ExtensionContext) {
             // セル内容をターミナルに送信
             const commands = cell.document.getText ().split ("\n");
             for (const cmd of commands) {
-		const line = cmd.trim ();
+		let line = cmd.trimStart ();
                 if (line === "") continue; // 空行は飛ばす
 		if (line.startsWith ("#")) continue; // コメント行も飛ばす
 		if (line == "!restart" || line == "!start") {
-		    restartGdbTerminal (notebook, execution);
+		    restartGdbTerminal (notebook);
 		    isRestarted = true;
 		} else {
-                    gdbTerminal!.sendText (cmd);
+		    // 先頭の "(gdb) " や "$ " を削除してから送信
+		    if (line.startsWith ("(gdb)")) {
+			line = line.slice ("(gdb)".length).trimStart();
+		    } else if (line.startsWith ("$")) {
+			line = line.slice ("$".length).trimStart();
+		    }
+                    gdbTerminal!.sendText (line);
 		}
             }
 
@@ -96,6 +102,7 @@ export function activate (context: vscode.ExtensionContext) {
 
 	    // 美しくないけど，セル出力を消去（チェックマークは消えない）
 	    if (isRestarted) {
+		executionCounter = 1;
 		notebook.getCells ().forEach (cell => {
 		    const execution = controller.createNotebookCellExecution (cell);
 		    execution.start ();
@@ -137,21 +144,7 @@ function createGdbTerminal (notebook: vscode.NotebookDocument) {
     }
 }
 
-async function restartGdbTerminal (notebook: vscode.NotebookDocument,
-				   old_execution: vscode.NotebookCellExecution | undefined) {
-    executionCounter = 1;
-    /*
-    if (!old_execution) {
-	notebook.getCells ().forEach (cell => {
-	    const execution = controller.createNotebookCellExecution (cell);
-            execution.start ();
-	    // execution.replaceOutput ([]); // クリア
-	    execution.clearOutput (); // クリア
-	    execution.end (true);
-	});
-    }
-    */
-
+async function restartGdbTerminal (notebook: vscode.NotebookDocument) {
     if (gdbTerminal) {
 	gdbTerminal.dispose();
 	gdbTerminal = undefined;
@@ -180,8 +173,29 @@ class GdbSerializer implements vscode.NotebookSerializer {
 			  ? vscode.NotebookCellKind.Code
 			  : vscode.NotebookCellKind.Markup);
 	    
-            const lang = (kind === vscode.NotebookCellKind.Code
-			  ? "code" : "markdown");
+	    let first_line;
+	    const lines = item.value.split ('\n');
+	    for (const line of lines) {
+		if (!line.trimStart ().startsWith ("#")) {
+		    first_line = line.trimStart ();
+		    break;
+		}
+	    }
+	    // console.log ("first_line: " + first_line);
+
+            let lang;
+	    if (kind === vscode.NotebookCellKind.Code) {
+		if (first_line.trimStart ().startsWith ("$")) {
+		    lang = "shellscript";
+		} else if (first_line.startsWith ("!")) {
+		    lang = "extension_command";
+		} else {
+		    lang = "gdb_command";
+		}
+	    } else {
+		lang = "markdown";
+	    }
+	    // console.log ("lang: " + lang);
 	    
             return new vscode.NotebookCellData (kind, item.value, lang);
 	});
