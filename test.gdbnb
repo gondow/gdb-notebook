@@ -22,7 +22,7 @@
     },
     {
       "kind": "code",
-      "value": "# gdb コマンドの例\n(gdb) break main"
+      "value": "# gdb コマンドの例\n(gdb) break main\n(gdb) b main"
     }
   ]
 }

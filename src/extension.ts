@@ -1,9 +1,11 @@
 import * as vscode from 'vscode';
 import * as path from "path";
+import { hoverMap } from "./hoverMap"
 
 let gdbTerminal: vscode.Terminal | undefined;
 let executionCounter = 1;
 let controller: vscode.NotebookController;
+let helpProvider: GdbHelpViewProvider;
 
 export function activate (context: vscode.ExtensionContext) {
     console.log ('your extension "gdb-notebook" is now active!');
@@ -120,6 +122,7 @@ export function activate (context: vscode.ExtensionContext) {
 	vscode.workspace.onDidOpenNotebookDocument ((notebook) => {
             if (notebook.notebookType !== "gdb-notebook") { return; }
 	    createGdbTerminal (notebook);
+	    // updateDecorations (notebook.getCells ());
 	})
     );
 
@@ -129,6 +132,69 @@ export function activate (context: vscode.ExtensionContext) {
 		gdbTerminal = undefined;
 	    }
 	})
+    );
+
+    context.subscriptions.push (
+	vscode.languages.registerCodeLensProvider (
+            { language: "gdb_command", scheme: "vscode-notebook-cell" },
+            new GdbCodeLensProvider()
+	)
+    );
+
+    context.subscriptions.push (
+	vscode.commands.registerCommand (
+            "gdb-notebook.breakHelp",
+            () => {
+		vscode.window.showInformationMessage (
+                    "break: set breakpoint",
+		    "OK" );
+	    }
+	)
+    );
+
+    context.subscriptions.push (
+	vscode.commands.registerCommand (
+            "gdb-notebook.breakExample",
+            () => {
+		/*
+		vscode.window.showInformationMessage (
+		    `b main  # main関数でブレーク
+b foo.c:10  # ファイルfoo.cの10行目でブレーク`,
+		    { modal: true } );
+		*/
+
+		helpProvider.showHelp ("ほげほげながいながいながい\nはげはげ");
+	    }
+	)
+    );
+    console.log ("CodeLens registered");
+
+    registerGdbHover ();
+
+    const panel = vscode.window.createWebviewPanel(
+	"gdbHelp",
+	"GDB Help",
+	vscode.ViewColumn.Active,
+	{}
+    );
+    
+    panel.webview.html = `
+<html>
+<body style="font-family: monospace; padding: 10px;">
+<h3>breakの省略形，ブレークポイントをセットする</h3>
+<b>使用例</b>
+<pre>
+b main         # main関数でブレーク
+b file.c:10    # ファイルfile.cの10行目でブレーク
+b 42           # （現在のファイルの）42行目でブレーク
+</pre>
+</body>
+</html>
+`;
+
+    helpProvider = new GdbHelpViewProvider ();
+    context.subscriptions.push (
+	vscode.window.registerWebviewViewProvider ("gdbHelpView", helpProvider)
     );
 }
 
@@ -151,7 +217,10 @@ async function restartGdbTerminal (notebook: vscode.NotebookDocument) {
     }
     await new Promise (resolve => setTimeout (resolve, 50));
     createGdbTerminal (notebook);
+
+    // updateDecorations (notebook.getCells ());
 }
+
 
 class GdbSerializer implements vscode.NotebookSerializer {
     // 読み込み
@@ -217,5 +286,133 @@ class GdbSerializer implements vscode.NotebookSerializer {
 	const json = JSON.stringify ({cells}, null, 2);
 	
 	return new TextEncoder().encode(json);
+    }
+}
+
+/*
+        switch (cell.document.languageId) {
+            case "shellscript":
+                bgColor = "#FFFACD"; // レモンイエロー
+                break;
+            case "gdb_command":
+                bgColor = "#E0FFFF"; // ライトシアン
+                break;
+            case "extension_command":
+                bgColor = "#F0E68C"; // カーキ
+                break;
+        }
+*/
+
+/*
+const cellDecorationType = {
+    "shellscript": vscode.window.createTextEditorDecorationType ({
+	light: { backgroundColor: '#FFFACD' },
+	dark:  { backgroundColor: '#FFFACD' },
+	isWholeLine: true
+    }),
+    "gdb_command": vscode.window.createTextEditorDecorationType ({
+	light: { backgroundColor: '#E0FFFF' },
+	dark:  { backgroundColor: '#E0FFFF' },
+	isWholeLine: true
+    }),
+    "extension_command": vscode.window.createTextEditorDecorationType ({
+	light: { backgroundColor: '#F0E68C' },
+	dark:  { backgroundColor: '#F0E68C' },
+	isWholeLine: true
+    })
+};
+
+function updateDecorations (cells: vscode.NotebookCell []) {
+    const cellDecorationType = vscode.window.createTextEditorDecorationType ({
+	light: { backgroundColor: '#F0E68C' },
+	dark:  { backgroundColor: '#F0E68C' },
+	isWholeLine: true});
+    
+    const activeEditor = vscode.window.activeTextEditor;
+    for (const cell of cells) {
+	const range = new vscode.Range(
+            new vscode.Position(0, 0),
+            new vscode.Position(cell.document.lineCount, 0));
+	activeEditor?.setDecorations (cellDecorationType, [range]);
+    }
+}
+*/
+
+function registerGdbHover () {
+    vscode.languages.registerHoverProvider(
+        { scheme: 'vscode-notebook-cell', language: 'gdb_command' },
+        {
+            provideHover(document, position, token) {
+                const range = document.getWordRangeAtPosition(position);
+                if (!range) return;
+
+                const word = document.getText(range);
+
+                // 省略コマンドの説明
+		/*
+                const hoverMap: Record<string, string> = {
+                    b: 'break: Set breakpoint',
+                    r: 'run: Start program',
+                    c: 'continue: Continue execution'
+                };
+		*/
+
+                const text = hoverMap[word];
+                if (text) {
+                    return new vscode.Hover(text, range);
+                }
+            }
+        }
+    );
+}
+
+class GdbCodeLensProvider implements vscode.CodeLensProvider {
+    provideCodeLenses (document: vscode.TextDocument): vscode.CodeLens [] {
+	console.log("CodeLens called");
+	console.log("language:", document.languageId);
+	console.log("scheme:", document.uri.scheme);
+
+        const lenses: vscode.CodeLens [] = [];
+
+        for (let i = 0; i < document.lineCount; i++) {
+            const line = document.lineAt (i);
+            const text = line.text.trim ();
+            if (text.includes ("b ")) {
+                const range = new vscode.Range (i, 0, i, 0);
+                lenses.push (new vscode.CodeLens (range, {
+                    title: "help break", command: "gdb-notebook.breakHelp"}));
+                lenses.push (new vscode.CodeLens (range, {
+                    title: "help example", command: "gdb-notebook.breakExample"}));
+            }
+        }
+        return lenses;
+    }
+}
+
+class GdbHelpViewProvider implements vscode.WebviewViewProvider {
+
+    public static readonly viewType = "gdbHelpView";
+    private view?: vscode.WebviewView;
+
+    resolveWebviewView (view: vscode.WebviewView) {
+	this.view = view;
+
+	view.webview.options = {
+	    enableScripts: false
+	};
+	
+	view.webview.html = `
+<html>
+<body style="font-family: monospace">
+<pre>GDB Help</pre>
+</body>
+</html>
+`;
+    }
+    
+    showHelp (text: string) {
+	if (this.view) {
+	    this.view.webview.html = `<pre>${text}</pre>`;
+	}
     }
 }

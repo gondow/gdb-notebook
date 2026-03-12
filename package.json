@@ -28,6 +28,10 @@
 	    {
 		"command": "gdb-notebook.startGdb",
 		"title": "Start GDB"
+	    },
+	    {
+		"command": "gdb-notebook.breakHelp",
+		"title": "GDB: break Help"
 	    }
 	],
 	"notebooks": [
@@ -67,7 +71,16 @@
 		"aliases": ["extension command"],
 		"configuration": "./lang-config.json"
 	    }
-	]
+	],
+	"views": {
+	    "explorer": [
+		{
+		    "type": "webview",
+		    "id": "gdbHelpView",
+		    "name": "GDBヘルプ"
+		}
+	    ]
+	}
     },
     "scripts": {
 	"vscode:prepublish": "npm run compile",
