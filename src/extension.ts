@@ -144,9 +144,9 @@ export function activate (context: vscode.ExtensionContext) {
     context.subscriptions.push (
 	vscode.commands.registerCommand (
             "gdb-notebook.breakHelp",
-            () => {
+            (cmd: string) => {
 		vscode.window.showInformationMessage (
-                    "break: set breakpoint",
+		    cmd,
 		    "OK" );
 	    }
 	)
@@ -155,7 +155,7 @@ export function activate (context: vscode.ExtensionContext) {
     context.subscriptions.push (
 	vscode.commands.registerCommand (
             "gdb-notebook.breakExample",
-            () => {
+            (cmd: string) => {
 		/*
 		vscode.window.showInformationMessage (
 		    `b main  # main関数でブレーク
@@ -163,7 +163,7 @@ b foo.c:10  # ファイルfoo.cの10行目でブレーク`,
 		    { modal: true } );
 		*/
 
-		helpProvider.showHelp ("ほげほげながいながいながい\nはげはげ");
+		helpProvider.showHelp (cmd + "ほげほげながいながいながい\nはげはげ");
 	    }
 	)
     );
@@ -380,9 +380,15 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
             if (text.includes ("b ")) {
                 const range = new vscode.Range (i, 0, i, 0);
                 lenses.push (new vscode.CodeLens (range, {
-                    title: "help break", command: "gdb-notebook.breakHelp"}));
+                    title: "ヘルプ",
+		    command: "gdb-notebook.breakHelp",
+		    arguments: ["break"]
+		}));
                 lenses.push (new vscode.CodeLens (range, {
-                    title: "help example", command: "gdb-notebook.breakExample"}));
+                    title: "使用例",
+		    command: "gdb-notebook.breakExample",
+		    arguments: ["break"]
+		}));
             }
         }
         return lenses;

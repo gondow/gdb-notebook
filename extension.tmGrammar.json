@@ -1,0 +1,13 @@
+{
+    "scopeName": "source.extension",
+    "patterns": [
+	{
+	    "match": "#.*$",
+	    "name": "comment.line.number-sign.gdb"
+	},
+	{
+	    "match": "^!.*$",
+	    "name": "keyword.control.extension"
+	}
+    ]
+}

@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### デバッグ情報付きでコンパイルして実行する\n- gcc に -g オプションをつけると，a.out にデバッグ情報が入る\n- gdb でデバッグする時は，gccに -g オプションをつける（行番号などの情報量が増えるから）\n"
+      "value": "### デバッグ情報付きでコンパイルして実行する\n- gcc に -g オプションをつけると，a.out にデバッグ情報が入る\n- gdb でデバッグする時は，gccに -g オプションをつける（行番号などの情報量が増えるから）\n(gdb) break main\n$ ls\n"
     },
     {
       "kind": "code",
@@ -22,7 +22,7 @@
     },
     {
       "kind": "code",
-      "value": "# gdb コマンドの例\n(gdb) break main\n(gdb) b main"
+      "value": "# gdb コマンドの例\n(gdb) break main\n(gdb) continue\n(gdb) b main"
     }
   ]
 }
