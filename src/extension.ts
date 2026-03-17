@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from "path";
-import { hoverMap } from "./hoverMap"
+import { aliasMap, commandMap } from "./commandMap"
 
 let executionCounter = 1;
 let controller: vscode.NotebookController;
@@ -182,29 +182,26 @@ export function activate (context: vscode.ExtensionContext) {
 	    }
 
 	    // 特定のセルを折りたたむ
-	    let i = 0, start = 0, last = notebook.getCells ().length - 1;
+	    let i = 0, start = 0;
 	    for (const cell of notebook.getCells ()) {
 		const line = cell.document.getText ();
-		console.log (i++ + ": " + line);
+		console.log (i + ": " + line);
 		if (line.match ("#.*答")) {
 		    start = i;
+		    break;
 		}
+		i++;
 	    }
-	    console.log ("start = " + start + ", last = " + last);
-	    /*
-	    await vscode.commands.executeCommand (
-		"notebook.fold", { start: 1, end: last }
-	    );
-	    */
-	    setTimeout (async () => {
-		await vscode.window.showNotebookDocument (notebook);
-		await vscode.commands.executeCommand ("notebook.cell.quitEdit");
-		editor.selection = new vscode.NotebookRange (3, 4);
-		await vscode.commands.executeCommand ("notebook.fold");
-		// await vscode.commands.executeCommand ("notebook.fold", { start: 1, end: 1});
-		console.log ("notebook.fold executed");
-	    },
-		300);
+	    console.log ("start = " + start);
+	    // setTimeout (async () => {
+	    // await vscode.window.showNotebookDocument (notebook);
+	    // await vscode.commands.executeCommand ("notebook.cell.quitEdit");
+	    // notebook.fold には引数は無く，事前に折りたたむセクションを含む
+	    // マークダウンセルを選択しておく必要がある．
+	    editor.selection = new vscode.NotebookRange (start, start+1);
+	    await vscode.commands.executeCommand ("notebook.fold");
+	    console.log ("notebook.fold executed");
+	    // }, 300);
 	})
     );
     
@@ -219,6 +216,10 @@ export function activate (context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand (
             "gdb-notebook.breakHelp",
             (cmd: string) => {
+
+		const url = vscode.Uri.parse ('https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E5%A4%89%E6%95%B0%E3%81%AE%E5%80%A4%E3%82%92%E8%A1%A8%E7%A4%BA-print');
+		vscode.env.openExternal(url);
+
 		vscode.window.showInformationMessage (
 		    cmd,
 		    "OK" );
@@ -440,20 +441,10 @@ function registerGdbHover () {
                 const range = document.getWordRangeAtPosition(position);
                 if (!range) return;
 
-                const word = document.getText(range);
-
-                // 省略コマンドの説明
-		/*
-                const hoverMap: Record<string, string> = {
-                    b: 'break: Set breakpoint',
-                    r: 'run: Start program',
-                    c: 'continue: Continue execution'
-                };
-		*/
-
-                const text = hoverMap[word];
+                const word = document.getText (range);
+		const text = commandMap [aliasMap [word] ?? word].exp;
                 if (text) {
-                    return new vscode.Hover(text, range);
+                    return new vscode.Hover (text, range);
                 }
             }
         }
@@ -474,13 +465,13 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
             if (text.includes ("b ")) {
                 const range = new vscode.Range (i, 0, i, 0);
                 lenses.push (new vscode.CodeLens (range, {
-                    title: "ヘルプ",
-		    command: "gdb-notebook.breakHelp",
+                    title: "説明",
+		    command: "gdb-notebook.breakExample",
 		    arguments: ["break"]
 		}));
                 lenses.push (new vscode.CodeLens (range, {
-                    title: "使用例",
-		    command: "gdb-notebook.breakExample",
+                    title: "説明リンク",
+		    command: "gdb-notebook.breakHelp",
 		    arguments: ["break"]
 		}));
             }
