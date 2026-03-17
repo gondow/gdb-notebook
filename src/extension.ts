@@ -2,10 +2,12 @@ import * as vscode from 'vscode';
 import * as path from "path";
 import { hoverMap } from "./hoverMap"
 
-let gdbTerminal: vscode.Terminal | undefined;
 let executionCounter = 1;
 let controller: vscode.NotebookController;
 let helpProvider: GdbHelpViewProvider;
+
+// let gdbTerminal: vscode.Terminal | undefined;
+const terminalMap = new Map<string, vscode.Terminal> ();
 
 export function activate (context: vscode.ExtensionContext) {
     console.log ('your extension "gdb-notebook" is now active!');
@@ -59,7 +61,7 @@ export function activate (context: vscode.ExtensionContext) {
 	let isRestarted = false;
 	
 	// ターミナルがなければまず作る
-	createGdbTerminal (notebook);
+	getOrCreateTerminal (notebook);
 
         for (const cell of cells) {
             const execution = controller.createNotebookCellExecution (cell);
@@ -82,7 +84,9 @@ export function activate (context: vscode.ExtensionContext) {
 		    isRestarted = true;
 		} else if (line == "!fold") {
 		    // 特定のセルを折りたたむ
-		    const notebook = vscode.window.activeNotebookEditor!.notebook;
+		    const editor = vscode.window.activeNotebookEditor;
+		    if (!editor) return;
+		    const notebook = editor.notebook;
 		    let i = 0, start, last = notebook.getCells ().length - 1;
 		    for (const cell of notebook.getCells ()) {
 			const line = cell.document.getText ();
@@ -97,8 +101,10 @@ export function activate (context: vscode.ExtensionContext) {
 			"notebook.fold", { start: 1, end: last }
 		    );
 		    */
-		    await vscode.commands.executeCommand(" notebook.cell.quitEdit");
-		    await vscode.commands.executeCommand ( "notebook.fold" );
+		    await vscode.commands.executeCommand ("notebook.cell.quitEdit");
+
+		    editor.selection = new vscode.NotebookRange (0, 1);
+		    await vscode.commands.executeCommand ("notebook.fold");
 		} else {
 		    // 先頭の "(gdb) " や "$ " を削除してから送信
 		    if (line.startsWith ("(gdb)")) {
@@ -106,8 +112,9 @@ export function activate (context: vscode.ExtensionContext) {
 		    } else if (line.startsWith ("$")) {
 			line = line.slice ("$".length).trimStart();
 		    }
-		    if (gdbTerminal) {
-                       gdbTerminal.sendText (line);
+		    const term = getOrCreateTerminal (notebook);
+		    if (term) {
+			term.sendText (line);
 		    }
 		}
             }
@@ -142,17 +149,25 @@ export function activate (context: vscode.ExtensionContext) {
     context.subscriptions.push (
 	vscode.workspace.onDidOpenNotebookDocument ((notebook) => {
             if (notebook.notebookType !== "gdb-notebook") { return; }
-	    createGdbTerminal (notebook);
+	    getOrCreateTerminal (notebook);
 	    // updateDecorations (notebook.getCells ());
 
 	})
     );
 
     context.subscriptions.push (
-	vscode.window.onDidCloseTerminal (terminal => {
-	    if (terminal === gdbTerminal) {
-		gdbTerminal = undefined;
+	vscode.window.onDidCloseTerminal (closed => {
+	    for (const [key, term] of terminalMap.entries ()) {
+		if (term === closed) {
+		    terminalMap.delete (key);
+		}
 	    }
+	})
+    );
+
+    context.subscriptions.push (
+	vscode.workspace.onDidCloseNotebookDocument (nb => {
+	    closeTerminal (nb);
 	})
     );
 
@@ -160,6 +175,12 @@ export function activate (context: vscode.ExtensionContext) {
 	vscode.window.onDidChangeActiveNotebookEditor (async editor => {
 	    if (!editor) return;
 	    const notebook = editor.notebook;
+	    // 対応するGDBターミナルを表示する
+	    const term = getOrCreateTerminal (notebook);
+	    if (term) {
+		term.show ();
+	    }
+
 	    // 特定のセルを折りたたむ
 	    let i = 0, start = 0, last = notebook.getCells ().length - 1;
 	    for (const cell of notebook.getCells ()) {
@@ -255,23 +276,43 @@ export function deactivate () {
     vscode.window.showInformationMessage ('Deactivated');
 }
 
+/*
 function createGdbTerminal (notebook: vscode.NotebookDocument) {
     const cwd = path.dirname (notebook.uri.fsPath);
     if (!gdbTerminal) {
 	gdbTerminal = vscode.window.createTerminal ({name: "GDB", cwd: cwd});
         gdbTerminal.show ();
     }
+    console.log (`GDB: ${notebook.uri.path.split('/').pop ()}`);
+}
+*/
+
+function closeTerminal (nb: vscode.NotebookDocument) {
+    const key = nb.uri.toString ();
+    const term = terminalMap.get (key);
+    if (term) {
+	term.dispose ();
+	terminalMap.delete (key);
+    }
 }
 
-async function restartGdbTerminal (notebook: vscode.NotebookDocument) {
-    if (gdbTerminal) {
-	gdbTerminal.dispose();
-	gdbTerminal = undefined;
+function getOrCreateTerminal (nb: vscode.NotebookDocument): vscode.Terminal {
+    const key = nb.uri.toString ();
+    let term = terminalMap.get (key);
+    if (!term) {
+        term = vscode.window.createTerminal ({
+            name: `GDB: ${nb.uri.path.split('/').pop()}`
+        });
+	term.show ();
+        terminalMap.set (key, term);
     }
-    await new Promise (resolve => setTimeout (resolve, 50));
-    createGdbTerminal (notebook);
+    return term;
+}
 
-    // updateDecorations (notebook.getCells ());
+async function restartGdbTerminal (nb: vscode.NotebookDocument) {
+    closeTerminal (nb);
+    await new Promise (resolve => setTimeout (resolve, 50));
+    getOrCreateTerminal (nb);
 }
 
 
