@@ -1,0 +1,32 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### デバッガ gdb を起動して，すぐ終了させる\n- `gdb ./a.out` で gdb を起動．デバッガ上で `a.out`を実行する準備をする．\n- gdb中で `(gdb) quit` することで，gdbを終了できる．`(gdb)`はgdbのプロンプトなので入力不要．"
+    },
+    {
+      "kind": "code",
+      "value": "# GDBターミナルを再起動して，このノートブックをリセット\n!restart"
+    },
+    {
+      "kind": "code",
+      "value": "!fold"
+    },
+    {
+      "kind": "code",
+      "value": "# デバッグ情報付きでコンパイルする (-g オプションがデバッグ情報付きコンパイルを指示する)\n$ gcc -g fact.c"
+    },
+    {
+      "kind": "code",
+      "value": "# デバッガ gdb を起動\n$ gdb ./a.out"
+    },
+    {
+      "kind": "markdown",
+      "value": "ターミナル上で \n`--Type <RET> for more, q to quit, c to continue without paging--`\nという表示が出たら，ターミナルにカーソルを合わせて，リターンキー（エンターキー）を押して下さい．\n`(gdb)` というgdbのプロンプトが表示されたらOKです．\nこの表示はgdbの出力が1画面内に収まらないときに出ます．"
+    },
+    {
+      "kind": "code",
+      "value": "# quit で gdbを終了させる（シェルのプロンプト $ が出たら成功）\n(gdb) quit"
+    }
+  ]
+}

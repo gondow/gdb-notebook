@@ -6,11 +6,19 @@
     },
     {
       "kind": "code",
-      "value": "# GDBターミナルを再起動して，このノートブックをリセット\n!restart"
+      "value": "# GDBターミナルを再起動して，このノートブックをリセット（ターミナル上では実行できません）\n!restart"
     },
     {
       "kind": "code",
-      "value": "# デバッグ情報付きでコンパイルする (-g オプションがデバッグ情報付きコンパイルを指示する)\n$ gcc -g fact.c"
+      "value": "!fold"
+    },
+    {
+      "kind": "markdown",
+      "value": "### 答え"
+    },
+    {
+      "kind": "code",
+      "value": "# デバッグ情報付きでコンパイルする (-g オプションがデバッグ情報付きコンパイルを指示する)\n$ gcc -g fact.c  "
     },
     {
       "kind": "code",

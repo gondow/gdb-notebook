@@ -80,6 +80,25 @@ export function activate (context: vscode.ExtensionContext) {
 		if (line == "!restart" || line == "!start") {
 		    restartGdbTerminal (notebook);
 		    isRestarted = true;
+		} else if (line == "!fold") {
+		    // 特定のセルを折りたたむ
+		    const notebook = vscode.window.activeNotebookEditor!.notebook;
+		    let i = 0, start, last = notebook.getCells ().length - 1;
+		    for (const cell of notebook.getCells ()) {
+			const line = cell.document.getText ();
+			console.log (i++ + ": " + line);
+			if (line.match ("#.*答")) {
+			    start = i;
+			}
+		    }
+		    console.log ("start = " + start + ", last = " + last);
+		    /*
+		    await vscode.commands.executeCommand (
+			"notebook.fold", { start: 1, end: last }
+		    );
+		    */
+		    await vscode.commands.executeCommand(" notebook.cell.quitEdit");
+		    await vscode.commands.executeCommand ( "notebook.fold" );
 		} else {
 		    // 先頭の "(gdb) " や "$ " を削除してから送信
 		    if (line.startsWith ("(gdb)")) {
@@ -87,7 +106,9 @@ export function activate (context: vscode.ExtensionContext) {
 		    } else if (line.startsWith ("$")) {
 			line = line.slice ("$".length).trimStart();
 		    }
-                    gdbTerminal!.sendText (line);
+		    if (gdbTerminal) {
+                       gdbTerminal.sendText (line);
+		    }
 		}
             }
 
@@ -123,6 +144,7 @@ export function activate (context: vscode.ExtensionContext) {
             if (notebook.notebookType !== "gdb-notebook") { return; }
 	    createGdbTerminal (notebook);
 	    // updateDecorations (notebook.getCells ());
+
 	})
     );
 
@@ -134,6 +156,37 @@ export function activate (context: vscode.ExtensionContext) {
 	})
     );
 
+    context.subscriptions.push (
+	vscode.window.onDidChangeActiveNotebookEditor (async editor => {
+	    if (!editor) return;
+	    const notebook = editor.notebook;
+	    // 特定のセルを折りたたむ
+	    let i = 0, start = 0, last = notebook.getCells ().length - 1;
+	    for (const cell of notebook.getCells ()) {
+		const line = cell.document.getText ();
+		console.log (i++ + ": " + line);
+		if (line.match ("#.*答")) {
+		    start = i;
+		}
+	    }
+	    console.log ("start = " + start + ", last = " + last);
+	    /*
+	    await vscode.commands.executeCommand (
+		"notebook.fold", { start: 1, end: last }
+	    );
+	    */
+	    setTimeout (async () => {
+		await vscode.window.showNotebookDocument (notebook);
+		await vscode.commands.executeCommand ("notebook.cell.quitEdit");
+		editor.selection = new vscode.NotebookRange (3, 4);
+		await vscode.commands.executeCommand ("notebook.fold");
+		// await vscode.commands.executeCommand ("notebook.fold", { start: 1, end: 1});
+		console.log ("notebook.fold executed");
+	    },
+		300);
+	})
+    );
+    
     context.subscriptions.push (
 	vscode.languages.registerCodeLensProvider (
             { language: "gdb_command", scheme: "vscode-notebook-cell" },

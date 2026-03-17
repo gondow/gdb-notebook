@@ -1,2 +1,0 @@
-(gdb) break main
-$ ls
