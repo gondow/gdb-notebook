@@ -4,9 +4,9 @@ import * as fs     from "fs";
 import JSON5 from "json5";
 
 type CommandData = {
-     exp:   string; // 説明文
-     usage: string; // 使用例
-     url:   string; // 関連URL
+    exp:   string;             // 説明文
+    usage: [string, string][]; // 使用例（「使用例と説明」のリスト）
+    url:   string;             // 関連URL
 };
 
 let executionCounter = 1;
@@ -14,6 +14,10 @@ let controller: vscode.NotebookController;
 let helpProvider: GdbHelpViewProvider;
 let aliasMap:   Record<string, string>;
 let commandMap: Record<string, CommandData>;
+let shellCommandMap: Record<string, CommandData>;
+const extensionCommandMap: Record<string, string> = {
+    "restart": "GDBターミナルを再起動して，このノートブックをリセット\n（ターミナル上では実行不可）"
+};
 
 const terminalMap = new Map<string, vscode.Terminal> ();
 
@@ -28,6 +32,8 @@ export function activate (context: vscode.ExtensionContext) {
     const grammar_data = JSON5.parse (grammar_json)
     aliasMap   = grammar_data.gdb_command.aliasMap;
     commandMap = grammar_data.gdb_command.commandMap;
+    shellCommandMap = grammar_data.shell_command.commandMap;
+    console.log (JSON.stringify (shellCommandMap, null, 2));
 
     context.subscriptions.push (
 	vscode.commands.registerCommand ('gdb-notebook.helloWorld', () => {
@@ -71,6 +77,8 @@ export function activate (context: vscode.ExtensionContext) {
                 continue;
             }
 
+	    console.log ("languageId = " + cell.document.languageId + ", " + cell.document.getText ());
+
             // セル内容をターミナルに送信
             const commands = cell.document.getText ().split ("\n");
             for (const cmd of commands) {
@@ -94,11 +102,6 @@ export function activate (context: vscode.ExtensionContext) {
 			}
 		    }
 		    console.log ("start = " + start + ", last = " + last);
-		    /*
-		    await vscode.commands.executeCommand (
-			"notebook.fold", { start: 1, end: last }
-		    );
-		    */
 		    await vscode.commands.executeCommand ("notebook.cell.quitEdit");
 
 		    editor.selection = new vscode.NotebookRange (0, 1);
@@ -106,9 +109,9 @@ export function activate (context: vscode.ExtensionContext) {
 		} else {
 		    // 先頭の "(gdb) " や "$ " を削除してから送信
 		    if (line.startsWith ("(gdb)")) {
-			line = line.slice ("(gdb)".length).trimStart();
+			line = line.slice ("(gdb)".length).trimStart ();
 		    } else if (line.startsWith ("$")) {
-			line = line.slice ("$".length).trimStart();
+			line = line.slice ("$".length).trimStart ();
 		    }
 		    const term = getOrCreateTerminal (notebook);
 		    if (term) {
@@ -117,15 +120,24 @@ export function activate (context: vscode.ExtensionContext) {
 		}
             }
 
+	    if (isRestarted) {
+		execution.replaceOutput ([
+                    new vscode.NotebookCellOutput ([
+			vscode.NotebookCellOutputItem.text (
+			    `[${executionCounter}] ` + "GDBターミナルを再起動して，このノートブックをレセットしました")
+                    ])
+		]);
+	    } else {
             // ターミナル送信したのでセルは「完了」にする
-            execution.replaceOutput ([
-                new vscode.NotebookCellOutput ([
-                    vscode.NotebookCellOutputItem.text (
-			`[${executionCounter}] ` + "GDBターミナルに送信済み")
-                ])
-            ]);
+		execution.replaceOutput ([
+                    new vscode.NotebookCellOutput ([
+			vscode.NotebookCellOutputItem.text (
+			    `[${executionCounter}] ` + "GDBターミナルにコマンド送信済み")
+                    ])
+		]);
+		executionCounter++;
+	    }
 
-	    executionCounter++;
             execution.end (true);
 
 	    // 美しくないけど，セル出力を消去（チェックマークは消えない）
@@ -145,11 +157,15 @@ export function activate (context: vscode.ExtensionContext) {
     context.subscriptions.push (controller);
 
     context.subscriptions.push (
-	vscode.workspace.onDidOpenNotebookDocument ((notebook) => {
+	vscode.workspace.onDidOpenNotebookDocument (async (notebook) => {
             if (notebook.notebookType !== "gdb-notebook") { return; }
 	    getOrCreateTerminal (notebook);
-	    // updateDecorations (notebook.getCells ());
 
+	    // フォルダをワークスペースとして開く
+	    const uri = vscode.Uri.file (path.dirname (notebook.uri.fsPath));
+	    console.log (uri);
+	    await vscode.commands.executeCommand ("vscode.openFolder", uri, false);
+	    // true=新しいウィンドウ
 	})
     );
 
@@ -205,44 +221,35 @@ export function activate (context: vscode.ExtensionContext) {
     
     context.subscriptions.push (
 	vscode.languages.registerCodeLensProvider (
-            { language: "gdb_command", scheme: "vscode-notebook-cell" },
-            new GdbCodeLensProvider()
+	    [
+		{ language: "gdb_command", scheme: "vscode-notebook-cell" },
+		{ language: "shellscript", scheme: "vscode-notebook-cell" },
+		{ language: "extension_command", scheme: "vscode-notebook-cell" }
+	    ],
+            new GdbCodeLensProvider ()
 	)
     );
 
     context.subscriptions.push (
 	vscode.commands.registerCommand (
-            "gdb-notebook.breakHelp",
+            "gdb-notebook.showLink",
             (cmd: string) => {
-
 		const url = vscode.Uri.parse ('https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E5%A4%89%E6%95%B0%E3%81%AE%E5%80%A4%E3%82%92%E8%A1%A8%E7%A4%BA-print');
-		vscode.env.openExternal(url);
-
-		vscode.window.showInformationMessage (
-		    cmd,
-		    "OK" );
+		vscode.env.openExternal (url);
+		// vscode.window.showInformationMessage (cmd, "OK");
 	    }
 	)
     );
 
     context.subscriptions.push (
 	vscode.commands.registerCommand (
-            "gdb-notebook.breakExample",
-            (cmd: string) => {
-		/*
-		vscode.window.showInformationMessage (
-		    `b main  # main関数でブレーク
-b foo.c:10  # ファイルfoo.cの10行目でブレーク`,
-		    { modal: true } );
-		*/
-
-		helpProvider.showHelp (cmd + "ほげほげながいながいながい\nはげはげ");
-	    }
+            "gdb-notebook.showHelp",
+            (command_data: CommandData) => { helpProvider.showHelp (command_data); }
 	)
     );
     console.log ("CodeLens registered");
 
-    registerGdbHover ();
+    registerGdbHover (context);
 
     const panel = vscode.window.createWebviewPanel(
 	"gdbHelp",
@@ -273,6 +280,8 @@ b 42           # （現在のファイルの）42行目でブレーク
 
 export function deactivate () {
     vscode.window.showInformationMessage ('Deactivated');
+
+    vscode.window.terminals.forEach (terminal => { terminal.dispose(); });
 }
 
 function closeTerminal (nb: vscode.NotebookDocument) {
@@ -289,7 +298,8 @@ function getOrCreateTerminal (nb: vscode.NotebookDocument): vscode.Terminal {
     let term = terminalMap.get (key);
     if (!term) {
         term = vscode.window.createTerminal ({
-            name: `GDB: ${nb.uri.path.split ('/').pop ()}`
+            name: `GDB: ${nb.uri.path.split ('/').pop ()}`,
+	    cwd: path.dirname (nb.uri.fsPath)
         });
 	term.show ();
         terminalMap.set (key, term);
@@ -357,21 +367,54 @@ class GdbSerializer implements vscode.NotebookSerializer {
     }
 }
 
-function registerGdbHover () {
-    vscode.languages.registerHoverProvider (
-        { scheme: 'vscode-notebook-cell', language: 'gdb_command' },
-        {
-            provideHover (document, position, token) {
-                const range = document.getWordRangeAtPosition (position);
-                if (!range) return;
+function registerGdbHover (context: vscode.ExtensionContext) {
 
-                const word = document.getText (range);
-		const text = commandMap [aliasMap [word] ?? word].exp;
-                if (text) {
-                    return new vscode.Hover (text, range);
-                }
+    context.subscriptions.push (
+	vscode.languages.registerHoverProvider (
+            { scheme: 'vscode-notebook-cell', language: 'gdb_command' },
+            {
+		provideHover (document, position, token) {
+                    const range = document.getWordRangeAtPosition (position);
+                    if (!range) return;
+                    const word = document.getText (range);
+		    const text = commandMap [aliasMap [word] ?? word].exp;
+		    console.log ("commandMap [word] = " + text);
+                    if (text) { return new vscode.Hover (text, range); }
+		}
             }
-        }
+	)
+    );
+
+    context.subscriptions.push (
+	vscode.languages.registerHoverProvider (
+            { scheme: 'vscode-notebook-cell', language: 'shellscript' },
+            {
+		provideHover (document, position, token) {
+                    const range = document.getWordRangeAtPosition (position);
+                    if (!range) return;
+                    const word = document.getText (range);
+		    const text = shellCommandMap [word].exp;
+		    console.log ("shellCommandMap [word] = " + text);
+                    if (text) { return new vscode.Hover (text, range); }
+		}
+            }
+	)
+    );
+
+    context.subscriptions.push (
+	vscode.languages.registerHoverProvider (
+            { scheme: 'vscode-notebook-cell', language: 'extension_command' },
+            {
+		provideHover (document, position, token) {
+                    const range = document.getWordRangeAtPosition (position);
+                    if (!range) return;
+                    const word = document.getText (range);
+		    const text = extensionCommandMap [word];
+		    console.log ("extensionCommandMap [" + word + "] = " + text);
+                    if (text) { return new vscode.Hover (text, range); }
+		}
+            }
+	)
     );
 }
 
@@ -381,24 +424,91 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
 	console.log ("language:", document.languageId);
 	console.log ("scheme:", document.uri.scheme);
 
+	const gdb_alias_keys = Object.keys (aliasMap);
+	const gdb_canon_keys = Object.keys (commandMap);
+	const shell_command_keys = Object.keys (shellCommandMap);
+
         const lenses: vscode.CodeLens [] = [];
 
+	// console.log (gdb_alias_keys);
+
+	outer_loop:
         for (let i = 0; i < document.lineCount; i++) {
             const line = document.lineAt (i);
             const text = line.text.trim ();
-            if (text.includes ("b ")) {
-                const range = new vscode.Range (i, 0, i, 0);
-                lenses.push (new vscode.CodeLens (range, {
-                    title: "説明",
-		    command: "gdb-notebook.breakExample",
-		    arguments: ["break"]
-		}));
-                lenses.push (new vscode.CodeLens (range, {
-                    title: "説明リンク",
-		    command: "gdb-notebook.breakHelp",
-		    arguments: ["break"]
-		}));
-            }
+	    console.log ("======:" + line.text);
+	    // コマンドは（トリム後の）行頭に限定（高速化のため）
+	    // break-if だけ特別処理
+	    for (const key of gdb_alias_keys) {
+		let alias_line = text;
+		if (alias_line.startsWith ("(gdb)")) {
+		    alias_line = alias_line.slice ("(gdb)".length).trimStart ();
+		}
+		console.log ("alias_line: " + alias_line);
+		if (alias_line.match ("^" + key + "\\b")) {
+		    console.log ("alias matched: " + line.text + ", " + key);
+                    const range = new vscode.Range (i, 0, i, 0);
+                    lenses.push (new vscode.CodeLens (range, {
+			title: "説明",
+			command: "gdb-notebook.showHelp",
+			arguments: [ commandMap [aliasMap [key]] ]
+		    }));
+                    lenses.push (new vscode.CodeLens (range, {
+			title: "関連リンク",
+			command: "gdb-notebook.showLink",
+			arguments: [commandMap [aliasMap [key]].url]
+		    }));
+
+		    continue outer_loop;
+		}
+	    }
+
+	    for (const key of gdb_canon_keys) {
+		let canon_line = text;
+		if (canon_line.startsWith ("(gdb)")) {
+		    canon_line = canon_line.slice ("(gdb)".length).trimStart ();
+		}
+		if (canon_line.match ("^" + key + "\\b")) {
+		    console.log ("canon matched: " + line.text + ", " + key);
+                    const range = new vscode.Range (i, 0, i, 0);
+                    lenses.push (new vscode.CodeLens (range, {
+			title: "説明",
+			command: "gdb-notebook.showHelp",
+			arguments: [ commandMap [key] ]
+		    }));
+                    lenses.push (new vscode.CodeLens (range, {
+			title: "関連リンク",
+			command: "gdb-notebook.showLink",
+			arguments: [commandMap [key].url]
+		    }));
+
+		    continue outer_loop;
+		}
+	    }
+
+	    console.log (shell_command_keys);
+	    for (const key of shell_command_keys) {
+		let shell_line = text;
+		if (shell_line.startsWith ("$")) {
+		    shell_line = shell_line.slice ("$".length).trimStart ();
+		}
+		if (shell_line.match ("^" + key + "\\b")) {
+		    console.log ("shell matched: " + line.text + ", " + key);
+                    const range = new vscode.Range (i, 0, i, 0);
+                    lenses.push (new vscode.CodeLens (range, {
+			title: "説明",
+			command: "gdb-notebook.showHelp",
+			arguments: [ shellCommandMap [key] ]
+		    }));
+                    lenses.push (new vscode.CodeLens (range, {
+			title: "関連リンク",
+			command: "gdb-notebook.showLink",
+			arguments: [ shellCommandMap [key].url]
+		    }));
+
+		    continue outer_loop;
+		}
+	    }
         }
         return lenses;
     }
@@ -425,9 +535,21 @@ class GdbHelpViewProvider implements vscode.WebviewViewProvider {
 `;
     }
     
-    showHelp (text: string) {
+    showHelp (command_data: CommandData) {
 	if (this.view) {
-	    this.view.webview.html = `<pre>${text}</pre>`;
+	    // this.view.webview.html = `<pre>${text}</pre>`;
+	    const tr_list_html = command_data.usage.map (([cmd, desc]) => {
+		return `<tr><td><code>${cmd}</code></td><td>${desc}</td></tr>`
+	    }).join ("\n");
+	    console.log (tr_list_html);
+	    this.view.webview.html = `<html>
+<h3> ${command_data.exp} </h3>
+<table border="1">
+  <thead> <tr> <th>コマンド使用例</th> <th>説明</th> </tr> </thead>
+  <tbody> ${tr_list_html} </tbody>
+</table>
+<a href=${command_data.url}>関連リンク</a>
+</html>`;
 	}
     }
 }

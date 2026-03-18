@@ -26,12 +26,12 @@
                 "icon": "$(debug-restart)"
             },
             {
-                "command": "gdb-notebook.startGdb",
-                "title": "Start GDB"
+                "command": "gdb-notebook.showHelp",
+                "title": "show help"
             },
             {
-                "command": "gdb-notebook.breakHelp",
-                "title": "GDB: break Help"
+                "command": "gdb-notebook.showLink",
+                "title": "show link"
             }
         ],
         "notebooks": [
@@ -100,21 +100,12 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "pretest": "npm run compile && npm run lint",
-        "lint": "eslint src",
-        "test": "vscode-test"
+        "compile": "tsc -p ./"
     },
     "devDependencies": {
-        "@types/mocha": "^10.0.10",
         "@types/node": "22.x",
         "@types/vscode": "^1.110.0",
-        "@vscode/test-cli": "^0.0.11",
-        "@vscode/test-electron": "^2.5.2",
-        "eslint": "^9.39.2",
-        "typescript": "^5.9.3",
-        "typescript-eslint": "^8.54.0"
+        "typescript": "^5.9.3"
     },
     "dependencies": {
         "json5": "^2.2.3"
