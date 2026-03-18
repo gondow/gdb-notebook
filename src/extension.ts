@@ -1,17 +1,33 @@
-import * as vscode from 'vscode';
-import * as path from "path";
-import { aliasMap, commandMap } from "./commandMap"
+import * as vscode from "vscode";
+import * as path   from "path";
+import * as fs     from "fs";
+import JSON5 from "json5";
+
+type CommandData = {
+     exp:   string; // 説明文
+     usage: string; // 使用例
+     url:   string; // 関連URL
+};
 
 let executionCounter = 1;
 let controller: vscode.NotebookController;
 let helpProvider: GdbHelpViewProvider;
+let aliasMap:   Record<string, string>;
+let commandMap: Record<string, CommandData>;
 
-// let gdbTerminal: vscode.Terminal | undefined;
 const terminalMap = new Map<string, vscode.Terminal> ();
 
 export function activate (context: vscode.ExtensionContext) {
     console.log ('your extension "gdb-notebook" is now active!');
     vscode.window.showInformationMessage ('Hello gdb-notebook');
+
+    // ./grammar.json から，aliasMap, commandMap を取得する
+    const grammar_json_path = context.asAbsolutePath ("./src/grammar.json")
+    console.log (grammar_json_path);
+    const grammar_json = fs.readFileSync (grammar_json_path, "utf-8");
+    const grammar_data = JSON5.parse (grammar_json)
+    aliasMap   = grammar_data.gdb_command.aliasMap;
+    commandMap = grammar_data.gdb_command.commandMap;
 
     context.subscriptions.push (
 	vscode.commands.registerCommand ('gdb-notebook.helloWorld', () => {
@@ -38,24 +54,6 @@ export function activate (context: vscode.ExtensionContext) {
     controller = vscode.notebooks.createNotebookController (
 	"gdb-controller", "gdb-notebook", "Gdb Controller");
     controller.supportedLanguages = ["code", "markdown", "plaintext", "shellscript", "gdb_command", "extension_command"];
-
-    /*
-    controller.executeHandler = async (cells) => {
-	for (const cell of cells) {
-	    const execution =
-		  controller.createNotebookCellExecution (cell);
-	    execution.start ();
-	    const text = cell.document.getText ();
-	    const result = text.toUpperCase ();
-	    execution.replaceOutput ([
-		new vscode.NotebookCellOutput ([
-		    vscode.NotebookCellOutputItem.text (result)
-		])
-	    ]);
-	    execution.end (true);
-	}
-    };
-    */
     
     controller.executeHandler = async (cells, notebook) => {
 	let isRestarted = false;
@@ -277,17 +275,6 @@ export function deactivate () {
     vscode.window.showInformationMessage ('Deactivated');
 }
 
-/*
-function createGdbTerminal (notebook: vscode.NotebookDocument) {
-    const cwd = path.dirname (notebook.uri.fsPath);
-    if (!gdbTerminal) {
-	gdbTerminal = vscode.window.createTerminal ({name: "GDB", cwd: cwd});
-        gdbTerminal.show ();
-    }
-    console.log (`GDB: ${notebook.uri.path.split('/').pop ()}`);
-}
-*/
-
 function closeTerminal (nb: vscode.NotebookDocument) {
     const key = nb.uri.toString ();
     const term = terminalMap.get (key);
@@ -302,7 +289,7 @@ function getOrCreateTerminal (nb: vscode.NotebookDocument): vscode.Terminal {
     let term = terminalMap.get (key);
     if (!term) {
         term = vscode.window.createTerminal ({
-            name: `GDB: ${nb.uri.path.split('/').pop()}`
+            name: `GDB: ${nb.uri.path.split ('/').pop ()}`
         });
 	term.show ();
         terminalMap.set (key, term);
@@ -323,16 +310,7 @@ class GdbSerializer implements vscode.NotebookSerializer {
 	const text = new TextDecoder ().decode (content);
 	const raw = JSON.parse(text);
 	
-	/*
-	const cells = text.split ("\n").map (line =>
-					     new vscode.NotebookCellData (
-						 vscode.NotebookCellKind.Code,
-						 line,
-						 "plaintext"
-					     )
-					    );
-	*/
-	const cells = raw.cells.map((item: any) => {
+	const cells = raw.cells.map ((item: any) => {
             const kind = (item.kind === "code"
 			  ? vscode.NotebookCellKind.Code
 			  : vscode.NotebookCellKind.Markup);
@@ -368,11 +346,6 @@ class GdbSerializer implements vscode.NotebookSerializer {
     
     // 書き込み
     async serializeNotebook (data: vscode.NotebookData) {
-	/*
-	const text = data.cells.map (cell => cell.value).join ("\n");
-	return new TextEncoder ().encode (text);
-	*/
-
 	const cells = data.cells.map (cell => ({
             kind: (cell.kind === vscode.NotebookCellKind.Code
 		   ? "code" : "markdown"),
@@ -380,65 +353,16 @@ class GdbSerializer implements vscode.NotebookSerializer {
 	}));
 	const json = JSON.stringify ({cells}, null, 2);
 	
-	return new TextEncoder().encode(json);
+	return new TextEncoder ().encode (json);
     }
 }
-
-/*
-        switch (cell.document.languageId) {
-            case "shellscript":
-                bgColor = "#FFFACD"; // レモンイエロー
-                break;
-            case "gdb_command":
-                bgColor = "#E0FFFF"; // ライトシアン
-                break;
-            case "extension_command":
-                bgColor = "#F0E68C"; // カーキ
-                break;
-        }
-*/
-
-/*
-const cellDecorationType = {
-    "shellscript": vscode.window.createTextEditorDecorationType ({
-	light: { backgroundColor: '#FFFACD' },
-	dark:  { backgroundColor: '#FFFACD' },
-	isWholeLine: true
-    }),
-    "gdb_command": vscode.window.createTextEditorDecorationType ({
-	light: { backgroundColor: '#E0FFFF' },
-	dark:  { backgroundColor: '#E0FFFF' },
-	isWholeLine: true
-    }),
-    "extension_command": vscode.window.createTextEditorDecorationType ({
-	light: { backgroundColor: '#F0E68C' },
-	dark:  { backgroundColor: '#F0E68C' },
-	isWholeLine: true
-    })
-};
-
-function updateDecorations (cells: vscode.NotebookCell []) {
-    const cellDecorationType = vscode.window.createTextEditorDecorationType ({
-	light: { backgroundColor: '#F0E68C' },
-	dark:  { backgroundColor: '#F0E68C' },
-	isWholeLine: true});
-    
-    const activeEditor = vscode.window.activeTextEditor;
-    for (const cell of cells) {
-	const range = new vscode.Range(
-            new vscode.Position(0, 0),
-            new vscode.Position(cell.document.lineCount, 0));
-	activeEditor?.setDecorations (cellDecorationType, [range]);
-    }
-}
-*/
 
 function registerGdbHover () {
-    vscode.languages.registerHoverProvider(
+    vscode.languages.registerHoverProvider (
         { scheme: 'vscode-notebook-cell', language: 'gdb_command' },
         {
-            provideHover(document, position, token) {
-                const range = document.getWordRangeAtPosition(position);
+            provideHover (document, position, token) {
+                const range = document.getWordRangeAtPosition (position);
                 if (!range) return;
 
                 const word = document.getText (range);
@@ -453,9 +377,9 @@ function registerGdbHover () {
 
 class GdbCodeLensProvider implements vscode.CodeLensProvider {
     provideCodeLenses (document: vscode.TextDocument): vscode.CodeLens [] {
-	console.log("CodeLens called");
-	console.log("language:", document.languageId);
-	console.log("scheme:", document.uri.scheme);
+	console.log ("CodeLens called");
+	console.log ("language:", document.languageId);
+	console.log ("scheme:", document.uri.scheme);
 
         const lenses: vscode.CodeLens [] = [];
 

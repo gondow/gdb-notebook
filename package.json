@@ -5,111 +5,118 @@
     "description": "gdb-notebook",
     "version": "0.0.1",
     "engines": {
-	"vscode": "^1.110.0"
+        "vscode": "^1.110.0"
     },
     "categories": [
-	"Other"
+        "Other"
     ],
     "activationEvents": [
-	"onNotebook:gdb-notebook"
+        "onNotebook:gdb-notebook"
     ],
     "main": "./out/extension.js",
     "contributes": {
-	"commands": [
-	    {
-		"command": "gdb-notebook.helloWorld",
-		"title": "Hello World"
-	    },
-	    {
-		"command": "gdb-notebook.restartGdbTerminal",
-		"title": "Restart GDB terminal",
-		"icon": "$(debug-restart)"
-	    },
-	    {
-		"command": "gdb-notebook.startGdb",
-		"title": "Start GDB"
-	    },
-	    {
-		"command": "gdb-notebook.breakHelp",
-		"title": "GDB: break Help"
-	    }
-	],
-	"notebooks": [
-	    {
-		"type": "gdb-notebook",
-		"displayName": "GDB Notebook",
-		"selector": [
-		    {
-			"filenamePattern": "*.gdbnb"
-		    }
-		]
-	    }
-	],
-	"notebookSerializer": [
-	    {
-		"type": "gdb-notebook",
-		"displayName": "GDB Notebook Serializer"
-	    }
-	],
-	"menus": {
-	    "notebook/toolbar": [
-		{
-		    "command": "gdb-notebook.restartGdbTerminal",
-		    "when": "notebookType == 'gdb-notebook'",
-		    "group": "navigation@1"
-		}
-	    ]
-	},
-	"languages": [
-	    {
-		"id": "gdb_command",
-		"aliases": ["GDB command"],
-		"configuration": "./lang-config.json"
-	    },
-	    {
-		"id": "extension_command",
-		"aliases": ["extension command"],
-		"configuration": "./lang-config.json"
-	    }
-	],
-	"grammars": [
-	    {
-		"language": "gdb_command",
-		"scopeName": "source.gdb",
-		"path": "./gdb.tmGrammar.json"
-	    },
-	    {
-		"language": "extension_command",
-		"scopeName": "source.extension",
-		"path": "./extension.tmGrammar.json"
-	    }
-	],
-	"views": {
-	    "explorer": [
-		{
-		    "type": "webview",
-		    "id": "gdbHelpView",
-		    "name": "GDBヘルプ"
-		}
-	    ]
-	}
+        "commands": [
+            {
+                "command": "gdb-notebook.helloWorld",
+                "title": "Hello World"
+            },
+            {
+                "command": "gdb-notebook.restartGdbTerminal",
+                "title": "Restart GDB terminal",
+                "icon": "$(debug-restart)"
+            },
+            {
+                "command": "gdb-notebook.startGdb",
+                "title": "Start GDB"
+            },
+            {
+                "command": "gdb-notebook.breakHelp",
+                "title": "GDB: break Help"
+            }
+        ],
+        "notebooks": [
+            {
+                "type": "gdb-notebook",
+                "displayName": "GDB Notebook",
+                "selector": [
+                    {
+                        "filenamePattern": "*.gdbnb"
+                    }
+                ]
+            }
+        ],
+        "notebookSerializer": [
+            {
+                "type": "gdb-notebook",
+                "displayName": "GDB Notebook Serializer"
+            }
+        ],
+        "menus": {
+            "notebook/toolbar": [
+                {
+                    "command": "gdb-notebook.restartGdbTerminal",
+                    "when": "notebookType == 'gdb-notebook'",
+                    "group": "navigation@1"
+                }
+            ]
+        },
+        "languages": [
+            {
+                "id": "gdb_command",
+                "aliases": [
+                    "GDB command"
+                ],
+                "configuration": "./lang-config.json"
+            },
+            {
+                "id": "extension_command",
+                "aliases": [
+                    "extension command"
+                ],
+                "configuration": "./lang-config.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "gdb_command",
+                "scopeName": "source.gdb",
+                "path": "./gdb.tmGrammar.json"
+            },
+            {
+                "language": "extension_command",
+                "scopeName": "source.extension",
+                "path": "./extension.tmGrammar.json"
+            }
+        ],
+        "views": {
+            "explorer": [
+                {
+                    "type": "webview",
+                    "id": "gdbHelpView",
+                    "name": "GDBヘルプ"
+                }
+            ]
+        }
     },
     "scripts": {
-	"vscode:prepublish": "npm run compile",
-	"compile": "tsc -p ./",
-	"watch": "tsc -watch -p ./",
-	"pretest": "npm run compile && npm run lint",
-	"lint": "eslint src",
-	"test": "vscode-test"
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src",
+        "test": "vscode-test"
     },
     "devDependencies": {
-	"@types/mocha": "^10.0.10",
-	"@types/node": "22.x",
-	"@types/vscode": "^1.110.0",
-	"@vscode/test-cli": "^0.0.11",
-	"@vscode/test-electron": "^2.5.2",
-	"eslint": "^9.39.2",
-	"typescript": "^5.9.3",
-	"typescript-eslint": "^8.54.0"
+        "@types/mocha": "^10.0.10",
+        "@types/node": "22.x",
+        "@types/vscode": "^1.110.0",
+        "@vscode/test-cli": "^0.0.11",
+        "@vscode/test-electron": "^2.5.2",
+        "eslint": "^9.39.2",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.54.0"
+    },
+    "dependencies": {
+        "json5": "^2.2.3"
     }
 }

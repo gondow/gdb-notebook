@@ -1,17 +1,17 @@
 {
-    "scopeName": "source.gdb",
-    "patterns": [
-	{
-	    "match": "\\b(break|run|continue|next|step|print)\\b",
-	    "name": "keyword.control.gdb"
-	},
-	{
-	    "match": "#.*$",
-	    "name": "comment.line.number-sign.gdb"
-	},
-	{
-	    "match": "^\\(gdb\\)",
-	    "name": "support.function.gdb"
-	}
-    ]
+  "scopeName": "source.gdb",
+  "patterns": [
+    {
+      "match": "\\b(b|r|c|break|run|continue)\\b",
+      "name": "keyword.control.gdb"
+    },
+    {
+      "match": "#.*$",
+      "name": "comment.line.number-sign.gdb"
+    },
+    {
+      "match": "^\\(gdb\\)",
+      "name": "support.function.gdb"
+    }
+  ]
 }
