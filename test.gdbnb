@@ -30,7 +30,7 @@
     },
     {
       "kind": "code",
-      "value": "# gdb コマンドの例\n(gdb) break main\n(gdb) continue\n(gdb) b main\n(gdb) b main if n==0"
+      "value": "# gdb コマンドの例\n(gdb) break main\n(gdb) continue\n(gdb) break main\n(gdb) b main if n==0\n(gdb) run"
     }
   ]
 }

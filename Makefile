@@ -1,5 +1,6 @@
 
 compile:
+	rm -rf out
 	npm run compile
 
 clean:

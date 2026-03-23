@@ -2,7 +2,7 @@
   "scopeName": "source.gdb",
   "patterns": [
     {
-      "match": "\\b(b|r|c|break|breakif|run|continue)\\b",
+      "match": "\\b(b|r|c|break|if|run|continue)\\b",
       "name": "keyword.control.gdb"
     },
     {

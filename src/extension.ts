@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as path   from "path";
 import * as fs     from "fs";
 import JSON5 from "json5";
+import 'source-map-support/register'; // for ts->js行番号変換
 
 type CommandData = {
     exp:   string;             // 説明文
@@ -11,7 +12,7 @@ type CommandData = {
 
 let executionCounter = 1;
 let controller: vscode.NotebookController;
-let helpProvider: GdbHelpViewProvider;
+let helpProvider: CommandHelpViewProvider;
 let aliasMap:   Record<string, string>;
 let commandMap: Record<string, CommandData>;
 let shellCommandMap: Record<string, CommandData>;
@@ -20,6 +21,26 @@ const extensionCommandMap: Record<string, string> = {
 };
 
 const terminalMap = new Map<string, vscode.Terminal> ();
+
+function access<T, K extends keyof T>(obj: T | null | undefined, key: K): T[K] {
+    if (obj == null) {
+	const msg = `Cannot access property "${String(key)}" of ${obj}`;
+	const err = new Error (msg);
+	// console.error (err);
+	console.error (err.stack!.split ("\n").slice (0, 4).join ("\n"));
+	throw err;
+    }
+    const value = obj [key];
+    if (value === undefined) {
+	const msg = `Property "${String(key)}" does not exist`;
+	const err = new Error (msg);
+	// console.error (err);
+	console.error (err.stack!.split ("\n").slice (0, 4).join ("\n"));
+	console.error ("==================================");
+	// throw err;
+    }
+    return value;
+}
 
 export async function activate (context: vscode.ExtensionContext) {
     console.log ('your extension "gdb-notebook" is now active!');
@@ -302,9 +323,9 @@ export async function activate (context: vscode.ExtensionContext) {
     registerGdbHover (context);
 
 
-    helpProvider = new GdbHelpViewProvider ();
+    helpProvider = new CommandHelpViewProvider ();
     context.subscriptions.push (
-	vscode.window.registerWebviewViewProvider ("gdbHelpView", helpProvider)
+	vscode.window.registerWebviewViewProvider ("commandHelpView", helpProvider)
     );
 
     // ======================
@@ -313,6 +334,12 @@ export async function activate (context: vscode.ExtensionContext) {
     console.log ("showDemo2 = " + showDemo2);
     // 永続化（グローバル保存）
     await config.update ("showDemo2", "hagehage", true); // 第3引数 true = グローバル
+
+    // =======================
+    const provider = new CommandTreeDataProvider ();
+    vscode.window.createTreeView ("commandTreeView", {
+        treeDataProvider: provider
+    });
 }
 
 export function deactivate () {
@@ -414,7 +441,7 @@ function registerGdbHover (context: vscode.ExtensionContext) {
                     const range = document.getWordRangeAtPosition (position);
                     if (!range) return;
                     const word = document.getText (range);
-		    const text = commandMap [aliasMap [word] ?? word].exp;
+		    const text = commandMap [aliasMap [word] ?? word]!.exp;
 		    console.log ("commandMap [word] = " + text);
                     if (text) { return new vscode.Hover (text, range); }
 		}
@@ -430,7 +457,7 @@ function registerGdbHover (context: vscode.ExtensionContext) {
                     const range = document.getWordRangeAtPosition (position);
                     if (!range) return;
                     const word = document.getText (range);
-		    const text = shellCommandMap [word].exp;
+		    const text = shellCommandMap [word]!.exp;
 		    console.log ("shellCommandMap [word] = " + text);
                     if (text) { return new vscode.Hover (text, range); }
 		}
@@ -476,38 +503,46 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
 	    console.log ("======:" + line.text);
 	    // コマンドは（トリム後の）行頭に限定（高速化のため）
 	    // break-if だけ特別処理
-	    for (const key of gdb_alias_keys) {
+	    for (let key of gdb_alias_keys) {
 		let alias_line = text;
 		if (alias_line.startsWith ("(gdb)")) {
 		    alias_line = alias_line.slice ("(gdb)".length).trimStart ();
 		}
 		console.log ("alias_line: " + alias_line);
 		if (alias_line.match ("^" + key + "\\b")) {
-		    console.log ("alias matched: " + line.text + ", " + key);
                     const range = new vscode.Range (i, 0, i, 0);
+		    // break-if だけ特別扱い
+		    if (alias_line.match ("\\bif\\b")) {
+			key = "if";
+			console.log ("********************: " + key);
+		    }
+		    console.log ("alias matched: " + line.text + ", " + key);
+		    const cmd = access (commandMap, access (aliasMap, key));  
                     lenses.push (new vscode.CodeLens (range, {
 			title: "説明",
 			command: "gdb-notebook.showHelp",
-			arguments: [ commandMap [aliasMap [key]] ]
+			arguments: [ cmd ]
 		    }));
                     lenses.push (new vscode.CodeLens (range, {
 			title: "関連リンク",
 			command: "gdb-notebook.showLink",
-			arguments: [commandMap [aliasMap [key]].url]
+			arguments: [ access (cmd, "url") ]
 		    }));
 
 		    continue outer_loop;
 		}
 	    }
 
-	    for (const key of gdb_canon_keys) {
+	    for (let key of gdb_canon_keys) {
 		let canon_line = text;
 		if (canon_line.startsWith ("(gdb)")) {
 		    canon_line = canon_line.slice ("(gdb)".length).trimStart ();
 		}
 		if (canon_line.match ("^" + key + "\\b")) {
-		    console.log ("canon matched: " + line.text + ", " + key);
                     const range = new vscode.Range (i, 0, i, 0);
+		    // break-if だけ特別扱い
+		    if (canon_line.match ("\\bif\\b")) { key = "if"; }
+		    console.log ("canon matched: " + line.text + ", " + key);
                     lenses.push (new vscode.CodeLens (range, {
 			title: "説明",
 			command: "gdb-notebook.showHelp",
@@ -516,7 +551,7 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
                     lenses.push (new vscode.CodeLens (range, {
 			title: "関連リンク",
 			command: "gdb-notebook.showLink",
-			arguments: [commandMap [key].url]
+			arguments: [commandMap [key]!.url]
 		    }));
 
 		    continue outer_loop;
@@ -540,7 +575,7 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
                     lenses.push (new vscode.CodeLens (range, {
 			title: "関連リンク",
 			command: "gdb-notebook.showLink",
-			arguments: [ shellCommandMap [key].url]
+			arguments: [ shellCommandMap [key]!.url]
 		    }));
 
 		    continue outer_loop;
@@ -551,12 +586,12 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
     }
 }
 
-class GdbHelpViewProvider implements vscode.WebviewViewProvider {
+class CommandHelpViewProvider implements vscode.WebviewViewProvider {
 
-    public static readonly viewType = "gdbHelpView";
+    public static readonly viewType = "commandHelpView";
     private view?: vscode.WebviewView;
 
-    resolveWebviewView (view: vscode.WebviewView) {
+    async resolveWebviewView (view: vscode.WebviewView) {
 	this.view = view;
 
 	view.webview.options = {
@@ -572,13 +607,18 @@ class GdbHelpViewProvider implements vscode.WebviewViewProvider {
 `;
     }
     
-    showHelp (command_data: CommandData) {
+    async showHelp (command_data: CommandData) {
+	if (!this.view) {
+	    await vscode.commands.executeCommand ("commandHelpView.focus");
+	    await new Promise (resolve => setTimeout (resolve, 50));
+	}
 	if (this.view) {
+	    
 	    // this.view.webview.html = `<pre>${text}</pre>`;
 	    const tr_list_html = command_data.usage.map (([cmd, desc]) => {
 		return `<tr><td><code>${cmd}</code></td><td>${desc}</td></tr>`
 	    }).join ("\n");
-	    console.log (tr_list_html);
+            console.log (tr_list_html);
 	    this.view.webview.html = `<html>
 <h3> ${command_data.exp} </h3>
 <table border="1">
@@ -587,6 +627,34 @@ class GdbHelpViewProvider implements vscode.WebviewViewProvider {
 </table>
 <a href=${command_data.url}>関連リンク</a>
 </html>`;
+
+	    await vscode.commands.executeCommand ("commandHelpView.focus");
 	}
+    }
+}
+
+class CommandTreeItem extends vscode.TreeItem {
+    constructor (
+        public readonly label: string
+    ) {
+        super (label);
+    }
+}
+
+class CommandTreeDataProvider implements vscode.TreeDataProvider<CommandTreeItem> {
+
+    getTreeItem (element: CommandTreeItem): vscode.TreeItem {
+        return element;
+    }
+
+    getChildren (element?: CommandTreeItem): Thenable<CommandTreeItem[]> {
+        if (!element) {
+            return Promise.resolve ([
+                new CommandTreeItem ("Item A"),
+                new CommandTreeItem ("Item B")
+            ]);
+        }
+
+        return Promise.resolve([]);
     }
 }

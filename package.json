@@ -92,27 +92,31 @@
             "explorer": [
                 {
                     "type": "webview",
-                    "id": "gdbHelpView",
-                    "name": "GDBヘルプ"
+                    "id": "commandHelpView",
+                    "name": "コマンドヘルプ"
+                },
+                {
+                    "id": "commandTreeView",
+                    "name": "コマンドリスト"
                 }
             ]
         },
-	"configuration": {
-	    "type": "object",
-	    "title": "GDB Notebook",
-	    "properties": {
-		"gdbDemo.showDemo": {
-		    "type": "boolean",
-		    "default": true,
-		    "description": "次回から送信デモを表示するかどうか"
-		},
-		"gdbDemo.showDemo2": {
+        "configuration": {
+            "type": "object",
+            "title": "GDB Notebook",
+            "properties": {
+                "gdbDemo.showDemo": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "次回から送信デモを表示するかどうか"
+                },
+                "gdbDemo.showDemo2": {
                     "type": "string",
                     "default": "hogehoge",
                     "description": "sample value"
-		}
-	    }
-	}
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
@@ -121,6 +125,7 @@
     "devDependencies": {
         "@types/node": "22.x",
         "@types/vscode": "^1.110.0",
+        "source-map-support": "^0.5.21",
         "typescript": "^5.9.3"
     },
     "dependencies": {
