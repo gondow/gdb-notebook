@@ -14,7 +14,7 @@
     },
     {
       "kind": "markdown",
-      "value": "### 答え"
+      "value": "### ←ここを押すと「答え」が開きます"
     },
     {
       "kind": "code",
@@ -30,7 +30,7 @@
     },
     {
       "kind": "code",
-      "value": "# gdb コマンドの例\n(gdb) break main\n(gdb) continue\n(gdb) b main"
+      "value": "# gdb コマンドの例\n(gdb) break main\n(gdb) continue\n(gdb) b main\n(gdb) b main if n==0"
     }
   ]
 }

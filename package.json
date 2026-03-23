@@ -96,7 +96,23 @@
                     "name": "GDBヘルプ"
                 }
             ]
-        }
+        },
+	"configuration": {
+	    "type": "object",
+	    "title": "GDB Notebook",
+	    "properties": {
+		"gdbDemo.showDemo": {
+		    "type": "boolean",
+		    "default": true,
+		    "description": "次回から送信デモを表示するかどうか"
+		},
+		"gdbDemo.showDemo2": {
+                    "type": "string",
+                    "default": "hogehoge",
+                    "description": "sample value"
+		}
+	    }
+	}
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

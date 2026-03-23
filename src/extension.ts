@@ -21,7 +21,7 @@ const extensionCommandMap: Record<string, string> = {
 
 const terminalMap = new Map<string, vscode.Terminal> ();
 
-export function activate (context: vscode.ExtensionContext) {
+export async function activate (context: vscode.ExtensionContext) {
     console.log ('your extension "gdb-notebook" is now active!');
     vscode.window.showInformationMessage ('Hello gdb-notebook');
 
@@ -162,10 +162,60 @@ export function activate (context: vscode.ExtensionContext) {
 	    getOrCreateTerminal (notebook);
 
 	    // フォルダをワークスペースとして開く
+	    /*
 	    const uri = vscode.Uri.file (path.dirname (notebook.uri.fsPath));
 	    console.log (uri);
 	    await vscode.commands.executeCommand ("vscode.openFolder", uri, false);
-	    // true=新しいウィンドウ
+	    */
+
+	    const image_path = vscode.Uri.file (
+		path.join ( path.dirname (notebook.uri.fsPath),
+			    "images/execute-cell.png")
+	    );
+	    const image_dir = vscode.Uri.file (path.dirname (notebook.uri.fsPath));
+	    const panel = vscode.window.createWebviewPanel(
+		"gdbHelp",
+		"ヒント",
+		vscode.ViewColumn.Active,
+		{
+		    enableScripts: true,
+		    localResourceRoots: [ image_dir ]
+		}
+	    );
+	    
+	    panel.webview.html = `
+    <html>
+    <body>
+        <h3>ヒント：「セルの実行」ボタンの役割</h3>
+        <p>
+        <button onclick="send()">閉じる</button>
+        <button onclick="closeWin()">閉じる（次から表示しない）</button>
+        </p>
+
+        <script>
+            const vscode = acquireVsCodeApi();
+            function send() {
+                vscode.postMessage({ command: "send" });
+            }
+            function closeWin() {
+                vscode.postMessage({ command: "close" });
+            }
+        </script>
+        <p>
+        <image src="${panel.webview.asWebviewUri (image_path)}" width="80%"/>
+        </p>
+    </body>
+    </html>
+    `;
+
+	    console.log (`${path.dirname (notebook.uri.fsPath)}/images/execute-cell.png`);
+
+	    panel.webview.onDidReceiveMessage(msg => {
+		if (msg.command === "send") { console.log ("send"); }
+		if (msg.command === "close") { console.log ("close"); }
+		panel.dispose(); // 送信後閉じる
+	    });
+	    // ======================
 	})
     );
 
@@ -251,31 +301,18 @@ export function activate (context: vscode.ExtensionContext) {
 
     registerGdbHover (context);
 
-    const panel = vscode.window.createWebviewPanel(
-	"gdbHelp",
-	"GDB Help",
-	vscode.ViewColumn.Active,
-	{}
-    );
-    
-    panel.webview.html = `
-<html>
-<body style="font-family: monospace; padding: 10px;">
-<h3>breakの省略形，ブレークポイントをセットする</h3>
-<b>使用例</b>
-<pre>
-b main         # main関数でブレーク
-b file.c:10    # ファイルfile.cの10行目でブレーク
-b 42           # （現在のファイルの）42行目でブレーク
-</pre>
-</body>
-</html>
-`;
 
     helpProvider = new GdbHelpViewProvider ();
     context.subscriptions.push (
 	vscode.window.registerWebviewViewProvider ("gdbHelpView", helpProvider)
     );
+
+    // ======================
+    const config = vscode.workspace.getConfiguration ("gdbDemo");
+    const showDemo2 = config.get ("showDemo2", true);
+    console.log ("showDemo2 = " + showDemo2);
+    // 永続化（グローバル保存）
+    await config.update ("showDemo2", "hagehage", true); // 第3引数 true = グローバル
 }
 
 export function deactivate () {
