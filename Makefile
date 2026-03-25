@@ -1,7 +1,21 @@
 
+
 compile:
 	rm -rf out
 	npm run compile
+
+package: 
+	vsce package
+
+install: package
+	code --install-extension gdb-notebook-0.0.1.vsix
+
+uninstall:
+	code --uninstall-extension gondow.gdb-notebook
+
+20:
+	. ~/.nvm/nvm.sh 
+	nvm use 20	
 
 clean:
 	rm -f *~ a.out

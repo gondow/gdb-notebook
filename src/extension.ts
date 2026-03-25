@@ -85,7 +85,8 @@ export async function activate (context: vscode.ExtensionContext) {
     });
     
     // ./grammar.json から，aliasMap, commandMap を取得する
-    const grammar_json_path = context.asAbsolutePath ("./src/grammar.json")
+    const grammar_json_path = context.asAbsolutePath ("./out/grammar.json")
+    // const grammar_json_path = vscode.Uri.joinPath (context.extensionUri, "./src/grammar.json").fsPath;
     // console.log (grammar_json_path);
     const grammar_json = fs.readFileSync (grammar_json_path, "utf-8");
     const grammar_data = JSON5.parse (grammar_json)
@@ -563,8 +564,6 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
 	const shell_command_keys = Object.keys (shellCommandMap);
 
         const lenses: vscode.CodeLens [] = [];
-
-	// console.log (gdb_alias_keys);
 
         lenses.push (new vscode.CodeLens (
             new vscode.Range (0, 0, 0, 0),
