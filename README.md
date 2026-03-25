@@ -1,7 +1,8 @@
 # gdb-notebook README
 
-gdb-notebook は，gdbコマンドをVSCode上で対話的に（クリックするだけで）
-学ぶためのノートブック環境です．
+gdb-notebook は，gdbコマンドをVSCode上で対話的に（クリックするだけで）実行することで，
+gdbの使い方を学ぶため，記録するためのノートブック環境です．
+（Pythonノートブックでは，gdbを対話的に実行することが困難です）．
 
 ## 主な機能
 

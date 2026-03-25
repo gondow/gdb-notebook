@@ -13,6 +13,9 @@ install: package
 uninstall:
 	code --uninstall-extension gondow.gdb-notebook
 
+ls: 
+	vsce ls --tree
+
 20:
 	. ~/.nvm/nvm.sh 
 	nvm use 20	

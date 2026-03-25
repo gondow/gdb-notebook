@@ -2,7 +2,10 @@ import * as vscode from "vscode";
 import * as path   from "path";
 import * as fs     from "fs";
 import JSON5 from "json5";
-import 'source-map-support/register'; // for ts->js行番号変換
+// import 'source-map-support/register'; // for ts->js行番号変換
+if (process.env.NODE_ENV === "development") {
+    require ("source-map-support/register");
+}
 
 type CommandData = {
     exp:   string;             // 説明文
@@ -10,6 +13,7 @@ type CommandData = {
     url:   string;             // 関連URL
 };
 
+let extension_context: vscode.ExtensionContext;
 let executionCounter = 1;
 let controller: vscode.NotebookController;
 let helpProvider: CommandHelpViewProvider;
@@ -76,18 +80,29 @@ export async function activate (context: vscode.ExtensionContext) {
     console.log ('your extension "gdb-notebook" is now active!');
     vscode.window.showInformationMessage ('Hello gdb-notebook');
 
-    // ゴミとして残っているターミナルを最初に閉じておく
+    extension_context = context;
 
+    // ゴミとして残っているターミナルを最初に閉じておく
     vscode.window.terminals.forEach (terminal => {
 	if (terminal.name.startsWith ("GDBNB")) {
 	    terminal.dispose ();
 	}
     });
+
+    // 「有効にする」設定になっていなかったら，以下をスキップする
+    /*
+    const config = vscode.workspace.getConfiguration ("gdbNotebook");
+    const enabled = config.get<boolean> ("enabled", true);
+    console.log ("enabled = " + enabled);
+    if (!enabled) return;
+    */
+    // 永続化（グローバル保存）
+    // await config.update ("showDemo2", "hagehage", true); // 第3引数 true = グローバル
     
     // ./grammar.json から，aliasMap, commandMap を取得する
-    const grammar_json_path = context.asAbsolutePath ("./out/grammar.json")
-    // const grammar_json_path = vscode.Uri.joinPath (context.extensionUri, "./src/grammar.json").fsPath;
-    // console.log (grammar_json_path);
+    // const grammar_json_path = context.asAbsolutePath ("./out/grammar.json")
+    const grammar_json_path = vscode.Uri.joinPath (context.extensionUri, "./out/grammar.json").fsPath;
+    console.log (grammar_json_path);
     const grammar_json = fs.readFileSync (grammar_json_path, "utf-8");
     const grammar_data = JSON5.parse (grammar_json)
     aliasMap   = grammar_data.gdb_command.aliasMap;
@@ -229,11 +244,14 @@ export async function activate (context: vscode.ExtensionContext) {
 	    await vscode.commands.executeCommand ("vscode.openFolder", uri, false);
 	    */
 
-	    const image_path = vscode.Uri.file (
-		path.join ( path.dirname (notebook.uri.fsPath),
-			    "images/execute-cell.png")
+	    const image_path = vscode.Uri.joinPath (
+		context.extensionUri,
+		// path.dirname (notebook.uri.fsPath),
+		"images/execute-cell.png"
 	    );
-	    const image_dir = vscode.Uri.file (path.dirname (notebook.uri.fsPath));
+	    console.log ("image_path = " + image_path);
+	    // const image_dir = vscode.Uri.file (path.dirname (notebook.uri.fsPath));
+	    const image_dir = context.extensionUri;
 	    const panel = vscode.window.createWebviewPanel(
 		"gdbHelp",
 		"GDBNBヒント",
@@ -243,6 +261,9 @@ export async function activate (context: vscode.ExtensionContext) {
 		    localResourceRoots: [ image_dir ]
 		}
 	    );
+
+	    const webview_uri = panel.webview.asWebviewUri (image_path);
+	    console.log ("webview_uri = " + webview_uri);
 	    
 	    panel.webview.html = `
     <html>
@@ -263,7 +284,7 @@ export async function activate (context: vscode.ExtensionContext) {
             }
         </script>
         <p>
-        <image src="${panel.webview.asWebviewUri (image_path)}" width="80%"/>
+        <image src="${webview_uri}" width="80%"/>
         </p>
     </body>
     </html>
@@ -377,13 +398,6 @@ export async function activate (context: vscode.ExtensionContext) {
 	vscode.window.registerWebviewViewProvider ("commandHelpView", helpProvider)
     );
 
-    // ======================
-    const config = vscode.workspace.getConfiguration ("gdbDemo");
-    const showDemo2 = config.get ("showDemo2", true);
-    // console.log ("showDemo2 = " + showDemo2);
-    // 永続化（グローバル保存）
-    await config.update ("showDemo2", "hagehage", true); // 第3引数 true = グローバル
-
     // =======================
     const provider = new CommandTreeDataProvider ();
     vscode.window.createTreeView ("commandTreeView", {
@@ -409,6 +423,17 @@ export async function activate (context: vscode.ExtensionContext) {
 	    vscode.window.showInformationMessage(`選択: ${picked}`);
 	})
     );
+
+    // -----------------------------------
+    /*
+    const sampleUri = vscode.Uri.joinPath(context.extensionUri, "examples/test.gdbnb");
+    console.log ("sampleUri = " + sampleUri);
+    await new Promise (resolve => setTimeout (resolve, 500));
+    vscode.workspace.openNotebookDocument (sampleUri).then (doc => {
+	// 編集可能だが元に戻る
+	vscode.window.showNotebookDocument (doc, { preview: true });
+    });
+    */
 }
 
 export function deactivate () {
@@ -429,10 +454,11 @@ function closeTerminal (nb: vscode.NotebookDocument) {
 function getOrCreateTerminal (nb: vscode.NotebookDocument): vscode.Terminal {
     const key = nb.uri.toString ();
     let term = terminalMap.get (key);
+    const cwd = nb.uri.fsPath ? path.dirname (nb.uri.fsPath) : extension_context.extensionUri.fsPath;
     if (!term) {
         term = vscode.window.createTerminal ({
             name: `GDBNB: ${nb.uri.path.split ('/').pop ()}`,
-	    cwd: path.dirname (nb.uri.fsPath)
+	    cwd: cwd
         });
 	term.show ();
         terminalMap.set (key, term);
