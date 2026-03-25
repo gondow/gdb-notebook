@@ -357,7 +357,16 @@ export async function activate (context: vscode.ExtensionContext) {
             (command_data: CommandData) => { helpProvider.showHelp (command_data); }
 	)
     );
-    // console.log ("CodeLens registered");
+
+    context.subscriptions.push (
+	vscode.commands.registerCommand (
+            "gdb-notebook.toggleCellType",
+            async (doc: vscode.TextDocument) => {
+		const newLang = doc.languageId === "gdb_command" ? "shellscript" : "gdb_command";
+		await vscode.languages.setTextDocumentLanguage (doc, newLang);
+	    }
+	)
+    );
 
     registerGdbHover (context);
 
@@ -380,6 +389,25 @@ export async function activate (context: vscode.ExtensionContext) {
         treeDataProvider: provider
     });
     // provider._onDidChangeTreeData.fire (undefined);
+
+    
+    context.subscriptions.push (
+	vscode.commands.registerCommand ("example.quickpick", async () => {
+	    const picked = await vscode.window.showQuickPick([
+		"apple",
+		"banana",
+		"orange"
+	    ], {
+		placeHolder: "好きなフルーツを選んでください"
+	    });
+	    
+	    if (!picked) {
+		return; // キャンセル
+	    }
+	    
+	    vscode.window.showInformationMessage(`選択: ${picked}`);
+	})
+    );
 }
 
 export function deactivate () {
@@ -538,6 +566,15 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
 
 	// console.log (gdb_alias_keys);
 
+        lenses.push (new vscode.CodeLens (
+            new vscode.Range (0, 0, 0, 0),
+	    {
+		title: "セル言語の切替",
+		command: "gdb-notebook.toggleCellType",
+		arguments: [ document ]
+	    }
+	));
+
 	outer_loop:
         for (let i = 0; i < document.lineCount; i++) {
             const line = document.lineAt (i);
@@ -679,8 +716,12 @@ class CommandHelpViewProvider implements vscode.WebviewViewProvider {
 
 class CommandTreeItem extends vscode.TreeItem {
     public readonly label: string;
-    constructor (label: string, has_map: boolean) {
-        super (label, vscode.TreeItemCollapsibleState.Collapsed);
+    constructor (label: string, has_map: boolean, is_leaf: boolean) {
+	if (is_leaf) {
+            super (label, vscode.TreeItemCollapsibleState.None);
+	} else {
+            super (label, vscode.TreeItemCollapsibleState.Collapsed);
+	}
 	this.label = label;
 
 	if (has_map) {
@@ -702,17 +743,24 @@ class CommandTreeDataProvider implements vscode.TreeDataProvider<CommandTreeItem
     getChildren (element?: CommandTreeItem): CommandTreeItem [] {
         if (!element) {
             return [
-		new CommandTreeItem ("GDBNBの使い方", false),
-                new CommandTreeItem ("シェルコマンド", false),
-                new CommandTreeItem ("GDBコマンド", false)
+		new CommandTreeItem ("GDBNBの使い方",  false, false),
+                new CommandTreeItem ("シェルコマンド", false, false),
+                new CommandTreeItem ("GDBコマンド",    false, false)
             ];
         }
 	
 	if (element.label === "GDBコマンド") {
-            return [
-                new CommandTreeItem ("break", true),
-                new CommandTreeItem ("continue", true)
-            ];
+            return Object.entries (commandMap)
+		.sort (([a], [b]) => a.localeCompare (b))
+		.map (([key, cmd]) => {
+                return new CommandTreeItem (key, true, true);
+	    });
+	} else if (element.label === "シェルコマンド") {
+            return Object.entries (shellCommandMap)
+		.sort (([a], [b]) => a.localeCompare (b))
+		.map (([key, cmd]) => {
+                return new CommandTreeItem (key, true, true);
+	    });
 	}
 	
         return [];

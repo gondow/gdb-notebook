@@ -32,6 +32,10 @@
             {
                 "command": "gdb-notebook.showLink",
                 "title": "show link"
+            },
+            {
+                "command": "example.quickpick",
+                "title": "Example QuickPick"
             }
         ],
         "notebooks": [
