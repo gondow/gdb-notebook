@@ -22,7 +22,7 @@
             },
             {
                 "command": "gdb-notebook.restartGdbTerminal",
-                "title": "Restart GDB terminal",
+                "title": "Restart GDBNB terminal",
                 "icon": "$(debug-restart)"
             },
             {
@@ -93,11 +93,11 @@
                 {
                     "type": "webview",
                     "id": "commandHelpView",
-                    "name": "コマンドヘルプ"
+                    "name": "GDBNBコマンドヘルプ"
                 },
                 {
                     "id": "commandTreeView",
-                    "name": "コマンドリスト"
+                    "name": "GDBNBコマンドリスト"
                 }
             ]
         },
