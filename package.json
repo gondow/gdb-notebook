@@ -15,7 +15,7 @@
         "Other"
     ],
     "activationEvents": [
-        "onNotebook:gdb-notebook"
+	"onStartupFinished"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -114,15 +114,10 @@
             "type": "object",
             "title": "GDB Notebook",
             "properties": {
-                "gdbNotebook.enabled": {
+                "gdbNotebook.autoOpenSampleFolder": {
                     "type": "boolean",
-                    "default": true,
-                    "description": "GDBノートブック拡張を有効にするかどうか"
-                },
-                "gdbDemo.showDemo2": {
-                    "type": "string",
-                    "default": "hogehoge",
-                    "description": "sample value"
+                    "default": false,
+                    "description": "サンプルコード用のフォルダを自動で開く"
                 }
             }
         }

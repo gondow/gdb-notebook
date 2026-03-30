@@ -89,15 +89,6 @@ export async function activate (context: vscode.ExtensionContext) {
 	}
     });
 
-    // 「有効にする」設定になっていなかったら，以下をスキップする
-    /*
-    const config = vscode.workspace.getConfiguration ("gdbNotebook");
-    const enabled = config.get<boolean> ("enabled", true);
-    console.log ("enabled = " + enabled);
-    if (!enabled) return;
-    */
-    // 永続化（グローバル保存）
-    // await config.update ("showDemo2", "hagehage", true); // 第3引数 true = グローバル
     
     // ./grammar.json から，aliasMap, commandMap を取得する
     // const grammar_json_path = context.asAbsolutePath ("./out/grammar.json")
@@ -424,16 +415,49 @@ export async function activate (context: vscode.ExtensionContext) {
 	})
     );
 
-    // -----------------------------------
-    /*
-    const sampleUri = vscode.Uri.joinPath(context.extensionUri, "examples/test.gdbnb");
-    console.log ("sampleUri = " + sampleUri);
-    await new Promise (resolve => setTimeout (resolve, 500));
-    vscode.workspace.openNotebookDocument (sampleUri).then (doc => {
-	// 編集可能だが元に戻る
-	vscode.window.showNotebookDocument (doc, { preview: true });
-    });
-    */
+    // =======================
+    try {
+	const example_dir = vscode.Uri.joinPath (context.extensionUri, "examples");
+	const example_file = vscode.Uri.joinPath (example_dir, "test.gdbnb");
+	/*
+	const doc = await vscode.workspace.openNotebookDocument (example_file);
+	console.log ("example_file = " + example_file);
+	console.log ("example_dir = " + example_dir);
+	// await new Promise (resolve => setTimeout (resolve, 500));
+	await vscode.window.showNotebookDocument(doc, { preview: false });
+	getOrCreateTerminal (doc);
+	*/
+
+	const config = vscode.workspace.getConfiguration ("gdbNotebook");
+	const autoOpenSampleFolder = config.get<boolean> ("autoOpenSampleFolder", false);
+	console.log ("autoOpenSampleFolder = " + autoOpenSampleFolder);
+
+	if (autoOpenSampleFolder) {
+	    vscode.commands.executeCommand ("vscode.openFolder", example_dir);
+	} else {
+	    vscode.window.showInformationMessage (
+		"サンプルコード用のフォルダを開きますか？\n（開かなくてもサンプルコードの実行は可能です）",
+		{ modal: true },
+		"開く（今回だけ）",
+		"開く（今後も起動時に自動で開く）",
+		"開かない"
+	    ).then (async choice => {
+		if (choice === "開く（今回だけ）") {
+		    vscode.commands.executeCommand ("vscode.openFolder",
+						    example_dir);
+		} else if (choice === "開く（今後も起動時に自動で開く）") {
+		    vscode.commands.executeCommand ("vscode.openFolder",
+						    example_dir);
+		    await config.update ("autoOpenSampleFolder", true,
+					 vscode.ConfigurationTarget.Global);
+		}
+	    });
+	}
+    } catch (e) {
+	console.error ("ERROR: ", e);
+    }
+
+    // =======================
 }
 
 export function deactivate () {
