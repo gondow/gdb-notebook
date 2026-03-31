@@ -125,6 +125,28 @@
 		    ["print $rax", "レジスタraxの値を表示"],
 		],
 		url: "",
+		options: {
+		    x: {
+			exp: "16進数(hexadecimal)で表示",
+			usage: [["print/x x", "変数xの値を16進で表示"]],
+		    },
+		    z: {
+			exp: "16進数で表示(上位バイトのゼロ(zero)も表示)",
+			usage: [["print/z x", "変数xの値を上位バイトのゼロ付き16進で表示"]],
+		    },
+		},
+/*
+z	
+o	8進数 (octal)
+d	符号あり10進数 (decimal)
+u	符号なし10進数 (unsigned)
+t	2進数 (two)
+c	文字 (char)
+s	文字列 (string)
+i	機械語命令 (instruction)
+a	アドレス (address)
+f	浮動小数点数 (float)
+*/
 	    },
 	},
     },
