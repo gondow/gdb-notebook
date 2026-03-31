@@ -7,11 +7,18 @@ if (process.env.NODE_ENV === "development") {
     require ("source-map-support/register");
 }
 
+type OptionData = {
+    exp:   string;  // 説明文
+    usage: [string, string][]; // 使用例（「使用例と説明」のリスト）
+};
+
 type CommandData = {
     exp:   string;             // 説明文
     abbr:  string;             // 省略形
     usage: [string, string][]; // 使用例（「使用例と説明」のリスト）
     url:   string;             // 関連URL
+    subcommands?: Record<string, CommandData>; // サブコマンドのマップ
+    options?: Record<string, OptionData>; // オプションのマップ 
 };
 
 let extension_context: vscode.ExtensionContext;
@@ -459,52 +466,95 @@ export async function activate (context: vscode.ExtensionContext) {
     }
 
     // =======================
-
+    // todo:
+    // * オプションに対応
+    // * shellコマンドに対応
     context.subscriptions.push (
 	vscode.languages.registerCompletionItemProvider (
-	"gdb_command",
-	{
-	    provideCompletionItems: (document, position) => {
-		const line = document.lineAt (position).text;
-		if (!line.startsWith ("(gdb)")) return;
+	    "gdb_command",
+	    {
+		provideCompletionItems: (document, position, token, context) => {
+		    const line = document.lineAt (position).text;
+		    if (!line.startsWith ("(gdb)")) return;
 
-            	return Object.entries (commandMap)
-		    .sort (([a], [b]) => a.localeCompare (b))
-		    .map (([key, cmd]) => {
-			const item = new vscode.CompletionItem (
-			    { label: key, description: cmd.exp },
-			    vscode.CompletionItemKind.Keyword);
-			item.detail = `(${cmd.abbr}) ` + cmd.exp;
-			item.documentation = new vscode.MarkdownString (
-			    "|使用例|説明|\n|--|--|\n" + 
-				cmd.usage.map (([cmd, desc]) => {
-				    return `|\`${cmd}\`|${desc}|`
-				}).join ("\n"));
-			return item;
-		    });
+		    const tokens = line.match(/[^\/\s]+|\/[^\s]*/g);
+		    if (tokens == null) return [];
 
-/*
-		const item = new vscode.CompletionItem (
-		    {label: "break", description: "'Set breakpoint"},
-		    vscode.CompletionItemKind.Keyword
-		);
-		item.detail = 'Set breakpoint';
-		item.documentation = new vscode.MarkdownString(
-		    '指定した位置にブレークポイントを設定します。\n\n例: `break main`'
-		);
-		return [
-		    item,
-		    new vscode.CompletionItem('run', vscode.CompletionItemKind.Keyword),
-		    new vscode.CompletionItem('continue', vscode.CompletionItemKind.Keyword),
-		    new vscode.CompletionItem('next', vscode.CompletionItemKind.Keyword),
-		    new vscode.CompletionItem('step', vscode.CompletionItemKind.Keyword),
-		];
-*/
-	    }
-	},
-	" " // トリガー文字
+		    console.log ("tokens = " + tokens);
+		    
+		    if (tokens.length <= 1) {
+            		return Object.entries (commandMap)
+			    .sort (([a], [b]) => a.localeCompare (b))
+			    .map (([key, cmd]) => {
+				const item = new vscode.CompletionItem (
+				    { label: key, description: cmd.exp },
+				    vscode.CompletionItemKind.Keyword);
+				item.detail = `(${cmd.abbr}) ` + cmd.exp;
+				item.documentation = new vscode.MarkdownString (
+				    "|使用例|説明|\n|--|--|\n" + 
+					cmd.usage.map (([cmd, desc]) => {
+					    return `|\`${cmd}\`|${desc}|`
+					}).join ("\n"));
+				return item;
+			    });
+		    }
+		    if (tokens.length == 2) {
+			const key = aliasMap [tokens [1]!] ?? tokens [1]!;
+			const command = commandMap [key];
+			if (command == null || command.subcommands == null) return [];
+            		return Object.entries (command.subcommands)
+			    .sort (([a], [b]) => a.localeCompare (b))
+			    .map (([key, cmd]) => {
+				const item = new vscode.CompletionItem (
+				    { label: key, description: cmd.exp },
+				    vscode.CompletionItemKind.Keyword);
+				item.detail = `(${cmd.abbr}) ` + cmd.exp;
+				item.documentation = new vscode.MarkdownString (
+				    "|使用例|説明|\n|--|--|\n" + 
+					cmd.usage.map (([cmd, desc]) => {
+					    return `|\`${cmd}\`|${desc}|`
+					}).join ("\n"));
+				return item;
+			    });
+		    }
+		    if (context.triggerCharacter === "/"
+			&& tokens.length == 3
+			&& tokens [2]!.startsWith ("/")) {
+			console.log ("!!tokens = " + tokens);
+			const item1 = new vscode.CompletionItem("x", vscode.CompletionItemKind.Value);
+			// item1.range = range;
+			item1.filterText = "x y";
+			const item2 = new vscode.CompletionItem("y", vscode.CompletionItemKind.Value);
+			item2.filterText = "x y";
+			// item2.range = range;
+			return [
+			    item1, item2,
+			];   
+		    }
+		}
+	    },
+	    " ", "/" // トリガー文字
 	)
     );
+/*
+    context.subscriptions.push (
+	vscode.languages.registerCompletionItemProvider (
+	    "gdb_command",
+	    {
+		provideCompletionItems: (document, position) => {
+		    const line = document.lineAt (position).text;
+		    if (!line.startsWith ("(gdb)")) return;
+
+		    return [
+			new vscode.CompletionItem("x", vscode.CompletionItemKind.Value),
+			new vscode.CompletionItem("w", vscode.CompletionItemKind.Value),
+		    ];   
+		}
+	    },
+	    "/" // トリガー文字
+	)
+    );
+*/
 }
 
 export function deactivate () {
