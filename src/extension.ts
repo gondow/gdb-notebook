@@ -9,6 +9,7 @@ if (process.env.NODE_ENV === "development") {
 
 type CommandData = {
     exp:   string;             // 説明文
+    abbr:  string;             // 省略形
     usage: [string, string][]; // 使用例（「使用例と説明」のリスト）
     url:   string;             // 関連URL
 };
@@ -65,7 +66,10 @@ function command_data2md (command_data: CommandData) {
     }).join ("\n");
     console.log ("tr_list_md = " + tr_list_md);
     const md =  new vscode.MarkdownString (`
-### ${command_data.exp}
+### ${command_data.exp} 
+---
+|省略コマンド|\`${command_data.abbr}\`|
+|--|--|
 ---
 |コマンド使用例|説明|
 |--|--|
@@ -458,6 +462,36 @@ export async function activate (context: vscode.ExtensionContext) {
     }
 
     // =======================
+
+    context.subscriptions.push (
+	vscode.languages.registerCompletionItemProvider (
+	"gdb_command",
+	{
+	    provideCompletionItems: (document, position) => {
+		const line = document.lineAt (position).text;
+		if (!line.startsWith ("(gdb)")) return;
+		const item = new vscode.CompletionItem(
+		    "break",
+		    vscode.CompletionItemKind.Keyword
+		);
+		item.detail = 'Set breakpoint';
+		item.documentation = new vscode.MarkdownString(
+		    '指定した位置にブレークポイントを設定します。\n\n例: `break main`'
+		);
+		return [
+		    item,
+/*
+		    new vscode.CompletionItem('run', vscode.CompletionItemKind.Keyword),
+		    new vscode.CompletionItem('continue', vscode.CompletionItemKind.Keyword),
+		    new vscode.CompletionItem('next', vscode.CompletionItemKind.Keyword),
+		    new vscode.CompletionItem('step', vscode.CompletionItemKind.Keyword),
+*/
+		];
+	    }
+	},
+	" " // トリガー文字
+	)
+    );
 }
 
 export function deactivate () {
@@ -615,10 +649,12 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
 
         const lenses: vscode.CodeLens [] = [];
 
+	const cell_type = document.languageId === "gdb_command" ? "GDB command" : "Shell Script";
+
         lenses.push (new vscode.CodeLens (
             new vscode.Range (0, 0, 0, 0),
 	    {
-		title: "セル言語の切替",
+		title: `セル言語の切替（今は${cell_type}）`,
 		command: "gdb-notebook.toggleCellType",
 		arguments: [ document ]
 	    }
@@ -751,10 +787,14 @@ class CommandHelpViewProvider implements vscode.WebviewViewProvider {
             console.log (tr_list_html);
 	    this.view.webview.html = `<html>
 <h3> ${command_data.exp} </h3>
+<hr/>
+<p>省略コマンド <code>${command_data.abbr}</code></p>
+<hr/>
 <table border="1">
   <thead> <tr> <th>コマンド使用例</th> <th>説明</th> </tr> </thead>
   <tbody> ${tr_list_html} </tbody>
 </table>
+<hr/>
 <a href=${command_data.url}>関連リンク</a>
 </html>`;
 

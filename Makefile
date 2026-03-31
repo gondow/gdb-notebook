@@ -17,9 +17,9 @@ ls:
 	vsce ls --tree
 
 20:
-	. ~/.nvm/nvm.sh 
-	nvm use 20	
+	@echo "これはシェルで実行しないと効かない"
+	. ~/.nvm/nvm.sh && nvm use 20	
 
 clean:
 	rm -f *~ a.out
-	rm -rf a.out.dSYM
+	rm -rf a.out.dSYM out
