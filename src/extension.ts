@@ -60,16 +60,13 @@ function str2command_data (str: string) {
     return command_data;
 }
 
-function command_data2md (command_data: CommandData) {
+function command_data2md (key: string, command_data: CommandData) {
     const tr_list_md = command_data.usage.map (([cmd, desc]) => {
 	return `|\`${cmd}\`|${desc}|`
     }).join ("\n");
     console.log ("tr_list_md = " + tr_list_md);
     const md =  new vscode.MarkdownString (`
-### ${command_data.exp} 
----
-|省略コマンド|\`${command_data.abbr}\`|
-|--|--|
+### \`${key}\` (\`${command_data.abbr}\`): ${command_data.exp} 
 ---
 |コマンド使用例|説明|
 |--|--|
@@ -371,7 +368,7 @@ export async function activate (context: vscode.ExtensionContext) {
     context.subscriptions.push (
 	vscode.commands.registerCommand (
             "gdb-notebook.showHelp",
-            (command_data: CommandData) => { helpProvider.showHelp (command_data); }
+            (key: string, command_data: CommandData) => { helpProvider.showHelp (key, command_data); }
 	)
     );
 
@@ -470,8 +467,25 @@ export async function activate (context: vscode.ExtensionContext) {
 	    provideCompletionItems: (document, position) => {
 		const line = document.lineAt (position).text;
 		if (!line.startsWith ("(gdb)")) return;
-		const item = new vscode.CompletionItem(
-		    "break",
+
+            	return Object.entries (commandMap)
+		    .sort (([a], [b]) => a.localeCompare (b))
+		    .map (([key, cmd]) => {
+			const item = new vscode.CompletionItem (
+			    { label: key, description: cmd.exp },
+			    vscode.CompletionItemKind.Keyword);
+			item.detail = `(${cmd.abbr}) ` + cmd.exp;
+			item.documentation = new vscode.MarkdownString (
+			    "|使用例|説明|\n|--|--|\n" + 
+				cmd.usage.map (([cmd, desc]) => {
+				    return `|\`${cmd}\`|${desc}|`
+				}).join ("\n"));
+			return item;
+		    });
+
+/*
+		const item = new vscode.CompletionItem (
+		    {label: "break", description: "'Set breakpoint"},
 		    vscode.CompletionItemKind.Keyword
 		);
 		item.detail = 'Set breakpoint';
@@ -480,13 +494,12 @@ export async function activate (context: vscode.ExtensionContext) {
 		);
 		return [
 		    item,
-/*
 		    new vscode.CompletionItem('run', vscode.CompletionItemKind.Keyword),
 		    new vscode.CompletionItem('continue', vscode.CompletionItemKind.Keyword),
 		    new vscode.CompletionItem('next', vscode.CompletionItemKind.Keyword),
 		    new vscode.CompletionItem('step', vscode.CompletionItemKind.Keyword),
-*/
 		];
+*/
 	    }
 	},
 	" " // トリガー文字
@@ -594,9 +607,10 @@ function registerGdbHover (context: vscode.ExtensionContext) {
                     const range = document.getWordRangeAtPosition (position);
                     if (!range) return;
                     const word = document.getText (range);
-		    const command_data = commandMap [aliasMap [word] ?? word];
+		    const key = aliasMap [word] ?? word;
+		    const command_data = commandMap [key];
 		    if (command_data != null) {
-			const md = command_data2md (command_data);
+			const md = command_data2md (key, command_data);
 			return new vscode.Hover (md, range);
 		    }
 		}
@@ -685,7 +699,7 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
                     lenses.push (new vscode.CodeLens (range, {
 			title: "説明",
 			command: "gdb-notebook.showHelp",
-			arguments: [ cmd ]
+			arguments: [ key, cmd ]
 		    }));
                     lenses.push (new vscode.CodeLens (range, {
 			title: "関連リンク",
@@ -711,7 +725,7 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
                     lenses.push (new vscode.CodeLens (range, {
 			title: "説明",
 			command: "gdb-notebook.showHelp",
-			arguments: [ cmd ]
+			arguments: [ key, cmd ]
 		    }));
                     lenses.push (new vscode.CodeLens (range, {
 			title: "関連リンク",
@@ -736,7 +750,7 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
                     lenses.push (new vscode.CodeLens (range, {
 			title: "説明",
 			command: "gdb-notebook.showHelp",
-			arguments: [ cmd ]
+			arguments: [ key, cmd ]
 		    }));
                     lenses.push (new vscode.CodeLens (range, {
 			title: "関連リンク",
@@ -773,7 +787,7 @@ class CommandHelpViewProvider implements vscode.WebviewViewProvider {
 `;
     }
     
-    async showHelp (command_data: CommandData) {
+    async showHelp (key: string, command_data: CommandData) {
 	if (!this.view) {
 	    await vscode.commands.executeCommand ("commandHelpView.focus");
 	    await new Promise (resolve => setTimeout (resolve, 50));
@@ -786,9 +800,7 @@ class CommandHelpViewProvider implements vscode.WebviewViewProvider {
 	    }).join ("\n");
             console.log (tr_list_html);
 	    this.view.webview.html = `<html>
-<h3> ${command_data.exp} </h3>
-<hr/>
-<p>省略コマンド <code>${command_data.abbr}</code></p>
+<h3> <code>${key}</code> (<code>${command_data.abbr}</code>): ${command_data.exp} </h3>
 <hr/>
 <table border="1">
   <thead> <tr> <th>コマンド使用例</th> <th>説明</th> </tr> </thead>
@@ -815,7 +827,7 @@ class CommandTreeItem extends vscode.TreeItem {
 
 	if (has_map) {
 	    const command_data = str2command_data (label);
-	    this.tooltip = command_data2md (command_data);
+	    this.tooltip = command_data2md (label, command_data);
 	}
     }
 }
