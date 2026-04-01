@@ -482,6 +482,7 @@ export async function activate (context: vscode.ExtensionContext) {
 
 		    console.log ("tokens = " + tokens);
 		    
+		    // メインコマンドの補完候補を出力
 		    if (tokens.length <= 1) {
             		return Object.entries (commandMap)
 			    .sort (([a], [b]) => a.localeCompare (b))
@@ -498,6 +499,7 @@ export async function activate (context: vscode.ExtensionContext) {
 				return item;
 			    });
 		    }
+		    // サブコマンドの補完候補を出力
 		    if (tokens.length == 2) {
 			const key = aliasMap [tokens [1]!] ?? tokens [1]!;
 			const command = commandMap [key];
@@ -517,9 +519,61 @@ export async function activate (context: vscode.ExtensionContext) {
 				return item;
 			    });
 		    }
+		    // メインコマンドのオプションの補完候補を出力
 		    if (context.triggerCharacter === "/"
 			&& tokens.length == 3
 			&& tokens [2]!.startsWith ("/")) {
+			if (tokens [1] === "x") {
+			    const item = new vscode.CompletionItem ("Nfu", vscode.CompletionItemKind.Snippet);
+			    item.insertText = new vscode.SnippetString ("${1:N}${2:f}${3:u}");
+			    item.filterText = "0 1 2 3 4 5 6 7 8 9 a c d f i o s t u x z b h w g N";
+			    item.documentation = new vscode.MarkdownString (
+`
+* N: 個数
+* f: 表示形式 (format)
+  - a (アドレス)
+  - c (文字)
+  - d (符号あり10進数)
+  - f (浮動小数点数)
+  - i (機械語命令)
+  - o (8進数)
+  - s (文字列)
+  - t (2進数)
+  - u (符号なし10進数)
+  - x (16進数)
+  - z (16進数・上位バイトのゼロも表示)
+* u: 単位 (unit)
+  - b (1バイト，byte)
+  - h (2バイト，half-word)
+  - w (4バイト，word)
+  - g (8バイト，giant)
+`
+			    );
+
+			    item.label = "/Nfu";
+			    console.log ("x: " + tokens [2]);
+			    return [item];
+			} else {
+			    const key = aliasMap [tokens [1]!] ?? tokens [1]!;
+			    const command = commandMap [key];
+			    if (command == null || command.options == null) return [];
+			    
+            		    return Object.entries (command.options)
+				.sort (([a], [b]) => a.localeCompare (b))
+				.map (([key, cmd]) => {
+				    const item = new vscode.CompletionItem (
+					{ label: key, description: cmd.exp },
+					vscode.CompletionItemKind.Keyword);
+				    item.detail = cmd.exp;
+				    item.documentation = new vscode.MarkdownString (
+					"|使用例|説明|\n|--|--|\n" + 
+					    cmd.usage.map (([cmd, desc]) => {
+						return `|\`${cmd}\`|${desc}|`
+					    }).join ("\n"));
+				    return item;
+				});
+			}
+/*
 			console.log ("!!tokens = " + tokens);
 			const item1 = new vscode.CompletionItem("x", vscode.CompletionItemKind.Value);
 			// item1.range = range;
@@ -530,31 +584,13 @@ export async function activate (context: vscode.ExtensionContext) {
 			return [
 			    item1, item2,
 			];   
+*/
 		    }
 		}
 	    },
 	    " ", "/" // トリガー文字
 	)
     );
-/*
-    context.subscriptions.push (
-	vscode.languages.registerCompletionItemProvider (
-	    "gdb_command",
-	    {
-		provideCompletionItems: (document, position) => {
-		    const line = document.lineAt (position).text;
-		    if (!line.startsWith ("(gdb)")) return;
-
-		    return [
-			new vscode.CompletionItem("x", vscode.CompletionItemKind.Value),
-			new vscode.CompletionItem("w", vscode.CompletionItemKind.Value),
-		    ];   
-		}
-	    },
-	    "/" // トリガー文字
-	)
-    );
-*/
 }
 
 export function deactivate () {
