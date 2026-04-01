@@ -2,35 +2,39 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### デバッグ情報付きでコンパイルして実行する\n- gcc に -g オプションをつけると，a.out にデバッグ情報が入る\n- gdb でデバッグする時は，gccに -g オプションをつける（行番号などの情報量が増えるから）\n(gdb) break main\n$ ls\n"
-    },
-    {
-      "kind": "code",
-      "value": "# GDBターミナルを再起動して，このノートブックをリセット（ターミナル上では実行できません）\n!restart"
-    },
-    {
-      "kind": "code",
-      "value": "!fold"
+      "value": "### 概要\nこのノートブックではデバッガgdbの以下の基本操作を学びます．\n- デバッグ情報付きでコンパイルする\n- gdb を起動する\n- gdb上で，デバッグ対象のプログラムを実行させる\n- gdb を終了する\n---"
     },
     {
       "kind": "markdown",
-      "value": "### ←ここを押すと「答え」が開きます"
+      "value": "### デバッグ情報付きでコンパイルして実行する\n#### 説明\n- `gcc` に `-g` オプションをつけると，コンパイル結果である`a.out`にデバッグ情報が入る\n- `gdb` でデバッグする時は，なるべく `gcc`に `-g` オプションをつける（行番号などの情報量が増えるから）\n#### 問題\n- 階乗を計算する`fact.c`を`-g`オプション付きでコンパイルして，`a.out`を実行しよう"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### ←ここを押すと「答え」が開きます\n- 以下のセルを実行すると，コンパイルや実行ができる\n- ターミナルに直接，コマンドを入力しても同じ事ができる（ので，ぜひやってみよう）"
     },
     {
       "kind": "code",
-      "value": "# デバッグ情報付きでコンパイルする (-g オプションがデバッグ情報付きコンパイルを指示する)\n$ gcc -g fact.c  "
+      "value": "# デバッグ情報付きでコンパイルする (-g オプションがデバッグ情報付きコンパイルを指示する)\n$ gcc -g fact.c"
     },
     {
       "kind": "code",
-      "value": "# コンパイルが成功すると a.out ファイルができている（ファイル一覧を出力するlsコマンドで確認）\n$ ls"
+      "value": "# a.out を実行する (fact (5) = 120 と表示されたら成功)\n$ ./a.out"
+    },
+    {
+      "kind": "markdown",
+      "value": "---\n### デバッガ上で`a.out`を実行する\n#### 説明\n- `gdb ./a.out` を実行すると，`a.out`をデバッグ対象として`gdb`が起動する\n- `(gdb)`は`gdb`のコマンドプロンプトであり，`(gdb)`の後ろに`gdb`のコマンドを入力する\n- デバッグ対象のプログラムの実行開始するコマンドは`run`，`gdb`の終了は`quit`\n#### 問題\n- `fact.c`をコンパイルした`a.out`を`gdb`上で実行し，その後で`gdb`コマンドを終了しよう"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え"
     },
     {
       "kind": "code",
-      "value": "# ./a.out を実行（fact (5) = 120 と出れば成功）\n$ ./a.out"
+      "value": "$ gcc -g fact.c\n$ gdb ./a.out\n# もし，--Type <RET> for more, q to quit, c to continue without paging-- と表示されたら，c Return をターミナル上で入力して下さい"
     },
     {
       "kind": "code",
-      "value": "# gdb コマンドの例\n(gdb) break main\n(gdb) continue\n(gdb) break main\n(gdb) b main if n==0\n(gdb) run"
+      "value": "# ターミナルの一番下に(gdb)が表示されてる状態で，以下のrunコマンドを実行しよう．a.outがデバッガ上で実行されます．\n(gdb) run"
     }
   ]
 }
