@@ -467,7 +467,6 @@ export async function activate (context: vscode.ExtensionContext) {
 
     // =======================
     // todo:
-    // * オプションに対応
     // * shellコマンドに対応
     context.subscriptions.push (
 	vscode.languages.registerCompletionItemProvider (
@@ -589,6 +588,40 @@ export async function activate (context: vscode.ExtensionContext) {
 		}
 	    },
 	    " ", "/" // トリガー文字
+	)
+    );
+
+    context.subscriptions.push (
+	vscode.languages.registerCompletionItemProvider (
+	    "shellscript",
+	    {
+		provideCompletionItems: (document, position, token, context) => {
+		    const line = document.lineAt (position).text;
+		    if (!line.startsWith ("$")) return [];
+
+		    const tokens = line.match(/[^\s]+/g);
+		    if (tokens == null || tokens.length >= 2) return [];
+
+		    console.log ("tokens = " + tokens);
+		    
+		    // コマンドの補完候補を出力
+            	    return Object.entries (shellCommandMap)
+			.sort (([a], [b]) => a.localeCompare (b))
+			.map (([key, cmd]) => {
+			    const item = new vscode.CompletionItem (
+				{ label: key, description: cmd.exp },
+				vscode.CompletionItemKind.Keyword);
+			    item.detail = cmd.exp;
+			    item.documentation = new vscode.MarkdownString (
+				"|使用例|説明|\n|--|--|\n" + 
+				    cmd.usage.map (([cmd, desc]) => {
+					return `|\`${cmd}\`|${desc}|`
+				    }).join ("\n"));
+			    return item;
+			});
+		}
+	    },
+	    " " // トリガー文字
 	)
     );
 }
@@ -879,14 +912,15 @@ class CommandHelpViewProvider implements vscode.WebviewViewProvider {
 	    await new Promise (resolve => setTimeout (resolve, 50));
 	}
 	if (this.view) {
-	    
 	    // this.view.webview.html = `<pre>${text}</pre>`;
 	    const tr_list_html = command_data.usage.map (([cmd, desc]) => {
 		return `<tr><td><code>${cmd}</code></td><td>${desc}</td></tr>`
 	    }).join ("\n");
             console.log (tr_list_html);
+	    const abbr = command_data.abbr ? `(<code>${command_data.abbr}</code>)` : "";
+	    console.log ("!!!!: " + abbr);
 	    this.view.webview.html = `<html>
-<h3> <code>${key}</code> (<code>${command_data.abbr}</code>): ${command_data.exp} </h3>
+<h3> <code>${key}</code> ${abbr}: ${command_data.exp} </h3>
 <hr/>
 <table border="1">
   <thead> <tr> <th>コマンド使用例</th> <th>説明</th> </tr> </thead>

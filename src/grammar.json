@@ -190,21 +190,21 @@
     shell_command: {
 	commandMap: {
 	    ls: {
-		exp: "ls: （現在居るディレクトリにある）ファイル一覧を表示する",
+		exp: "（現在居るディレクトリにある）ファイル一覧を表示する",
 		usage: [["ls", "ファイル一覧を表示"],
 			["ls -l", "ロングフォーマットで表示"],
 			["ls -a", "隠しファイル（.で始まるファイル）も表示"]],
 		url: "https://www.tohoho-web.com/linux/cmd/ls.html",
 	    },
 	    gcc: {
-		exp: "gcc: （C言語等の）プログラムをコンパイルする",
+		exp: "（C言語等の）プログラムをコンパイルする",
 		usage: [["gcc foo.c", "foo.c をコンパイルして，実行可能ファイル a.out を生成する"],
 			["gcc -g foo.c", "foo.c をコンパイルして，デバッグ情報付きの実行可能ファイル a.out を生成する"],
 			["gcc -c foo.c", "foo.c をコンパイルして，オブジェクトファイル foo.o を生成する"]],
 		url: "https://www.tohoho-web.com/ex/c-lang.html#hello-world",
 	    },
 	    gdb: {
-		exp: "gdb: コマンドライン引数に指定したプログラムをデバッグ対象としてgdbを起動する",
+		exp: "コマンドライン引数に指定したプログラムをデバッグ対象としてgdbを起動する",
 		usage: [["gdb ./a.out", "./a.out をデバッグ対象として，gdbを起動する"],
 			["gdb -p 1234", "実行中のプロセス（プロセス番号1234）に接続して，gdbを起動する"]],
 		url: "https://www.tohoho-web.com/ex/c-lang.html#hello-world",
