@@ -402,7 +402,7 @@ export async function activate (context: vscode.ExtensionContext) {
     vscode.window.createTreeView ("commandTreeView", {
         treeDataProvider: provider
     });
-    // provider._onDidChangeTreeData.fire (undefined);
+    provider._onDidChangeTreeData.fire (undefined);
 
     
     context.subscriptions.push (
