@@ -25,8 +25,8 @@
                 "title": "Hello World"
             },
             {
-                "command": "gdb-notebook.restartGdbTerminal",
-                "title": "Restart GDBNB terminal",
+                "command": "gdb-notebook.reopenGDBNBFile",
+                "title": "GDBNB再オープン",
                 "icon": "$(debug-restart)"
             },
             {
@@ -63,7 +63,7 @@
         "menus": {
             "notebook/toolbar": [
                 {
-                    "command": "gdb-notebook.restartGdbTerminal",
+                    "command": "gdb-notebook.reopenGDBNBFile",
                     "when": "notebookType == 'gdb-notebook'",
                     "group": "navigation@1"
                 }

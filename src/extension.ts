@@ -29,7 +29,7 @@ let aliasMap:   Record<string, string>;
 let commandMap: Record<string, CommandData>;
 let shellCommandMap: Record<string, CommandData>;
 const extensionCommandMap: Record<string, string> = {
-    "restart": "GDBNBターミナルを再起動して，このノートブックをリセット\n（ターミナル上では実行不可）"
+    "gdbnb-reopen": "GDBNBファイルを再オープンして，このノートブックをリセット"
 };
 
 const terminalMap = new Map<string, vscode.Terminal> ();
@@ -91,7 +91,11 @@ export async function activate (context: vscode.ExtensionContext) {
     extension_context = context;
 
     // ゴミとして残っているターミナルを最初に閉じておく
+    console.log ("terminals = " + vscode.window.terminals);
     vscode.window.terminals.forEach (terminal => {
+    	console.log ("terminal.name = |" + terminal.name + "|");
+	console.log('creationOptions:', terminal.creationOptions);
+	console.log('creationOptions.name:', terminal.creationOptions.name);
 	if (terminal.name.startsWith ("GDBNB")) {
 	    terminal.dispose ();
 	}
@@ -116,12 +120,8 @@ export async function activate (context: vscode.ExtensionContext) {
     );
 
     context.subscriptions.push (
-	vscode.commands.registerCommand ('gdb-notebook.restartGdbTerminal', () => {
-	    const editor = vscode.window.activeNotebookEditor;
-	    const notebook = editor?.notebook;
-	    if (notebook) {
-		restartGdbTerminal (notebook);
-	    }
+	vscode.commands.registerCommand ('gdb-notebook.reopenGDBNBFile', () => {
+	    reopenGDBNBFile ();
 	})
     );
 
@@ -136,8 +136,6 @@ export async function activate (context: vscode.ExtensionContext) {
     controller.supportedLanguages = ["code", "markdown", "plaintext", "shellscript", "gdb_command", "extension_command"];
     
     controller.executeHandler = async (cells, notebook) => {
-	let isRestarted = false;
-	
 	// ターミナルがなければまず作る
 	getOrCreateTerminal (notebook);
 
@@ -159,73 +157,29 @@ export async function activate (context: vscode.ExtensionContext) {
 		let line = cmd.trimStart ();
                 if (line === "") continue; // 空行は飛ばす
 		if (line.startsWith ("#")) continue; // コメント行も飛ばす
-		if (line == "!restart" || line == "!start") {
-		    restartGdbTerminal (notebook);
-		    isRestarted = true;
-		} else if (line == "!fold") {
-		    // 特定のセルを折りたたむ
-		    const editor = vscode.window.activeNotebookEditor;
-		    if (!editor) return;
-		    const notebook = editor.notebook;
-		    let i = 0, start, last = notebook.getCells ().length - 1;
-		    for (const cell of notebook.getCells ()) {
-			const line = cell.document.getText ();
-			i++;
-			// console.log (i + ": " + line);
-			if (line.match ("#.*答")) {
-			    start = i;
-			}
-		    }
-		    // console.log ("start = " + start + ", last = " + last);
-		    await vscode.commands.executeCommand ("notebook.cell.quitEdit");
 
-		    editor.selection = new vscode.NotebookRange (0, 1);
-		    await vscode.commands.executeCommand ("notebook.fold");
-		} else {
-		    // 先頭の "(gdb) " や "$ " を削除してから送信
-		    if (line.startsWith ("(gdb)")) {
-			line = line.slice ("(gdb)".length).trimStart ();
-		    } else if (line.startsWith ("$")) {
-			line = line.slice ("$".length).trimStart ();
-		    }
-		    const term = getOrCreateTerminal (notebook);
-		    if (term) {
-			term.sendText (line);
-		    }
+		// 先頭の "(gdb) " や "$ " を削除してから送信
+		if (line.startsWith ("(gdb)")) {
+		    line = line.slice ("(gdb)".length).trimStart ();
+		} else if (line.startsWith ("$")) {
+		    line = line.slice ("$".length).trimStart ();
+		}
+		const term = getOrCreateTerminal (notebook);
+		if (term) {
+		    term.sendText (line);
 		}
             }
 
-	    if (isRestarted) {
-		execution.replaceOutput ([
-                    new vscode.NotebookCellOutput ([
-			vscode.NotebookCellOutputItem.text (
-			    `[${executionCounter}] ` + "GDBNBターミナルを再起動して，このノートブックをレセットしました")
-                    ])
-		]);
-	    } else {
             // ターミナル送信したのでセルは「完了」にする
-		execution.replaceOutput ([
-                    new vscode.NotebookCellOutput ([
-			vscode.NotebookCellOutputItem.text (
-			    `[${executionCounter}] ` + "GDBNBターミナルにコマンド送信済み")
-                    ])
-		]);
-		executionCounter++;
-	    }
+	    execution.replaceOutput ([
+                new vscode.NotebookCellOutput ([
+		    vscode.NotebookCellOutputItem.text (
+			`[${executionCounter}] ` + "GDBNBターミナルにコマンド送信済み")
+                ])
+	    ]);
+	    executionCounter++;
 
             execution.end (true);
-
-	    // 美しくないけど，セル出力を消去（チェックマークは消えない）
-	    if (isRestarted) {
-		executionCounter = 1;
-		notebook.getCells ().forEach (cell => {
-		    const execution = controller.createNotebookCellExecution (cell);
-		    execution.start ();
-		    // execution.replaceOutput ([]); // クリア
-		    execution.clearOutput (); // クリア
-		    execution.end (true);
-		});
-	    }
         }
     };
 
@@ -656,10 +610,19 @@ function getOrCreateTerminal (nb: vscode.NotebookDocument): vscode.Terminal {
     return term;
 }
 
-async function restartGdbTerminal (nb: vscode.NotebookDocument) {
+async function reopenGDBNBFile () {
+    const editor = vscode.window.activeNotebookEditor;
+    const nb = editor?.notebook;
+
+    if (!nb) return;
+
+    const uri = nb.uri;
+
     closeTerminal (nb);
-    await new Promise (resolve => setTimeout (resolve, 50));
-    getOrCreateTerminal (nb);
+    await vscode.commands.executeCommand ('notebook.clearAllCellsOutputs');
+    await vscode.commands.executeCommand ('workbench.action.closeActiveEditor');
+    await new Promise (resolve => setTimeout (resolve, 200));
+    await vscode.commands.executeCommand ('vscode.openWith', uri, 'gdb-notebook' );
 }
 
 
