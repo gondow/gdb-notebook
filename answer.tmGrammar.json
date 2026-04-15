@@ -1,0 +1,9 @@
+{
+    "scopeName": "source.answer",
+    "patterns": [
+	{
+	    "match": "#.*$",
+	    "name": "comment.line.number-sign.gdb"
+	}
+    ]
+}

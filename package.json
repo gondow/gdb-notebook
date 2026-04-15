@@ -9,13 +9,13 @@
     "description": "gdb-notebook",
     "version": "0.0.1",
     "engines": {
-        "vscode": "^1.110.0"
+        "vscode": "^1.115.0"
     },
     "categories": [
         "Other"
     ],
     "activationEvents": [
-	"onStartupFinished"
+        "onStartupFinished"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -57,7 +57,11 @@
             {
                 "type": "gdb-notebook",
                 "displayName": "GDB Notebook Serializer",
-		"selector": [{ "filenamePattern": "*.gdbnb" }]
+                "selector": [
+                    {
+                        "filenamePattern": "*.gdbnb"
+                    }
+                ]
             }
         ],
         "menus": {
@@ -78,9 +82,9 @@
                 "configuration": "./lang-config.json"
             },
             {
-                "id": "extension_command",
+                "id": "answer",
                 "aliases": [
-                    "extension command"
+                    "答え情報"
                 ],
                 "configuration": "./lang-config.json"
             }
@@ -92,9 +96,9 @@
                 "path": "./gdb.tmGrammar.json"
             },
             {
-                "language": "extension_command",
-                "scopeName": "source.extension",
-                "path": "./extension.tmGrammar.json"
+                "language": "answer",
+                "scopeName": "source.answer",
+                "path": "./answer.tmGrammar.json"
             }
         ],
         "views": {
@@ -127,9 +131,9 @@
         "compile": "tsc -p ./ && cp src/grammar.json out/"
     },
     "devDependencies": {
-        "source-map-support": "^0.5.21",
         "@types/node": "22.x",
-        "@types/vscode": "^1.110.0",
+        "@types/vscode": "^1.115.0",
+        "source-map-support": "^0.5.21",
         "typescript": "^5.9.3"
     },
     "dependencies": {

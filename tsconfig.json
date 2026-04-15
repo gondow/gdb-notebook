@@ -6,6 +6,7 @@
 	"lib": [
 	    "ES2022", "DOM"
 	],
+	"types": ["node", "vscode"],
 	"esModuleInterop": true,
 	"sourceMap": true,
 	"inlineSources": true,

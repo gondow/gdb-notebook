@@ -84,9 +84,29 @@ ${tr_list_md}
     return md;
 }
 
+/*
+async function sendTextAndWait (term: vscode.Terminal, text: string) {
+    return new Promise ((resolve) => {
+        let buffer = "";
+
+        const disposable = vscode.window.onDidWriteTerminalData((e) => {
+            if (e.terminal !== term) return;
+            buffer += e.data;
+            // イベント検出
+            if (buffer.includes("(gdb)")) {
+                disposable.dispose();
+                resolve(buffer);
+            }
+        });
+
+        term.sendText (text);
+    });
+}
+*/
+
 export async function activate (context: vscode.ExtensionContext) {
     console.log ('your extension "gdb-notebook" is now active!');
-    vscode.window.showInformationMessage ('Hello gdb-notebook');
+    vscode.window.showInformationMessage ('拡張機能gdb-notebookを起動しました');
 
     extension_context = context;
 
@@ -133,7 +153,7 @@ export async function activate (context: vscode.ExtensionContext) {
 
     controller = vscode.notebooks.createNotebookController (
 	"gdb-controller", "gdb-notebook", "Gdb Controller");
-    controller.supportedLanguages = ["code", "markdown", "plaintext", "shellscript", "gdb_command", "extension_command"];
+    controller.supportedLanguages = ["code", "markdown", "plaintext", "shellscript", "gdb_command", "answer"];
     
     controller.executeHandler = async (cells, notebook) => {
 	// ターミナルがなければまず作る
@@ -308,8 +328,7 @@ export async function activate (context: vscode.ExtensionContext) {
 	vscode.languages.registerCodeLensProvider (
 	    [
 		{ language: "gdb_command", scheme: "vscode-notebook-cell" },
-		{ language: "shellscript", scheme: "vscode-notebook-cell" },
-		{ language: "extension_command", scheme: "vscode-notebook-cell" }
+		{ language: "shellscript", scheme: "vscode-notebook-cell" }
 	    ],
             new GdbCodeLensProvider ()
 	)
@@ -625,7 +644,6 @@ async function reopenGDBNBFile () {
     await vscode.commands.executeCommand ('vscode.openWith', uri, 'gdb-notebook' );
 }
 
-
 class GdbSerializer implements vscode.NotebookSerializer {
     // 読み込み
     async deserializeNotebook (content: Uint8Array) {
@@ -636,32 +654,10 @@ class GdbSerializer implements vscode.NotebookSerializer {
             const kind = (item.kind === "code"
 			  ? vscode.NotebookCellKind.Code
 			  : vscode.NotebookCellKind.Markup);
+	    const new_cell = new vscode.NotebookCellData (kind, item.value, item.languageId);
+	    new_cell.languageId = item.languageId;
 	    
-	    let first_line;
-	    const lines = item.value.split ('\n');
-	    for (const line of lines) {
-		if (!line.trimStart ().startsWith ("#")) {
-		    first_line = line.trimStart ();
-		    break;
-		}
-	    }
-	    // console.log ("first_line: " + first_line);
-
-            let lang;
-	    if (kind === vscode.NotebookCellKind.Code) {
-		if (first_line.trimStart ().startsWith ("$")) {
-		    lang = "shellscript";
-		} else if (first_line.startsWith ("!")) {
-		    lang = "extension_command";
-		} else {
-		    lang = "gdb_command";
-		}
-	    } else {
-		lang = "markdown";
-	    }
-	    // console.log ("lang: " + lang);
-	    
-            return new vscode.NotebookCellData (kind, item.value, lang);
+            return new_cell; 
 	});
 	return new vscode.NotebookData (cells);
     }
@@ -671,7 +667,8 @@ class GdbSerializer implements vscode.NotebookSerializer {
 	const cells = data.cells.map (cell => ({
             kind: (cell.kind === vscode.NotebookCellKind.Code
 		   ? "code" : "markdown"),
-            value: cell.value
+            value: cell.value,
+	    languageId: cell.languageId
 	}));
 	const json = JSON.stringify ({cells}, null, 2);
 	
@@ -716,6 +713,7 @@ function registerGdbHover (context: vscode.ExtensionContext) {
 	)
     );
 
+/*
     context.subscriptions.push (
 	vscode.languages.registerHoverProvider (
             { scheme: 'vscode-notebook-cell', language: 'extension_command' },
@@ -731,6 +729,7 @@ function registerGdbHover (context: vscode.ExtensionContext) {
             }
 	)
     );
+*/
 }
 
 class GdbCodeLensProvider implements vscode.CodeLensProvider {
