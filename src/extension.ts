@@ -21,6 +21,10 @@ type CommandData = {
     options?: Record<string, OptionData>; // オプションのマップ 
 };
 
+type CopilotEnable =
+    | boolean
+    | { [language: string]: boolean };
+
 let extension_context: vscode.ExtensionContext;
 let executionCounter = 1;
 let controller: vscode.NotebookController;
@@ -31,6 +35,7 @@ let shellCommandMap: Record<string, CommandData>;
 const extensionCommandMap: Record<string, string> = {
     "gdbnb-reopen": "GDBNBファイルを再オープンして，このノートブックをリセット"
 };
+let answer: string;
 
 const terminalMap = new Map<string, vscode.Terminal> ();
 
@@ -84,26 +89,6 @@ ${tr_list_md}
     return md;
 }
 
-/*
-async function sendTextAndWait (term: vscode.Terminal, text: string) {
-    return new Promise ((resolve) => {
-        let buffer = "";
-
-        const disposable = vscode.window.onDidWriteTerminalData((e) => {
-            if (e.terminal !== term) return;
-            buffer += e.data;
-            // イベント検出
-            if (buffer.includes("(gdb)")) {
-                disposable.dispose();
-                resolve(buffer);
-            }
-        });
-
-        term.sendText (text);
-    });
-}
-*/
-
 export async function activate (context: vscode.ExtensionContext) {
     console.log ('your extension "gdb-notebook" is now active!');
     vscode.window.showInformationMessage ('拡張機能gdb-notebookを起動しました');
@@ -153,8 +138,7 @@ export async function activate (context: vscode.ExtensionContext) {
 
     controller = vscode.notebooks.createNotebookController (
 	"gdb-controller", "gdb-notebook", "Gdb Controller");
-    controller.supportedLanguages = ["code", "markdown", "plaintext", "shellscript", "gdb_command", "answer"];
-    
+    controller.supportedLanguages = ["code", "markdown", "shellscript", "gdb_command", "answer"];
     controller.executeHandler = async (cells, notebook) => {
 	// ターミナルがなければまず作る
 	getOrCreateTerminal (notebook);
@@ -185,7 +169,7 @@ export async function activate (context: vscode.ExtensionContext) {
 		    line = line.slice ("$".length).trimStart ();
 		}
 		const term = getOrCreateTerminal (notebook);
-		if (term) {
+		if (term && cell.document.languageId !== "answer") {
 		    term.sendText (line);
 		}
             }
@@ -194,7 +178,10 @@ export async function activate (context: vscode.ExtensionContext) {
 	    execution.replaceOutput ([
                 new vscode.NotebookCellOutput ([
 		    vscode.NotebookCellOutputItem.text (
-			`[${executionCounter}] ` + "GDBNBターミナルにコマンド送信済み")
+			cell.document.languageId === "answer"
+			    ?  `[${executionCounter}] ` + "answerセルは実行できません"
+			    : `[${executionCounter}] ` + "GDBNBターミナルにコマンド送信済み"
+		    )
                 ])
 	    ]);
 	    executionCounter++;
@@ -202,7 +189,6 @@ export async function activate (context: vscode.ExtensionContext) {
             execution.end (true);
         }
     };
-
     context.subscriptions.push (controller);
 
     context.subscriptions.push (
@@ -362,6 +348,19 @@ export async function activate (context: vscode.ExtensionContext) {
 	)
     );
 
+    context.subscriptions.push (
+	vscode.commands.registerCommand (
+            "gdb-notebook.toggleCopilotCompletion",
+            async (enabled: boolean) => {
+		await vscode.workspace.getConfiguration ().update (
+		    "github.copilot.enable",
+		    { "*": !enabled},
+		    vscode.ConfigurationTarget.Workspace
+		);
+	    }
+	)
+    );
+
     registerGdbHover (context);
 
 
@@ -377,7 +376,6 @@ export async function activate (context: vscode.ExtensionContext) {
     });
     provider._onDidChangeTreeData.fire (undefined);
 
-    
     context.subscriptions.push (
 	vscode.commands.registerCommand ("example.quickpick", async () => {
 	    const picked = await vscode.window.showQuickPick([
@@ -396,19 +394,11 @@ export async function activate (context: vscode.ExtensionContext) {
 	})
     );
 
+/*
     // =======================
     try {
 	const example_dir = vscode.Uri.joinPath (context.extensionUri, "examples");
 	const example_file = vscode.Uri.joinPath (example_dir, "test.gdbnb");
-	/*
-	const doc = await vscode.workspace.openNotebookDocument (example_file);
-	console.log ("example_file = " + example_file);
-	console.log ("example_dir = " + example_dir);
-	// await new Promise (resolve => setTimeout (resolve, 500));
-	await vscode.window.showNotebookDocument(doc, { preview: false });
-	getOrCreateTerminal (doc);
-	*/
-
 	const config = vscode.workspace.getConfiguration ("gdbNotebook");
 	const autoOpenSampleFolder = config.get<boolean> ("autoOpenSampleFolder", false);
 	console.log ("autoOpenSampleFolder = " + autoOpenSampleFolder);
@@ -437,6 +427,7 @@ export async function activate (context: vscode.ExtensionContext) {
     } catch (e) {
 	console.error ("ERROR: ", e);
     }
+*/
 
     // =======================
     // todo:
@@ -648,18 +639,22 @@ class GdbSerializer implements vscode.NotebookSerializer {
     // 読み込み
     async deserializeNotebook (content: Uint8Array) {
 	const text = new TextDecoder ().decode (content);
-	const raw = JSON.parse(text);
+	const raw = JSON.parse (text);
 	
 	const cells = raw.cells.map ((item: any) => {
-            const kind = (item.kind === "code"
+	    const kind = (item.kind === "code"
 			  ? vscode.NotebookCellKind.Code
 			  : vscode.NotebookCellKind.Markup);
 	    const new_cell = new vscode.NotebookCellData (kind, item.value, item.languageId);
-	    new_cell.languageId = item.languageId;
-	    
-            return new_cell; 
+	    new_cell.languageId = item.languageId ?? "gdb-command";
+	    if (new_cell.languageId == "answer") {
+		answer = item.value;
+		console.log ("answer = " + answer);
+		return null;
+	    }
+	    return new_cell; 
 	});
-	return new vscode.NotebookData (cells);
+	return new vscode.NotebookData (cells.filter ((cell:any) => cell !== null));
     }
     
     // 書き込み
@@ -670,6 +665,9 @@ class GdbSerializer implements vscode.NotebookSerializer {
             value: cell.value,
 	    languageId: cell.languageId
 	}));
+	if (answer) {
+	    cells.push ({kind: "code", value: answer, languageId: "answer"});
+	}
 	const json = JSON.stringify ({cells}, null, 2);
 	
 	return new TextEncoder ().encode (json);
@@ -746,12 +744,26 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
 
 	const cell_type = document.languageId === "gdb_command" ? "GDB command" : "Shell Script";
 
+	const config = vscode.workspace.getConfiguration ();
+	const copilot_enable = config.get<CopilotEnable> ("github.copilot.enable");
+	const copilot_enable_bool = typeof copilot_enable === "boolean"
+	      ? copilot_enable : (copilot_enable?.["*"] ?? false);
+
         lenses.push (new vscode.CodeLens (
             new vscode.Range (0, 0, 0, 0),
 	    {
 		title: `セル言語の切替（今は${cell_type}）`,
 		command: "gdb-notebook.toggleCellType",
 		arguments: [ document ]
+	    }
+	));
+
+        lenses.push (new vscode.CodeLens (
+            new vscode.Range (0, 0, 0, 0),
+	    {
+		title: `Copilot補完の切替（今は${copilot_enable_bool}）`,
+		command: "gdb-notebook.toggleCopilotCompletion",
+		arguments: [ copilot_enable_bool ]
 	    }
 	));
 

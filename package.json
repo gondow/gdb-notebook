@@ -64,6 +64,13 @@
                 ]
             }
         ],
+	"notebookRenderer": [
+	    {
+		"id": "gdb-renderer",
+		"displayName": "GDB Renderer",
+		"mimeTypes": ["text/gdb"]
+	    }
+	],
         "menus": {
             "notebook/toolbar": [
                 {

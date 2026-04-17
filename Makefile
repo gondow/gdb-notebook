@@ -2,9 +2,10 @@
 
 compile:
 	rm -rf out
+	$(MAKE) -C src gdb.tmGrammar.json
 	npm run compile
 
-package: 
+package: compile
 	vsce package
 
 install: package

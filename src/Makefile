@@ -1,7 +1,7 @@
 
 all:
 
-foo:
+gdb.tmGrammar.json:
 	node generate-tmGrammar.js 
 
 clean:

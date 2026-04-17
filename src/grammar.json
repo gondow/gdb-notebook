@@ -9,6 +9,7 @@
 	    c: "continue",
 	    i: "info",
 	    p: "print",
+	    q: "quit",
 	},
 	commandMap: {
 	    break: {
@@ -182,7 +183,15 @@
 		    ["x/4gx $rbp", "レジスタ%rbp中のアドレスから，8バイトデータ(g)を16進数表記(x)で4個表示"],
 		    ["x/4gx $rbp+16", "レジスタ%rbp+16のアドレスから，8バイトデータ(g)を16進数表記(x)で4個表示"],
 		],
-		url: "",
+		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E3%83%A1%E3%83%A2%E3%83%AA%E4%B8%AD%E3%81%AE%E5%80%A4%E6%A9%9F%E6%A2%B0%E8%AA%9E%E5%91%BD%E4%BB%A4%E3%82%92%E8%A1%A8%E7%A4%BA%E3%81%99%E3%82%8B-x",
+	    },
+	    quit: {
+		exp: "gdbを終了させる",
+		abbr: "q",
+		usage: [
+		    ["quit", "gdbを終了させる"],
+		],
+		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E8%B5%B7%E5%8B%95-run-%E3%81%A8%E7%B5%82%E4%BA%86-quit",
 	    },
 	},
     },
