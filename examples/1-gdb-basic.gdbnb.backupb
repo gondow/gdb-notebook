@@ -1,16 +1,4 @@
 {
-  "metadata": {
-    "gdbnb": {
-      "answer": [
-        {
-          "type": "gdb_command",
-          "command": [
-            "run"
-          ]
-        }
-      ]
-    }
-  },
   "cells": [
     {
       "kind": "markdown",
@@ -29,13 +17,13 @@
     },
     {
       "kind": "code",
-      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g fact.c\n$ gdb a.out",
       "languageId": "shellscript"
     },
     {
       "kind": "code",
-      "value": "# gdb上で a.out の実行を開始し，その後，gdb を終了する\n(gdb) run\n(gdb) quit ",
-      "languageId": "gdb_command"
+      "value": "# gdb上で a.out の実行を開始し，その後，gdb を終了する\n(gdb) ",
+      "languageId": "shellscript"
     },
     {
       "kind": "markdown",
@@ -71,6 +59,11 @@
       "kind": "code",
       "value": "# ターミナルの一番下に(gdb)が表示されてる状態で，以下のrunコマンドを実行しよう．a.outがデバッガ上で実行されます．\n(gdb) run\n(gdb) ",
       "languageId": "gdb_command"
+    },
+    {
+      "kind": "code",
+      "value": "[ { \"type\": \"gdb_command\", \"command\": [\"run\"] } ]",
+      "languageId": "answer"
     }
   ]
 }
