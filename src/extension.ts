@@ -567,18 +567,6 @@ export async function activate (context: vscode.ExtensionContext) {
 				    return item;
 				});
 			}
-/*
-			console.log ("!!tokens = " + tokens);
-			const item1 = new vscode.CompletionItem("x", vscode.CompletionItemKind.Value);
-			// item1.range = range;
-			item1.filterText = "x y";
-			const item2 = new vscode.CompletionItem("y", vscode.CompletionItemKind.Value);
-			item2.filterText = "x y";
-			// item2.range = range;
-			return [
-			    item1, item2,
-			];   
-*/
 		    }
 		}
 	    },
