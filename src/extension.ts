@@ -25,11 +25,6 @@ type CopilotEnable =
     | boolean
     | { [language: string]: boolean };
 
-type NotebookState = {
-    answer?: string;
-    smart_completion: boolean;
-};
-
 let extension_context: vscode.ExtensionContext;
 let executionCounter = 1;
 let controller: vscode.NotebookController;
@@ -42,13 +37,9 @@ const extensionCommandMap: Record<string, string> = {
 };
 let gdbcodelens_provider: GdbCodeLensProvider;
 
-/*
-let answer: string;
 let smart_completion: boolean = true;
-*/
 
 const terminalMap = new Map<string, vscode.Terminal> ();
-const stateMap = new Map<string, NotebookState> ();
 
 // ****************************************************************
 function abort (msg: string): never {
@@ -67,6 +58,14 @@ function access<T, K extends keyof T>(obj: T | null | undefined, key: K): T[K] {
 	abort (`Property "${String(key)}" does not exist`);
     }
     return value;
+}
+
+function extract_set (key: string, data: any) {
+    const command_list = data
+	  .filter  ((item: any) => item.type === key)
+	  .flatMap ((item: any) => item.commands);
+    const command_set = Array.from (new Set (command_list));
+    return command_set;
 }
 
 function str2command_data (str: string) {
@@ -386,7 +385,7 @@ export async function activate (context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand (
             "gdb-notebook.toggleSmartCompletion",
             async () => {
-		// smart_completion = !smart_completion;
+		smart_completion = !smart_completion;
 		// xxx
 		gdbcodelens_provider.refresh ();
 	    }
@@ -672,15 +671,21 @@ class GdbSerializer implements vscode.NotebookSerializer {
 /*
   "metadata": {
     "gdbnb": {
-      "answer": [ { "type": "gdb_command", "command": ["run"] } ],
+      "answer": [ { "type": "gdb_command", "command": ["run"] } ]
     }
   },
 */
     // 読み込み
     async deserializeNotebook (content: Uint8Array) {
 	const text = new TextDecoder ().decode (content);
-	const raw = JSON.parse (text);
-	let answer: string;
+	let raw: any;
+	try {
+	    raw = JSON.parse (text);
+	} catch (e) {
+	    console.error (e);
+	}
+
+	console.log ("!!!!!!!!");
 	
 	const cells = raw.cells.map ((item: any) => {
 	    const kind = (item.kind === "code"
@@ -691,8 +696,19 @@ class GdbSerializer implements vscode.NotebookSerializer {
 	    return new_cell; 
 	});
 	const notebookData = new vscode.NotebookData (cells);
-	notebookData.metadata = raw.metadata ?? {};
 
+	const answer = raw.metadata?.gdbnb?.answer;
+	const shell_command_set = extract_set ("shellScript", answer);
+	const gdb_command_set   = extract_set ("gdb_command", answer);
+	console.log ("shell_command_set : " + shell_command_set);
+	console.log ("gdb_command_set : " + gdb_command_set);
+
+	notebookData.metadata = {
+	    ...(raw.metadata ?? {}),
+	    shell_command_set: shell_command_set,
+	    gdb_command_set: gdb_command_set
+	};
+	
 	return notebookData;
     }
     
@@ -704,8 +720,11 @@ class GdbSerializer implements vscode.NotebookSerializer {
             value: cell.value,
 	    languageId: cell.languageId
 	}));
+	const metadata_copy = { ...(data.metadata ?? {}) };
+	delete metadata_copy.shell_command_set;
+	delete metadata_copy.gdb_command_set;
 	const data2 = {
-	    metadata: data.metadata,
+	    metadata: metadata_copy,
 	    cells
 	};
 	console.log ("data.metadata = " + data.metadata);
@@ -819,8 +838,7 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
         lenses.push (new vscode.CodeLens (
             new vscode.Range (0, 0, 0, 0),
 	    {
-		// title: `補完候補の切替（今は${smart_completion?"SMART":"ALL"}）`,
-		title: `補完候補の切替（今はXXX）`,
+		title: `補完候補の切替（今は${smart_completion?"SMART":"ALL"}）`,
 		command: "gdb-notebook.toggleSmartCompletion",
 		arguments: [ ]
 	    }
@@ -1023,6 +1041,4 @@ class CommandTreeDataProvider implements vscode.TreeDataProvider<CommandTreeItem
 // ****************************************************************
 /*
   Todo:
-  - answer と smart_completion をノートブックごとに管理する（マップで）
-  - そのために，answer をノートブックの metadata として扱う？
 */

@@ -3,9 +3,35 @@
     "gdbnb": {
       "answer": [
         {
+          "type": "shellScript",
+          "commands": [
+            "make",
+            "gcc -g a.out",
+            "gdb a.out"
+          ]
+        },
+        {
           "type": "gdb_command",
-          "command": [
-            "run"
+          "commands": [
+            "break main",
+            "run",
+            "quit"
+          ]
+        },
+        {
+          "type": "shellScript",
+          "commands": [
+            "make",
+            "gcc -g a.out",
+            "gdb a.out"
+          ]
+        },
+        {
+          "type": "gdb_command",
+          "commands": [
+            "break main",
+            "run",
+            "quit"
           ]
         }
       ]
@@ -69,7 +95,7 @@
     },
     {
       "kind": "code",
-      "value": "# ターミナルの一番下に(gdb)が表示されてる状態で，以下のrunコマンドを実行しよう．a.outがデバッガ上で実行されます．\n(gdb) run\n(gdb) ",
+      "value": "# ターミナルの一番下に(gdb)が表示されてる状態で，以下のrunコマンドを実行しよう．a.outがデバッガ上で実行されます．\n(gdb) run\n(gdb) quit",
       "languageId": "gdb_command"
     }
   ]
