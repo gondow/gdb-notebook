@@ -89,9 +89,9 @@
                 "configuration": "./lang-config.json"
             },
             {
-                "id": "answer",
+                "id": "show_file",
                 "aliases": [
-                    "答え情報"
+                    "ファイルを表示"
                 ],
                 "configuration": "./lang-config.json"
             }
@@ -103,9 +103,9 @@
                 "path": "./gdb.tmGrammar.json"
             },
             {
-                "language": "answer",
-                "scopeName": "source.answer",
-                "path": "./answer.tmGrammar.json"
+                "language": "show_file",
+                "scopeName": "source.show_file",
+                "path": "./show_file.tmGrammar.json"
             }
         ],
         "views": {

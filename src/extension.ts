@@ -100,6 +100,37 @@ ${tr_list_md}
     return md;
 }
 
+async function fold_answer (editor: vscode.NotebookEditor) {
+    // 解答セルを折りたたむ（解答セルは１つだけという前提）
+    console.log ("fold_answer called");
+
+    const notebook = editor.notebook;
+
+    let i = 0, start = 0;
+    for (const cell of notebook.getCells ()) {
+	const line = cell.document.getText ();
+	// console.log (i + ": " + line);
+	if (line.match ("#.*答")) {
+	    // console.log ("matched line (" + i + ") = " + line);
+	    start = i;
+	    break;
+	}
+	i++;
+    }
+    // await vscode.window.showNotebookDocument (notebook);
+    // await vscode.commands.executeCommand ("notebook.cell.quitEdit");
+    // notebook.fold には引数は無く，事前に折りたたむセクションを含む
+    // マークダウンセルを選択しておく必要がある．
+    await new Promise (r => setTimeout (r, 500));
+    const range = new vscode.NotebookRange (start, start+1);
+    editor.selection = range;
+    editor.revealRange (range, vscode.NotebookEditorRevealType.Default);
+    await new Promise (r => setTimeout (r, 50));
+    await vscode.commands.executeCommand ("notebook.fold");
+}
+
+// ****************************************************************
+
 export async function activate (context: vscode.ExtensionContext) {
     console.log ('your extension "gdb-notebook" is now active!');
     vscode.window.showInformationMessage ('拡張機能gdb-notebookを起動しました');
@@ -151,7 +182,7 @@ export async function activate (context: vscode.ExtensionContext) {
 
     controller = vscode.notebooks.createNotebookController (
 	"gdb-controller", "gdb-notebook", "Gdb Controller");
-    controller.supportedLanguages = ["code", "markdown", "shellscript", "gdb_command", "answer"];
+    controller.supportedLanguages = ["code", "markdown", "shellscript", "gdb_command"];
     controller.executeHandler = async (cells, notebook) => {
 	// ターミナルがなければまず作る
 	getOrCreateTerminal (notebook);
@@ -182,18 +213,14 @@ export async function activate (context: vscode.ExtensionContext) {
 		    line = line.slice ("$".length).trimStart ();
 		}
 		const term = getOrCreateTerminal (notebook);
-		if (term && cell.document.languageId !== "answer") {
-		    term.sendText (line);
-		}
+		term.sendText (line);
             }
 
             // ターミナル送信したのでセルは「完了」にする
 	    execution.replaceOutput ([
                 new vscode.NotebookCellOutput ([
 		    vscode.NotebookCellOutputItem.text (
-			cell.document.languageId === "answer"
-			    ?  `[${executionCounter}] ` + "answerセルは実行できません"
-			    : `[${executionCounter}] ` + "GDBNBターミナルにコマンド送信済み"
+			`[${executionCounter}] ` + "GDBNBターミナルにコマンド送信済み"
 		    )
                 ])
 	    ]);
@@ -209,10 +236,6 @@ export async function activate (context: vscode.ExtensionContext) {
             if (notebook.notebookType !== "gdb-notebook") { return; }
 	    getOrCreateTerminal (notebook);
 
-	    /*
-	    const json = JSON.stringify (notebook, null, 2);
-	    console.log ("notebook = " + json);
-	    */
 
 	    // フォルダをワークスペースとして開く
 	    /*
@@ -221,6 +244,8 @@ export async function activate (context: vscode.ExtensionContext) {
 	    await vscode.commands.executeCommand ("vscode.openFolder", uri, false);
 	    */
 
+/*
+	    // GDBNBヒント表示
 	    const image_path = vscode.Uri.joinPath (
 		context.extensionUri,
 		// path.dirname (notebook.uri.fsPath),
@@ -269,12 +294,13 @@ export async function activate (context: vscode.ExtensionContext) {
 
 	    // console.log (`${path.dirname (notebook.uri.fsPath)}/images/execute-cell.png`);
 
-	    panel.webview.onDidReceiveMessage(msg => {
+	    panel.webview.onDidReceiveMessage (msg => {
 		if (msg.command === "send")  { console.log ("send"); }
 		if (msg.command === "close") { console.log ("close"); }
 		panel.dispose(); // 送信後閉じる
 	    });
 	    // ======================
+*/
 	})
     );
 
@@ -303,30 +329,18 @@ export async function activate (context: vscode.ExtensionContext) {
 	    if (term) {
 		term.show ();
 	    }
-
-	    // 特定のセルを折りたたむ
-	    let i = 0, start = 0;
-	    for (const cell of notebook.getCells ()) {
-		const line = cell.document.getText ();
-		// console.log (i + ": " + line);
-		if (line.match ("#.*答")) {
-		    start = i;
-		    break;
-		}
-		i++;
-	    }
-	    // console.log ("start = " + start);
-	    // setTimeout (async () => {
-	    // await vscode.window.showNotebookDocument (notebook);
-	    // await vscode.commands.executeCommand ("notebook.cell.quitEdit");
-	    // notebook.fold には引数は無く，事前に折りたたむセクションを含む
-	    // マークダウンセルを選択しておく必要がある．
-	    editor.selection = new vscode.NotebookRange (start, start+1);
-	    await vscode.commands.executeCommand ("notebook.fold");
-	    // console.log ("notebook.fold executed");
-	    // }, 300);
+	    fold_answer (editor);
 	})
     );
+
+    /*
+    // めっちゃ頻繁に呼ばれるので，なるべく使わない
+    context.subscriptions.push (
+	vscode.workspace.onDidChangeNotebookDocument (async editor => {
+	    console.log ("some cells changed");
+	})
+    );
+    */
     
     context.subscriptions.push (
 	vscode.languages.registerCodeLensProvider (
@@ -394,7 +408,6 @@ export async function activate (context: vscode.ExtensionContext) {
 
     registerGdbHover (context);
 
-
     helpProvider = new CommandHelpViewProvider ();
     context.subscriptions.push (
 	vscode.window.registerWebviewViewProvider ("commandHelpView", helpProvider)
@@ -425,16 +438,16 @@ export async function activate (context: vscode.ExtensionContext) {
 	})
     );
 
-/*
+    // console.log ("!!!!!!!! hogehoge");
     // =======================
     try {
 	const example_dir = vscode.Uri.joinPath (context.extensionUri, "examples");
 	const example_file = vscode.Uri.joinPath (example_dir, "test.gdbnb");
 	const config = vscode.workspace.getConfiguration ("gdbNotebook");
 	const autoOpenSampleFolder = config.get<boolean> ("autoOpenSampleFolder", false);
-	console.log ("autoOpenSampleFolder = " + autoOpenSampleFolder);
+	// console.log ("autoOpenSampleFolder = " + autoOpenSampleFolder);
 
-	if (autoOpenSampleFolder) {
+	if (true || autoOpenSampleFolder) {
 	    vscode.commands.executeCommand ("vscode.openFolder", example_dir);
 	} else {
 	    vscode.window.showInformationMessage (
@@ -458,11 +471,9 @@ export async function activate (context: vscode.ExtensionContext) {
     } catch (e) {
 	console.error ("ERROR: ", e);
     }
+/*
 */
 
-    // =======================
-    // todo:
-    // * shellコマンドに対応
     context.subscriptions.push (
 	vscode.languages.registerCompletionItemProvider (
 	    "gdb_command",
@@ -673,8 +684,6 @@ class GdbSerializer implements vscode.NotebookSerializer {
 	    console.error (e);
 	}
 
-	console.log ("!!!!!!!!");
-	
 	const cells = raw.cells.map ((item: any) => {
 	    const kind = (item.kind === "code"
 			  ? vscode.NotebookCellKind.Code
