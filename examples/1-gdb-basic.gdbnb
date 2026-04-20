@@ -22,7 +22,7 @@
     },
     {
       "kind": "code",
-      "value": "# gdb上で a.out の実行を開始し，その後，gdb を終了する\n(gdb) run\n(gdb) quit ",
+      "value": "# gdb上で a.out の実行を開始し，その後，gdb を終了する\n(gdb) run\n(gdb) ",
       "languageId": "gdb_command"
     },
     {
@@ -32,12 +32,12 @@
     },
     {
       "kind": "code",
-      "value": "# デバッグ情報付きでコンパイルする (-g オプションがデバッグ情報付きコンパイルを指示する)\n$ gcc -g fact.c\n$ gdb ./a.out",
+      "value": "# デバッグ情報付きでコンパイルする (-g オプションがデバッグ情報付きコンパイルを指示する)\n$ gcc -g fact.c\n$ gdb ./a.out\n$ gcc -g fact.c",
       "languageId": "shellscript"
     },
     {
       "kind": "code",
-      "value": "# ほげほげ\n(gdb) run\n(gdb) quit  ",
+      "value": "# ほげほげ\n(gdb) run\n(gdb) quit\n(gdb)",
       "languageId": "gdb_command"
     },
     {
@@ -47,7 +47,7 @@
     },
     {
       "kind": "code",
-      "value": "# ほげほげ\n(gdb) run\n(gdb) quit  ",
+      "value": "# ほげほげ\n(gdb) break main\n(gdb) run\n(gdb) quit\n",
       "languageId": "gdb_command"
     },
     {

@@ -37,7 +37,8 @@ const extensionCommandMap: Record<string, string> = {
 };
 let gdbcodelens_provider: GdbCodeLensProvider;
 
-let smart_completion: boolean = true;
+// 0: smart_long, 1: smart_short, 2: all
+let smart_completion_mode = 0;
 
 const terminalMap = new Map<string, vscode.Terminal> ();
 
@@ -409,10 +410,9 @@ export async function activate (context: vscode.ExtensionContext) {
 
     context.subscriptions.push (
 	vscode.commands.registerCommand (
-            "gdb-notebook.toggleSmartCompletion",
+            "gdb-notebook.cycleSmartCompletion",
             async () => {
-		smart_completion = !smart_completion;
-		// xxx
+		smart_completion_mode = (smart_completion_mode + 1) % 3;
 		gdbcodelens_provider.refresh ();
 	    }
 	)
@@ -497,7 +497,35 @@ export async function activate (context: vscode.ExtensionContext) {
 		    const tokens = line.match(/[^\/\s]+|\/[^\s]*/g);
 		    if (tokens == null) return [];
 
-		    console.log ("tokens = " + tokens);
+		    // console.log ("tokens = " + tokens);
+
+		    if (smart_completion_mode == 0 || smart_completion_mode == 1) {
+			const notebook = vscode.window.activeNotebookEditor?.notebook;
+			if (!notebook) return;
+
+			console.log ("!!!!!!");
+			const commands: string[] = notebook.metadata.gdb_command_set;
+			const keys = commands.map (cmd => cmd.trim ().split (/\s+/)[0]);
+			console.log ("commands: " + commands);
+			console.log ("keys: " + keys);
+            		return Object.entries (commandMap)
+			    .filter (([key, cmd]) => keys.includes (key))
+			    .sort (([a], [b]) => a.localeCompare (b))
+			    .map (([key, cmd]) => {
+				const long = commands.filter (s=>s.startsWith (key))[0] ?? key;
+				const item = new vscode.CompletionItem (
+				    { label: smart_completion_mode==0 ? long : key,
+				      description: cmd.exp },
+				    vscode.CompletionItemKind.Keyword);
+				item.detail = `(${cmd.abbr}) ` + cmd.exp;
+				item.documentation = new vscode.MarkdownString (
+				    "|使用例|説明|\n|--|--|\n" + 
+					cmd.usage.map (([cmd, desc]) => {
+					    return `|\`${cmd}\`|${desc}|`
+					}).join ("\n"));
+				return item;
+			    });
+		    }
 		    
 		    // メインコマンドの補完候補を出力
 		    if (tokens.length <= 1) {
@@ -609,7 +637,33 @@ export async function activate (context: vscode.ExtensionContext) {
 		    if (tokens == null || tokens.length >= 2) return [];
 
 		    console.log ("tokens = " + tokens);
+		    console.log ("mode = " + smart_completion_mode);
 		    
+		    if (smart_completion_mode == 0 || smart_completion_mode == 1) {
+			const notebook = vscode.window.activeNotebookEditor?.notebook;
+			if (!notebook) return;
+			const commands: string[] = notebook.metadata.shell_command_set;
+			const keys = commands.map (cmd => cmd.trim ().split (/\s+/)[0]);
+			console.log ("commands: " + commands);
+			console.log ("keys: " + keys);
+            		return Object.entries (shellCommandMap)
+			    .filter (([key, cmd]) => keys.includes (key))
+			    .sort (([a], [b]) => a.localeCompare (b))
+			    .map (([key, cmd]) => {
+				const long = commands.filter (s=>s.startsWith (key))[0] ?? key;
+				const item = new vscode.CompletionItem (
+				    { label: smart_completion_mode==0 ? long : key,
+				      description: cmd.exp },
+				    vscode.CompletionItemKind.Keyword);
+				item.detail = cmd.exp;
+				item.documentation = new vscode.MarkdownString (
+				    "|使用例|説明|\n|--|--|\n" + 
+					cmd.usage.map (([cmd, desc]) => {
+					    return `|\`${cmd}\`|${desc}|`
+					}).join ("\n"));
+				return item;
+			    });
+		    }
 		    // コマンドの補完候補を出力
             	    return Object.entries (shellCommandMap)
 			.sort (([a], [b]) => a.localeCompare (b))
@@ -725,23 +779,17 @@ class GdbSerializer implements vscode.NotebookSerializer {
 	    }
 	    i++;
 	}
-	console.log ("shell_command_list: " + shell_command_list);
-	console.log ("gdb_command_list: " + gdb_command_list);
+	// console.log ("shell_command_list: " + shell_command_list);
+	// console.log ("gdb_command_list: " + gdb_command_list);
 	const shell_command_set = extract_set ("shellscript", shell_command_list);
 	const gdb_command_set   = extract_set ("gdb_command", gdb_command_list);
-	console.log ("shell_command_set : " + shell_command_set);
-	console.log ("gdb_command_set : " + gdb_command_set);
-	
-/*
-	const answer = raw.metadata?.gdbnb?.answer;
+	// console.log ("shell_command_set : " + shell_command_set);
+	// console.log ("gdb_command_set : " + gdb_command_set);
 
 	notebookData.metadata = {
-	    ...(raw.metadata ?? {}),
 	    shell_command_set: shell_command_set,
 	    gdb_command_set: gdb_command_set
 	};
-*/
-	
 	return notebookData;
     }
     
@@ -874,8 +922,8 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
         lenses.push (new vscode.CodeLens (
             new vscode.Range (0, 0, 0, 0),
 	    {
-		title: `補完候補の切替（今は${smart_completion?"SMART":"ALL"}）`,
-		command: "gdb-notebook.toggleSmartCompletion",
+		title: `補完候補の切替（今は${smart_completion_mode==0?"LONG":smart_completion_mode==1?"SHORT": "ALL"}）`,
+		command: "gdb-notebook.cycleSmartCompletion",
 		arguments: [ ]
 	    }
 	));

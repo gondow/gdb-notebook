@@ -218,6 +218,11 @@
 			["gdb -p 1234", "実行中のプロセス（プロセス番号1234）に接続して，gdbを起動する"]],
 		url: "https://www.tohoho-web.com/ex/c-lang.html#hello-world",
 	    },
+	    "./a.out": {
+		exp: "実行可能ファイル ./a.out を実行する",
+		usage: [["./a.out", "./a.out を実行する"]],
+		url: "",
+	    },
 	},
     },
 }
