@@ -60,12 +60,24 @@ function access<T, K extends keyof T>(obj: T | null | undefined, key: K): T[K] {
     return value;
 }
 
-function extract_set (key: string, data: any) {
+function extract_set (key: string, data: string []): string[] {
+    const prompt = key === "shellscript" ? "$" : "(gdb)";
+    const list = data.flatMap (line => {
+	return line
+	    .split ("\n")              // 行分割
+	    .map (l => l.trim ())
+	    .filter (l => l.startsWith (prompt))
+	    .map (l => l.slice (prompt.length)) // (gdb) を除去
+	    .map (l => l.trim ())
+    });
+    return  Array.from (new Set (list)); // uniq
+/*
     const command_list = data
 	  .filter  ((item: any) => item.type === key)
 	  .flatMap ((item: any) => item.commands);
     const command_set = Array.from (new Set (command_list));
     return command_set;
+*/
 }
 
 function str2command_data (str: string) {
@@ -440,6 +452,7 @@ export async function activate (context: vscode.ExtensionContext) {
 
     // console.log ("!!!!!!!! hogehoge");
     // =======================
+/*
     try {
 	const example_dir = vscode.Uri.joinPath (context.extensionUri, "examples");
 	const example_file = vscode.Uri.joinPath (example_dir, "test.gdbnb");
@@ -471,7 +484,6 @@ export async function activate (context: vscode.ExtensionContext) {
     } catch (e) {
 	console.error ("ERROR: ", e);
     }
-/*
 */
 
     context.subscriptions.push (
@@ -666,14 +678,6 @@ async function reopenGDBNBFile () {
 }
 
 class GdbSerializer implements vscode.NotebookSerializer {
-
-/*
-  "metadata": {
-    "gdbnb": {
-      "answer": [ { "type": "gdb_command", "command": ["run"] } ]
-    }
-  },
-*/
     // 読み込み
     async deserializeNotebook (content: Uint8Array) {
 	const text = new TextDecoder ().decode (content);
@@ -689,22 +693,54 @@ class GdbSerializer implements vscode.NotebookSerializer {
 			  ? vscode.NotebookCellKind.Code
 			  : vscode.NotebookCellKind.Markup);
 	    const new_cell = new vscode.NotebookCellData (kind, item.value, item.languageId);
-	    new_cell.languageId = item.languageId ?? "gdb-command";
+	    new_cell.languageId = item.languageId;
 	    return new_cell; 
 	});
 	const notebookData = new vscode.NotebookData (cells);
 
-	const answer = raw.metadata?.gdbnb?.answer;
-	const shell_command_set = extract_set ("shellScript", answer);
-	const gdb_command_set   = extract_set ("gdb_command", answer);
+	// 解答情報を抽出
+	let i = 0, start = 0, answer_found = false;
+	let shell_command_list: string[] = [];
+	let gdb_command_list: string[] = [];
+	for (const item of raw.cells) {
+	    // console.log (i + ": " + item.kind + ", " + item.value);
+	    // 「#.*答」を含むマークダウンより後の連続コードセルを解答として収集
+	    if (item.value.match ("#.*答")) {
+		// console.log ("matched line (" + i + ") = " + item.value);
+		answer_found = true;
+	    } else if (answer_found) {
+		if (item.kind === "code") {
+		    // console.log ("answer (" + i + ") = " + item.value);
+		    if (item.languageId === "shellscript") {
+			shell_command_list.push (item.value);
+		    } else if (item.languageId === "gdb_command") {
+			gdb_command_list.push (item.value);
+                    } else {
+                        console.error ("unknown languageId: " + item.languageId);
+			throw new Error ("unknown languageId: " + item.languageId);
+		    }
+		} else {
+		    break;
+		}
+	    }
+	    i++;
+	}
+	console.log ("shell_command_list: " + shell_command_list);
+	console.log ("gdb_command_list: " + gdb_command_list);
+	const shell_command_set = extract_set ("shellscript", shell_command_list);
+	const gdb_command_set   = extract_set ("gdb_command", gdb_command_list);
 	console.log ("shell_command_set : " + shell_command_set);
 	console.log ("gdb_command_set : " + gdb_command_set);
+	
+/*
+	const answer = raw.metadata?.gdbnb?.answer;
 
 	notebookData.metadata = {
 	    ...(raw.metadata ?? {}),
 	    shell_command_set: shell_command_set,
 	    gdb_command_set: gdb_command_set
 	};
+*/
 	
 	return notebookData;
     }
@@ -717,6 +753,8 @@ class GdbSerializer implements vscode.NotebookSerializer {
             value: cell.value,
 	    languageId: cell.languageId
 	}));
+
+/*	
 	const metadata_copy = { ...(data.metadata ?? {}) };
 	delete metadata_copy.shell_command_set;
 	delete metadata_copy.gdb_command_set;
@@ -725,7 +763,8 @@ class GdbSerializer implements vscode.NotebookSerializer {
 	    cells
 	};
 	console.log ("data.metadata = " + data.metadata);
-	const json = JSON.stringify (data2, null, 2);
+*/
+	const json = JSON.stringify ({cells: cells}, null, 2);
 	
 	return new TextEncoder ().encode (json);
     }

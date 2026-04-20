@@ -1,42 +1,4 @@
 {
-  "metadata": {
-    "gdbnb": {
-      "answer": [
-        {
-          "type": "shellScript",
-          "commands": [
-            "make",
-            "gcc -g a.out",
-            "gdb a.out"
-          ]
-        },
-        {
-          "type": "gdb_command",
-          "commands": [
-            "break main",
-            "run",
-            "quit"
-          ]
-        },
-        {
-          "type": "shellScript",
-          "commands": [
-            "make",
-            "gcc -g a.out",
-            "gdb a.out"
-          ]
-        },
-        {
-          "type": "gdb_command",
-          "commands": [
-            "break main",
-            "run",
-            "quit"
-          ]
-        }
-      ]
-    }
-  },
   "cells": [
     {
       "kind": "markdown",
@@ -70,13 +32,23 @@
     },
     {
       "kind": "code",
-      "value": "# デバッグ情報付きでコンパイルする (-g オプションがデバッグ情報付きコンパイルを指示する)\n$ gcc -g fact.c",
+      "value": "# デバッグ情報付きでコンパイルする (-g オプションがデバッグ情報付きコンパイルを指示する)\n$ gcc -g fact.c\n$ gdb ./a.out",
       "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# ほげほげ\n(gdb) run\n(gdb) quit  ",
+      "languageId": "gdb_command"
     },
     {
       "kind": "code",
       "value": "# a.out を実行する (fact (5) = 120 と表示されたら成功)\n$ ./a.out",
       "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# ほげほげ\n(gdb) run\n(gdb) quit  ",
+      "languageId": "gdb_command"
     },
     {
       "kind": "markdown",
@@ -90,7 +62,7 @@
     },
     {
       "kind": "code",
-      "value": "$ gcc -g fact.c\n$ gdb ./a.out\n# もし，--Type <RET> for more, q to quit, c to continue without paging-- と表示されたら，c Return をターミナル上で入力して下さい",
+      "value": "$ gcc -g fact.c\n$ gdb ./a.out\n# もし，--Type <RET> for more, q to quit, c to continue without paging-- と表示されたら，c Return をターミナル上で入力して下さい\n$ ",
       "languageId": "shellscript"
     },
     {
