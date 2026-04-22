@@ -42,7 +42,12 @@
     },
     {
       "kind": "markdown",
-      "value": "#### 補足\n- `gdb`の`-q`オプションは，`gdb`の起動時メッセージを非表示にします．`~/.gdbearlyinit`に以下を設定しても非表示にできます．\n```\n   set startup-quietly on\n```   ",
+      "value": "#### 補足\n- `gdb`の`-q`オプションは，`gdb`の起動時メッセージを非表示にします．`~/.gdbearlyinit`に以下を設定しても非表示にできます．\n```\n   set startup-quietly on\n```\n- `gdb`の以下の表示中のInferiorは「デバッグされているプログラム」のことです．そして「プロセス番号27716で，正常に実行終了した」と言っています．デバッグされているプログラムは「デバッギ (debuggee)」と呼ばれることもあります．\n```\n[Inferior 1 (process 27716) exited normally]\n```",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "",
       "languageId": "markdown"
     }
   ]

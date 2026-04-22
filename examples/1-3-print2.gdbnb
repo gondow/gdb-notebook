@@ -1,0 +1,49 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "#### 説明\n- `print`コマンドは変数だけでなく，**式**を指定することができます．例えば，`print n+3` や `print fact(5)`と書けます．\n#### 問題\n- [`fact.c`](fact.c)の`main`関数の先頭行にブレークポイントを設定して，そこで実行を一時停止させる．その後，`print`コマンドで式`fact(5)`の値を表示してみよう",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) \n# ブレーク後に式 fact(5) の値を表示する\n(gdb) ",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g fact.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break main\n(gdb) run\n# main関数の先頭行でブレークする\n# Breakpoint 1, fact (n=5) at fact.c:5\n# 5\t    if (n <= 0) {",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "code",
+      "value": "# ブレーク後に式 fact(5) の値を表示する\n(gdb) print fact(5)\n(gdb) quit\n# Quit anyway? (y or n)  と聞かれたら，yとリターンを入力する必要がありますが，ここではyも自動入力しているので不要です\ny",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- Quit anyway? (y or n) は「（まだプログラムは実行中だけど）終了していいのか？（gdbを終了すると，デバッグ中のプログラムも終了するよ）」という意味です．いちいち y を入れるのは面倒ですが，再現性の低いバグの場合は慎重に判断すべきなので，よく注意して答えましょう．",
+      "languageId": "markdown"
+    }
+  ]
+}
