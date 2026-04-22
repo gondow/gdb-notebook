@@ -215,6 +215,7 @@
 	    gdb: {
 		exp: "コマンドライン引数に指定したプログラムをデバッグ対象としてgdbを起動する",
 		usage: [["gdb ./a.out", "./a.out をデバッグ対象として，gdbを起動する"],
+			["gdb -q ./a.out", "起動時メッセージを省略して，gdbを起動する"],
 			["gdb -p 1234", "実行中のプロセス（プロセス番号1234）に接続して，gdbを起動する"]],
 		url: "https://www.tohoho-web.com/ex/c-lang.html#hello-world",
 	    },

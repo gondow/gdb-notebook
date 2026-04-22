@@ -1,0 +1,54 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### 概要：ブレークポイント\n- デバッガはプログラムの実行を一時停止したり，実行を再開できます\n- この「デバッガで一時停止すること」を「ブレークする」，一時停止する場所を「ブレークポイント」と言います\n- ブレークポイントとして，関数名や行番号を指定できます\n---\n![](../images/break.png)",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "### 関数名を指定してブレークポイントを設定し，実行を再開する\n#### 説明\n- ブレークポイントの設定には`break`コマンドを使います．`break main`とすると，`main`関数の先頭行にブレークポイントを設定します．その後，`run`で実行開始すると`main`関数の先頭行で実行が一時停止します\n- 一時停止後，`continue`コマンドを使うと，実行が再開します\n#### 問題\n- [`fact.c`](fact.c)の`main`関数の先頭行にブレークポイントを設定して，そこで実行を一時停止させる．その後，実行を再開させよう",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) \n# ブレーク後に実行を再開し，gdbの実行を終了する\n(gdb) ",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g fact.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break main\n(gdb) run\n# ↓以下の表示が出て，14行目で実行が一時停止する（14行目はまだ実行されていない）\n# Breakpoint 1, main () at fact.c:14\n# 14\t    printf (\"fact (%d) = %d\\n\", 5, fact (5));",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "code",
+      "value": "# ブレーク後に実行を再開し，gdbの実行を終了する\n(gdb) continue\n# fact (5) = 120 と出力し，実行が終了する\n(gdb) quit",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- ブレークポイントは複数個所，指定できます．（設定しすぎると混乱するので，ほどほどに）\n- ブレークポイント一覧は`info breakpoints` (`i b`)で表示できます\n```\n(gdb) i b\nNum     Type           Disp Enb Address            What\n1       breakpoint     keep y   0x0000000000001180 in main at fact.c:14\n```",
+      "languageId": "markdown"
+    }
+  ]
+}

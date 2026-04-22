@@ -1,4 +1,6 @@
 
+all:
+	make install && code
 
 compile:
 	rm -rf out
