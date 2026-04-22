@@ -32,13 +32,18 @@
     },
     {
       "kind": "code",
-      "value": "# main関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break main\n(gdb) run\n# ↓以下の表示が出て，14行目で実行が一時停止する（14行目はまだ実行されていない）\n# Breakpoint 1, main () at fact.c:14\n# 14\t    printf (\"fact (%d) = %d\\n\", 5, fact (5));",
-      "languageId": "shellscript"
+      "value": "# fact関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break fact\n(gdb) run\n# fact関数の先頭行でブレークする\n# Breakpoint 1, fact (n=5) at fact.c:5\n# 5\t    if (n <= 0) {",
+      "languageId": "gdb_command"
     },
     {
       "kind": "code",
-      "value": "# ブレーク後に実行を再開し，gdbの実行を終了する\n(gdb) continue\n# fact (5) = 120 と出力し，実行が終了する\n(gdb) quit",
-      "languageId": "shellscript"
+      "value": "# ブレーク後に実行を再開すると，再びfactの先頭行でブレークする\n(gdb) continue\n# Breakpoint 1, fact (n=5) at fact.c:5\n# 5\t    if (n <= 0) {",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "code",
+      "value": "# 実行が終了するまで，繰り返し実行を再開する\n(gdb) continue\n(gdb) continue\n(gdb) continue\n(gdb) continue\n(gdb) continue\n(gdb) quit\n",
+      "languageId": "gdb_command"
     }
   ]
 }
