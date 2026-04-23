@@ -39,6 +39,11 @@
       "kind": "code",
       "value": "# ブレーク後に式 fact(5) の値を表示する\n(gdb) print fact(5)\n(gdb) quit\n# Quit anyway? (y or n)  と聞かれたら，yとリターンを入力する必要がありますが，ここではyも自動入力しているので不要です\ny",
       "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- `fact`関数にブレークポイントが設定されていると，`print fact(5)`をうまく実行できません．この場合は一時的にブレークポイントを無効にする必要があります．\n```\n(gdb) disable breakpoints\n(gdb) print fact(5)\n$1 = 120\n(gdb) enable breakpoints\n```",
+      "languageId": "markdown"
     }
   ]
 }

@@ -32,13 +32,8 @@
     },
     {
       "kind": "code",
-      "value": "# A関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break A\n(gdb) run\n# ブレーク後にstepコマンドを使い，B関数の先頭にステップ実行が進むことを確認する\n(gdb) step\n(gdb) quit\ny",
+      "value": "# A関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break A\n(gdb) run\n# ブレーク後にstepコマンドを使い，B関数の先頭にステップ実行が進むことを確認する\n(gdb) step\n# B関数の先頭にステップ実行が進む\n#  () at step2.c:4\n# 4           printf (\"B\\n\");\n(gdb) quit\ny",
       "languageId": "gdb_command"
-    },
-    {
-      "kind": "markdown",
-      "value": "#### 補足\n- Quit anyway? (y or n) は「（まだプログラムは実行中だけど）終了していいのか？（gdbを終了すると，デバッグ中のプログラムも終了するよ）」という意味です．いちいち y を入れるのは面倒ですが，再現性の低いバグの場合は慎重に判断すべきなので，よく注意して答えましょう．",
-      "languageId": "markdown"
     }
   ]
 }
