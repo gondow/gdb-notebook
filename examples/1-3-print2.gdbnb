@@ -39,11 +39,6 @@
       "kind": "code",
       "value": "# ブレーク後に式 fact(5) の値を表示する\n(gdb) print fact(5)\n(gdb) quit\n# Quit anyway? (y or n)  と聞かれたら，yとリターンを入力する必要がありますが，ここではyも自動入力しているので不要です\ny",
       "languageId": "gdb_command"
-    },
-    {
-      "kind": "markdown",
-      "value": "#### 補足\n- Quit anyway? (y or n) は「（まだプログラムは実行中だけど）終了していいのか？（gdbを終了すると，デバッグ中のプログラムも終了するよ）」という意味です．いちいち y を入れるのは面倒ですが，再現性の低いバグの場合は慎重に判断すべきなので，よく注意して答えましょう．",
-      "languageId": "markdown"
     }
   ]
 }

@@ -140,6 +140,8 @@ async function fold_answer(editor: vscode.NotebookEditor) {
     editor.revealRange(range, vscode.NotebookEditorRevealType.Default);
     await new Promise(r => setTimeout(r, 50));
     await vscode.commands.executeCommand("notebook.fold");
+    const range = new vscode.NotebookRange (0, 1);
+    editor.selection = range;
 }
 
 // ****************************************************************
