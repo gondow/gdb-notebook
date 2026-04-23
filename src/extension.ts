@@ -40,7 +40,8 @@ let gdbcodelens_provider: GdbCodeLensProvider;
 // 0: smart_long, 1: smart_short, 2: all
 let smart_completion_mode = 0;
 
-const terminalMap = new Map<string, vscode.Terminal>();
+const terminalMap = new Map<string, vscode.Terminal> ();
+const notebook_init = new WeakSet<vscode.NotebookDocument> ();
 
 // ****************************************************************
 function abort(msg: string): never {
@@ -113,7 +114,7 @@ ${tr_list_md}
     return md;
 }
 
-async function fold_answer(editor: vscode.NotebookEditor) {
+async function fold_answer (editor: vscode.NotebookEditor) {
     // 解答セルを折りたたむ（解答セルは１つだけという前提）
     console.log("fold_answer called");
 
@@ -140,8 +141,11 @@ async function fold_answer(editor: vscode.NotebookEditor) {
     editor.revealRange(range, vscode.NotebookEditorRevealType.Default);
     await new Promise(r => setTimeout(r, 50));
     await vscode.commands.executeCommand("notebook.fold");
+
+    await new Promise(r => setTimeout(r, 200));
     const range2 = new vscode.NotebookRange (0, 1);
     editor.selection = range2;
+	editor.revealRange (range2, vscode.NotebookEditorRevealType.Default);
 }
 
 // ****************************************************************
@@ -254,7 +258,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	    if (notebook.notebookType !== "gdb-notebook") { return; }
 	    getOrCreateTerminal(notebook);
 
-
 	    // フォルダをワークスペースとして開く
 	    /*
 	      const uri = vscode.Uri.file (path.dirname (notebook.uri.fsPath));
@@ -347,7 +350,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	    // 対応するGDBNBターミナルを表示する
 	    const term = getOrCreateTerminal (notebook);
 	    if (term) { term.show (); }
-	    fold_answer (editor);
+
+	    if (!notebook_init.has (editor.notebook)) {
+		notebook_init.add (editor.notebook);
+		fold_answer (editor);
+	    }
 	})
     );
 
