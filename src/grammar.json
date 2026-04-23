@@ -1,229 +1,495 @@
 // JSON5 データ（コメント，ケツカンマ，文字列中での改行あり）
 {
-    // GDBコマンド用のデータ
-    "gdb_command": {
+	// GDBコマンド用のデータ
+	"gdb_command": {
 	aliasMap: {
-	    if: "if",  // これだけ特別
+	    if: "if", // これだけ特別
 	    b: "break",
 	    r: "run",
 	    c: "continue",
 	    i: "info",
 	    p: "print",
 	    q: "quit",
-	},
+		s: "step",
+		n: "next",
+		si: "stepi",
+		ni: "nexti",
+		},
 	commandMap: {
 	    break: {
 		exp: "指定した場所にブレークポイント（実行の一時停止場所）を設定する",
 		abbr: "b",
-		usage: [["break main",      "main関数の先頭にブレークポインタを設定"],
-			["break file.c:10", "ファイルfile.cの10行目にブレークを設定"],
-			["break 42",        "（現在のファイルの）42行目にブレークポイントを設定"]],
+		usage: [
+					[
+						"break main",
+						"main関数の先頭にブレークポインタを設定"
+					],
+					[
+						"break file.c:10",
+						"ファイルfile.cの10行目にブレークを設定"
+					],
+					[
+						"break 42",
+						"（現在のファイルの）42行目にブレークポイントを設定"
+					]
+				],
 		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E5%A4%89%E6%95%B0%E3%81%AE%E5%80%A4%E3%82%92%E8%A1%A8%E7%A4%BA-print",
-	    },
+			},
 	    if: {
 		exp: "「break 場所 if 条件」という形式で，条件付きブレークポイントを設定する",
 		abbr: "if",
-		usage: [["break fact if n==0", "変数nが0に等しいときだけ，fact関数の先頭で実行を一時停止するブレークポイントを設定"]],
+		usage: [
+					[
+						"break fact if n==0",
+						"変数nが0に等しいときだけ，fact関数の先頭で実行を一時停止するブレークポイントを設定"
+					]
+				],
 		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E6%9D%A1%E4%BB%B6%E4%BB%98%E3%81%8D%E3%83%96%E3%83%AC%E3%83%BC%E3%82%AF%E3%83%9D%E3%82%A4%E3%83%B3%E3%83%88%E3%81%AE%E8%A8%AD%E5%AE%9A%E3%81%A8%E3%83%90%E3%83%83%E3%82%AF%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B9%E8%A1%A8%E7%A4%BA-break-if-backtrace",
-	    },
+			},
 	    run: {
 		exp: "gdb上で（デバッグ対象の）プログラムの実行を開始する",
 		abbr: "r",
-		usage: [["run", "プログラムの実行開始"],
-			["run a b c", "コマンドライン引数 a b c を与えて実行開始"],
-			["run < foo.txt", "標準入力をファイルfoo.txtに切り替えて（リダイレクトして）実行開始"]],
+		usage: [
+					[
+						"run",
+						"プログラムの実行開始"
+					],
+					[
+						"run a b c",
+						"コマンドライン引数 a b c を与えて実行開始"
+					],
+					[
+						"run < foo.txt",
+						"標準入力をファイルfoo.txtに切り替えて（リダイレクトして）実行開始"
+					]
+				],
 		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E8%B5%B7%E5%8B%95-run-%E3%81%A8%E7%B5%82%E4%BA%86-quit",
-	    },
+			},
 	    continue: {
 		exp: "ブレークポイントで一時停止中のプログラムの実行を再開する",
 		abbr: "c",
-		usage: [["continue", "プログラムの実行再開"]],
+		usage: [
+					[
+						"continue",
+						"プログラムの実行再開"
+					]
+				],
 		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E5%AE%9F%E8%A1%8C%E5%86%8D%E9%96%8B%E3%81%AE%E5%AE%9F%E8%A1%8C%E4%BE%8B-continue",
-	    },
+			},
 	    info: {
 		exp: "デバッグ対象のプログラムのデータを表示する",
 		abbr: "i",
 		usage: [
-		    ["info address main (i ad)", "main関数のアドレスを表示"],
-		    ["info breakpoints (i b)", "設定したブレークポイントを表示"],
-		    ["info display (i di)", "displayの設定を表示"],
-		    ["info locals (i lo)", "局所変数の値を表示"],
-		    ["info symbol 0x1234 (i s)", "0x1234番地のシンボルを表示"],
-		    ["info registers (i r)", "レジスタの値を表示"],
-		    ["info signals (i si)", "gdbのシグナル処理状態を表示"],
-		],
+					[
+						"info address main (i ad)",
+						"main関数のアドレスを表示"
+					],
+					[
+						"info breakpoints (i b)",
+						"設定したブレークポイントを表示"
+					],
+					[
+						"info display (i di)",
+						"displayの設定を表示"
+					],
+					[
+						"info locals (i lo)",
+						"局所変数の値を表示"
+					],
+					[
+						"info symbol 0x1234 (i s)",
+						"0x1234番地のシンボルを表示"
+					],
+					[
+						"info registers (i r)",
+						"レジスタの値を表示"
+					],
+					[
+						"info signals (i si)",
+						"gdbのシグナル処理状態を表示"
+					],
+				],
 		url: "",
 		subcommands: {
 		    address: {
 			exp: "指定したシンボルのアドレスを表示する",
 			abbr: "ad",
 			usage: [
-			    ["info address main", "main関数のアドレスを表示"],
-			    ["info address x", "変数xのアドレスを表示"],
-			],
+							[
+								"info address main",
+								"main関数のアドレスを表示"
+							],
+							[
+								"info address x",
+								"変数xのアドレスを表示"
+							],
+						],
 			url: "",
-		    },
+					},
 		    breakpoints: {
 			exp: "設定したブレークポイントを表示する",
 			abbr: "b",
 			usage: [
-			    ["info breakpoints", "設定したブレークポイントを表示"],
-			],
+							[
+								"info breakpoints",
+								"設定したブレークポイントを表示"
+							],
+						],
 			url: "",
-		    },
+					},
 		    display: {
 			exp: "displayの設定を表示",
 			abbr: "di",
 			usage: [
-			    ["info display)", "displayの設定を表示"],
-			],
+							[
+								"info display)",
+								"displayの設定を表示"
+							],
+						],
 			url: "",
-		    },
+					},
 		    locals: {
 			exp: "局所変数の値を表示",
 			abbr: "lo",
 			usage: [
-			    ["info locals)", "局所変数の値を表示"],
-			],
+							[
+								"info locals)",
+								"局所変数の値を表示"
+							],
+						],
 			url: "",
-		    },
+					},
 		    symbol: {
 			exp: "指定した番地のシンボルを表示",
 			abbr: "s",
 			usage: [
-			    ["info symbol 0x1234", "0x1234番地のシンボルを表示"],
-			],
+							[
+								"info symbol 0x1234",
+								"0x1234番地のシンボルを表示"
+							],
+						],
 			url: "",
-		    },
+					},
 		    registers: {
 			exp: "レジスタの値を表示",
 			abbr: "r",
 			usage: [
-			    ["info registers", "レジスタの値を表示"],
-			],
+							[
+								"info registers",
+								"レジスタの値を表示"
+							],
+						],
 			url: "",
-		    },
+					},
 		    signals: {
 			exp: "gdbのシグナル処理状態を表示",
 			abbr: "si",
 			usage: [
-			    ["info signals", "gdbのシグナル処理状態を表示"],
-			],
+							[
+								"info signals",
+								"gdbのシグナル処理状態を表示"
+							],
+						],
 			url: "",
-		    },
-		},
-	    },
+					},
+				},
+			},
 	    print: {
 		exp: "指定した式を実行して，その結果の値を表示する",
 		abbr: "p",
 		usage: [
-		    ["print x", "変数xの値を表示"],
-		    ["print *p->next->next", "式*p->next->nextの値を表示"],
-
-			
-		    ["print/x x", "変数xの値を16進表記で表示"],
-		    ["print foo (10)", "関数foo(10)を実行し，その返り値を表示"],
-		    ["print $rax", "レジスタraxの値を表示"],
-		],
+					[
+						"print x",
+						"変数xの値を表示"
+					],
+					[
+						"print *p->next->next",
+						"式*p->next->nextの値を表示"
+					],
+					[
+						"print/x x",
+						"変数xの値を16進表記で表示"
+					],
+					[
+						"print foo (10)",
+						"関数foo(10)を実行し，その返り値を表示"
+					],
+					[
+						"print $rax",
+						"レジスタraxの値を表示"
+					],
+				],
 		url: "",
 		options: {
 		    x: {
 			exp: "16進数(hexadecimal)で表示",
-			usage: [["print/x x", "変数xの値を16進数で表示"]],
-		    },
+			usage: [
+							[
+								"print/x x",
+								"変数xの値を16進数で表示"
+							]
+						],
+					},
 		    z: {
 			exp: "16進数で表示(上位バイトのゼロ(zero)も表示)",
-			usage: [["print/z x", "変数xの値を上位バイトのゼロ付き16進で表示"]],
-		    },
+			usage: [
+							[
+								"print/z x",
+								"変数xの値を上位バイトのゼロ付き16進で表示"
+							]
+						],
+					},
 		    o: {
 			exp: "8進数(octal)で表示",
-			usage: [["print/o x", "変数xの値を8進数で表示"]],
-		    },
+			usage: [
+							[
+								"print/o x",
+								"変数xの値を8進数で表示"
+							]
+						],
+					},
 		    d: {
 			exp: "符号あり10進数(decimal)で表示",
-			usage: [["print/d x", "変数xの値を符号あり10進数で表示"]],
-		    },
+			usage: [
+							[
+								"print/d x",
+								"変数xの値を符号あり10進数で表示"
+							]
+						],
+					},
 		    u: {
 			exp: "符号なし10進数(unsigned)で表示",
-			usage: [["print/u x", "変数xの値を符号なし10進数で表示"]],
-		    },
+			usage: [
+							[
+								"print/u x",
+								"変数xの値を符号なし10進数で表示"
+							]
+						],
+					},
 		    t: {
 			exp: "2進数(two)で表示",
-			usage: [["print/t x", "変数xの値を2進数で表示"]],
-		    },
+			usage: [
+							[
+								"print/t x",
+								"変数xの値を2進数で表示"
+							]
+						],
+					},
 		    c: {
 			exp: "文字(char)として表示",
-			usage: [["print/c x", "変数xの値を文字として表示"]],
-		    },
+			usage: [
+							[
+								"print/c x",
+								"変数xの値を文字として表示"
+							]
+						],
+					},
 		    s: {
 			exp: "文字列(string)として表示",
-			usage: [["print/s x", "変数xの値を文字列として表示"]],
-		    },
+			usage: [
+							[
+								"print/s x",
+								"変数xの値を文字列として表示"
+							]
+						],
+					},
 		    i: {
 			exp: "機械語命令(instruction)として表示",
-			usage: [["print/i x", "変数xの値を機械語命令として表示"]],
-		    },
+			usage: [
+							[
+								"print/i x",
+								"変数xの値を機械語命令として表示"
+							]
+						],
+					},
 		    a: {
 			exp: "アドレス(address)として表示",
-			usage: [["print/a x", "変数xの値をアドレスとして表示"]],
-		    },
+			usage: [
+							[
+								"print/a x",
+								"変数xの値をアドレスとして表示"
+							]
+						],
+					},
 		    f: {
 			exp: "浮動小数点数(float)として表示",
-			usage: [["print/f x", "変数xの値を浮動小数点数として表示"]],
-		    },
-		},
-	    },
-	    // x のオプションは複雑なので，コード中で特別扱いする
+			usage: [
+							[
+								"print/f x",
+								"変数xの値を浮動小数点数として表示"
+							]
+						],
+					},
+				},
+			},
+			// x のオプションは複雑なので，コード中で特別扱いする
 	    x: {
 		exp: "指定アドレスからメモリを読み，個数・単位・表示形式を指定して表示する",
 		abbr: "x",
 		usage: [
-		    ["x/4gx 0x1000", "アドレス0x1000から，8バイトデータ(g)を16進数表記(x)で4個表示"],
-		    ["x/8bc 0x1000", "アドレス0x1000から，1バイトデータ(b)を文字表記(c)で8個表示"],
-		    ["x/4gx $rbp", "レジスタ%rbp中のアドレスから，8バイトデータ(g)を16進数表記(x)で4個表示"],
-		    ["x/4gx $rbp+16", "レジスタ%rbp+16のアドレスから，8バイトデータ(g)を16進数表記(x)で4個表示"],
-		],
+					[
+						"x/4gx 0x1000",
+						"アドレス0x1000から，8バイトデータ(g)を16進数表記(x)で4個表示"
+					],
+					[
+						"x/8bc 0x1000",
+						"アドレス0x1000から，1バイトデータ(b)を文字表記(c)で8個表示"
+					],
+					[
+						"x/4gx $rbp",
+						"レジスタ%rbp中のアドレスから，8バイトデータ(g)を16進数表記(x)で4個表示"
+					],
+					[
+						"x/4gx $rbp+16",
+						"レジスタ%rbp+16のアドレスから，8バイトデータ(g)を16進数表記(x)で4個表示"
+					],
+				],
 		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E3%83%A1%E3%83%A2%E3%83%AA%E4%B8%AD%E3%81%AE%E5%80%A4%E6%A9%9F%E6%A2%B0%E8%AA%9E%E5%91%BD%E4%BB%A4%E3%82%92%E8%A1%A8%E7%A4%BA%E3%81%99%E3%82%8B-x",
-	    },
+			},
 	    quit: {
 		exp: "gdbを終了させる",
 		abbr: "q",
 		usage: [
-		    ["quit", "gdbを終了させる"],
-		],
+					[
+						"quit",
+						"gdbを終了させる"
+					],
+				],
 		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E8%B5%B7%E5%8B%95-run-%E3%81%A8%E7%B5%82%E4%BA%86-quit",
-	    },
+			},
+	    step: {
+		exp: "1行実行を進める(関数呼び出しは中に入って1行を数える)",
+		abbr: "s",
+		usage: [
+					[
+						"step",
+						"1行実行を進める(関数呼び出しは中に入って1行を数える)"
+					],
+					[
+						"step 3",
+						"3行実行を進める(関数呼び出しは中に入って1行を数える)"
+					],
+				],
+		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E3%82%B9%E3%83%86%E3%83%83%E3%83%97%E3%82%A4%E3%83%B3%E3%81%AE%E5%AE%9F%E8%A1%8C%E4%BE%8B-step",
+			},
+		},
+	    next: {
+		exp: "1行実行を進める(関数呼び出しはまたいで1行を数える)",
+		abbr: "n",
+		usage: [
+				[
+					"next",
+					"1行実行を進める(関数呼び出しはまたいで1行を数える)"
+				],
+				[
+					"next 3",
+					"3行実行を進める(関数呼び出しは中に入って1行を数える)"
+				],
+			],
+		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E3%82%B9%E3%83%86%E3%83%83%E3%83%97%E3%82%AA%E3%83%BC%E3%83%90%E3%83%BC%E3%81%AE%E5%AE%9F%E8%A1%8C%E4%BE%8B-next",
+		},
 	},
-    },
-    // シェルコマンド用のデータ（省略コマンドは無し）
+			    stepi: {
+		exp: "次の機械語命令を1つ実行(関数コールに入って1命令を数える)",
+		abbr: "si",
+		usage: [
+			[
+				"stepi",
+				"次の機械語命令を1つ実行(関数コールに入って1命令を数える)"
+			],
+			[
+				"stepi 3",
+				"次の機械語命令を3つ実行(関数コールに入って1命令を数える)"
+			],
+		],
+		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E3%82%B9%E3%83%86%E3%83%83%E3%83%97%E3%82%A4%E3%83%B3%E3%81%AE%E5%AE%9F%E8%A1%8C%E4%BE%8B-step:~:text=%E3%81%AF%20endbr64%E5%91%BD%E4%BB%A4-,stepi,-(%E2%9D%BC%20si)%E3%82%92",
+	},
+
+	    nexti: {
+		exp: "次の機械語命令を1つ実行(関数コールはまたいで1命令を数える)",
+		abbr: "ni",
+		usage: [
+		[
+			"nexti",
+			"次の機械語命令を1つ実行(関数コールはまたいで1命令を数える)"
+		],
+		[
+			"nexti 3",
+			"次の機械語命令を3つ実行(関数コールはまたいで1命令を数える)"
+		],
+	],
+		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E3%82%B9%E3%83%86%E3%83%83%E3%83%97%E3%82%A4%E3%83%B3%E3%81%AE%E5%AE%9F%E8%A1%8C%E4%BE%8B-step:~:text=%E5%91%BD%E4%BB%A4%E3%82%92%E6%95%B0%E3%81%88%E3%82%8B)-,nexti,-ni",
+},
+
+},
+},
+// シェルコマンド用のデータ（省略コマンドは無し）
     shell_command: {
 	commandMap: {
 	    ls: {
 		exp: "（現在居るディレクトリにある）ファイル一覧を表示する",
-		usage: [["ls", "ファイル一覧を表示"],
-			["ls -l", "ロングフォーマットで表示"],
-			["ls -a", "隠しファイル（.で始まるファイル）も表示"]],
+		usage: [
+		[
+			"ls",
+			"ファイル一覧を表示"
+		],
+		[
+			"ls -l",
+			"ロングフォーマットで表示"
+		],
+		[
+			"ls -a",
+			"隠しファイル（.で始まるファイル）も表示"
+		]
+	],
 		url: "https://www.tohoho-web.com/linux/cmd/ls.html",
-	    },
+},
 	    gcc: {
 		exp: "（C言語等の）プログラムをコンパイルする",
-		usage: [["gcc foo.c", "foo.c をコンパイルして，実行可能ファイル a.out を生成する"],
-			["gcc -g foo.c", "foo.c をコンパイルして，デバッグ情報付きの実行可能ファイル a.out を生成する"],
-			["gcc -c foo.c", "foo.c をコンパイルして，オブジェクトファイル foo.o を生成する"]],
+		usage: [
+		[
+			"gcc foo.c",
+			"foo.c をコンパイルして，実行可能ファイル a.out を生成する"
+		],
+		[
+			"gcc -g foo.c",
+			"foo.c をコンパイルして，デバッグ情報付きの実行可能ファイル a.out を生成する"
+		],
+		[
+			"gcc -c foo.c",
+			"foo.c をコンパイルして，オブジェクトファイル foo.o を生成する"
+		]
+	],
 		url: "https://www.tohoho-web.com/ex/c-lang.html#hello-world",
-	    },
+},
 	    gdb: {
 		exp: "コマンドライン引数に指定したプログラムをデバッグ対象としてgdbを起動する",
-		usage: [["gdb ./a.out", "./a.out をデバッグ対象として，gdbを起動する"],
-			["gdb -q ./a.out", "起動時メッセージを省略して，gdbを起動する"],
-			["gdb -p 1234", "実行中のプロセス（プロセス番号1234）に接続して，gdbを起動する"]],
+		usage: [
+		[
+			"gdb ./a.out",
+			"./a.out をデバッグ対象として，gdbを起動する"
+		],
+		[
+			"gdb -q ./a.out",
+			"起動時メッセージを省略して，gdbを起動する"
+		],
+		[
+			"gdb -p 1234",
+			"実行中のプロセス（プロセス番号1234）に接続して，gdbを起動する"
+		]
+	],
 		url: "https://www.tohoho-web.com/ex/c-lang.html#hello-world",
-	    },
-	    "./a.out": {
+},
+"./a.out": {
 		exp: "実行可能ファイル ./a.out を実行する",
-		usage: [["./a.out", "./a.out を実行する"]],
+		usage: [
+		[
+			"./a.out",
+			"./a.out を実行する"
+		]
+	],
 		url: "",
-	    },
-	},
-    },
+},
+},
+},
 }
