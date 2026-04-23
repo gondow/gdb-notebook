@@ -12,7 +12,8 @@ package: compile
 
 install: package
 	code --install-extension gdb-notebook-0.0.1.vsix
-	code --remote ssh-remote+ubuntu-utm --install-extension  gdb-notebook-0.0.1.vsix
+#	code --remote ssh-remote+ubuntu-utm --install-extension  gdb-notebook-0.0.1.vsix
+# リモートは手動でやる
 
 uninstall:
 	code --uninstall-extension gondow.gdb-notebook
