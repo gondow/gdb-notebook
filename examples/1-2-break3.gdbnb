@@ -37,12 +37,12 @@
     },
     {
       "kind": "code",
-      "value": "# ブレーク後に実行を再開すると，再びfactの先頭行でブレークする\n(gdb) continue\n# Breakpoint 1, fact (n=5) at fact.c:5\n# 5\t    if (n <= 0) {",
+      "value": "# ブレーク後に実行を再開すると，再びfactの先頭行でブレークする\n(gdb) continue\n# Breakpoint 1, fact (n=4) at fact.c:5\n# 5\t    if (n <= 0) {",
       "languageId": "gdb_command"
     },
     {
       "kind": "code",
-      "value": "# 実行が終了するまで，繰り返し実行を再開する\n(gdb) continue\n(gdb) continue\n(gdb) continue\n(gdb) continue\n(gdb) continue\n(gdb) quit\n",
+      "value": "# 実行が終了するまで，繰り返し実行を再開する\n(gdb) continue\n# reakpoint 1, fact (n=3) at fact.c:5\n# 5           if (n <= 0) {\n(gdb) continue\n# reakpoint 1, fact (n=2) at fact.c:5\n# 5           if (n <= 0) {\n(gdb) continue\n# reakpoint 1, fact (n=1) at fact.c:5\n# 5           if (n <= 0) {\n(gdb) continue\n# reakpoint 1, fact (n=0) at fact.c:5\n# 5           if (n <= 0) {\n(gdb) continue\n# fact (5) = 120\n# [Inferior 1 (process 184430) exited normally]\n(gdb) quit\n",
       "languageId": "gdb_command"
     }
   ]
