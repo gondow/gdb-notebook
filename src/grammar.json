@@ -16,6 +16,8 @@
 	    ni: "nexti",
 	    fin: "finish",
 	    disp: "display",
+	    dis: "disable",
+	    en: "enable",
 	},
 	commandMap: {
 	    break: {
@@ -470,6 +472,36 @@
 		    ],
 		],
 		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E3%82%B9%E3%82%B3%E3%83%BC%E3%83%97%E3%81%AE%E6%8C%87%E5%AE%9A-:~:text=%E8%AA%AC%E6%98%8E-,list,-%E5%A0%B4%E6%89%80",
+	    },
+	    disable: {
+		exp: "disable",
+		abbr: "dis",
+		usage: [
+		    [
+			"disable 1",
+			"1番目のブレークポイントを無効化する"
+		    ],
+		    [
+			"disable",
+			"すべてのブレークポイントを無効化する"
+		    ],
+		],
+		url: "",
+	    },
+	    enable: {
+		exp: "enable",
+		abbr: "en",
+		usage: [
+		    [
+			"enable 1",
+			"1番目のブレークポイントを有効化する"
+		    ],
+		    [
+			"enable",
+			"すべてのブレークポイントを有効化する"
+		    ],
+		],
+		url: "",
 	    },
 	},
     },
