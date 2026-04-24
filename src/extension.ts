@@ -225,14 +225,25 @@ export async function activate(context: vscode.ExtensionContext) {
 		if (line === "") continue; // 空行は飛ばす
 		if (line.startsWith("#")) continue; // コメント行も飛ばす
 
-		// 先頭の "(gdb) " や "$ " を削除してから送信
-		if (line.startsWith("(gdb)")) {
-		    line = line.slice("(gdb)".length).trimStart();
-		} else if (line.startsWith("$")) {
-		    line = line.slice("$".length).trimStart();
+		// 先頭の "(gdb) " や "> "や"$ " を削除してから送信
+		const prefixes = ["(gdb)", ">", "$"];
+		for (const p of prefixes) {
+		    if (line.startsWith (p)) {
+			line = line.slice (p.length).trimStart ();
+			break;
+		    }
 		}
-		const term = getOrCreateTerminal(notebook);
-		term.sendText(line);
+		/*
+		if (line.startsWith ("(gdb)")) {
+		    line = line.slice ("(gdb)".length).trimStart ();
+		} else if (line.startsWith (">")) {
+		    line = line.slice (">".length).trimStart ();
+		} else if (line.startsWith ("$")) {
+		    line = line.slice ("$".length).trimStart ();
+		}
+		*/
+		const term = getOrCreateTerminal (notebook);
+		term.sendText (line);
 
 		// 少し待つ
 		await new Promise(resolve => setTimeout (resolve, 500));
@@ -903,11 +914,11 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
     private _onDidChangeCodeLenses = new vscode.EventEmitter<void>();
     public readonly onDidChangeCodeLenses = this._onDidChangeCodeLenses.event;
 
-    refresh() {
-	this._onDidChangeCodeLenses.fire();
+    refresh () {
+	this._onDidChangeCodeLenses.fire ();
     }
 
-    provideCodeLenses(document: vscode.TextDocument): vscode.CodeLens[] {
+    provideCodeLenses (document: vscode.TextDocument): vscode.CodeLens[] {
 	// console.log ("CodeLens called");
 	// console.log ("language:", document.languageId);
 	// console.log ("scheme:", document.uri.scheme);
@@ -961,8 +972,10 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
 	    // break-if だけ特別処理
 	    for (let key of gdb_alias_keys) {
 		let alias_line = text;
-		if (alias_line.startsWith("(gdb)")) {
-		    alias_line = alias_line.slice("(gdb)".length).trimStart();
+		if (alias_line.startsWith ("(gdb)")) {
+		    alias_line = alias_line.slice ("(gdb)".length).trimStart ();
+		} else if (alias_line.startsWith (">")) {
+		    alias_line = alias_line.slice (">".length).trimStart ();
 		}
 		// console.log ("alias_line: " + alias_line);
 		if (alias_line.match("^" + key + "\\b")) {
@@ -991,8 +1004,10 @@ class GdbCodeLensProvider implements vscode.CodeLensProvider {
 
 	    for (let key of gdb_canon_keys) {
 		let canon_line = text;
-		if (canon_line.startsWith("(gdb)")) {
-		    canon_line = canon_line.slice("(gdb)".length).trimStart();
+		if (canon_line.startsWith ("(gdb)")) {
+		    canon_line = canon_line.slice ("(gdb)".length).trimStart();
+		} else if (canon_line.startsWith (">")) {
+		    canon_line = canon_line.slice (">".length).trimStart ();
 		}
 		if (canon_line.match("^" + key + "\\b")) {
 		    const range = new vscode.Range(i, 0, i, 0);
