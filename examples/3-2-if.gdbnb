@@ -32,12 +32,12 @@
     },
     {
       "kind": "code",
-      "value": "# fact関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break fact if n==0\n(gdb) run\n# fact関数の先頭行でブレークする\n# Breakpoint 1, fact (n=5) at fact.c:5\n# 5\t    if (n <= 0) {",
+      "value": "# fact関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break fact if n==0\n(gdb) run\n# fact関数の先頭行でブレークする（nはゼロ）\n# Breakpoint 1, fact (n=0) at fact.c:5\n# 5\t    if (n <= 0) {",
       "languageId": "gdb_command"
     },
     {
       "kind": "code",
-      "value": "# ブレークポイントを確認し，ブレークポイントを無効化して，実行を再開する\n(gdb) backtrace\n#0  fact (n=0) at fact.c:5\n#1  0x0000555555555172 in fact (n=1) at fact.c:8\n#2  0x0000555555555172 in fact (n=2) at fact.c:8\n#3  0x0000555555555172 in fact (n=3) at fact.c:8\n#4  0x0000555555555172 in fact (n=4) at fact.c:8\n#5  0x0000555555555172 in fact (n=5) at fact.c:8\n#6  0x000055555555518a in main () at fact.c:14\n(gdb) continue\n(gdb) quit",
+      "value": "# ブレークポイントに到達したらbactraceコマンドでバックトレースを表示する\n(gdb) backtrace\n#0  fact (n=0) at fact.c:5\n#1  0x0000555555555172 in fact (n=1) at fact.c:8\n#2  0x0000555555555172 in fact (n=2) at fact.c:8\n#3  0x0000555555555172 in fact (n=3) at fact.c:8\n#4  0x0000555555555172 in fact (n=4) at fact.c:8\n#5  0x0000555555555172 in fact (n=5) at fact.c:8\n#6  0x000055555555518a in main () at fact.c:14\n(gdb) continue\n# fact (5) = 120\n# [Inferior 1 (process 222585) exited normally]\n(gdb) quit",
       "languageId": "gdb_command"
     },
     {
