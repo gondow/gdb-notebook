@@ -18,6 +18,7 @@
 	    disp: "display",
 	    dis: "disable",
 	    en: "enable",
+	    d: "delete",
 	},
 	commandMap: {
 	    break: {
@@ -502,6 +503,21 @@
 		    ],
 		],
 		url: "",
+	    },
+	    delete: {
+		exp: "delete",
+		abbr: "d",
+		usage: [
+		    [
+			"delete 1",
+			"1番目のブレークポイントを削除する"
+		    ],
+		    [
+			"delete",
+			"すべてのブレークポイントを削除する"
+		    ],
+		],
+		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E3%82%B9%E3%82%B3%E3%83%BC%E3%83%97%E3%81%AE%E6%8C%87%E5%AE%9A-:~:text=end%E3%81%A7%E7%B5%82%E4%BA%86)-,delete,-%E7%95%AA%E5%8F%B7",
 	    },
 	},
     },
