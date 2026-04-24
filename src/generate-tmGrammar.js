@@ -29,7 +29,7 @@ const gdb_tmGrammar_json = {
 	    "name": "comment.line.number-sign.gdb"
 	},
 	{
-	    "match": "^\\(gdb\\)",
+	    "match": "^\\(gdb\\)|>",
 	    "name": "support.function.gdb"
 	}
     ]
