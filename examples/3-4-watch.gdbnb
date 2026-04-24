@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### ブレークポイントを設定し，繰り返し`continue`する\n#### 説明\n- `continue`は，実行再開後，次のブレークポイントまで実行を続けます．ブレークポイントに当たらなければ，プログラムを最後まで実行します．\n#### 問題\n- [`fact.c`](fact.c)の`fact`関数の先頭行にブレークポイントを設定して，そこで実行を一時停止させる．その後，ブレークするたびに，繰り返し実行を再開させよう",
+      "value": "### `watch`で変数への書き込みを監視する\n#### 説明\n- `watch`は指定した変数（や式）の変化（書き込み）を監視します．変化したらブレークします．`watch`が設定したブレークポイントを**ウォッチポイント**といいます．\n- ウォッチポイントは「どこで値が変わるのか分からない」という場合に便利です．\n- `break`と同様に，`watch`にも`if`で条件を指定できます． 例えば，`watch x if x==13`とすると，変数の値が`13`になった時点でブレークできます．\n- `watch`は通常，ハードウェア機能を使うため，高速ですが指定できる個数に限りがあります．また，仮想環境では`watch`がうまく動作しないことがあります（ホスト環境にウォッチポイントのハードウェア機能が無いことが原因で）\n#### 問題\n- [`watch.c`](watch.c)の`main`関数の先頭行にブレークポイントを設定して，そこで実行を一時停止させる．ウォッチポイントを変数`x`に設定し，実行を再開させよう．",
       "languageId": "markdown"
     },
     {
@@ -12,12 +12,12 @@
     },
     {
       "kind": "code",
-      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "value": "# watch.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
       "languageId": "shellscript"
     },
     {
       "kind": "code",
-      "value": "# fact関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) \n# ブレーク後に実行を再開すると，再びfactの先頭行でブレークする\n(gdb) \n# 実行が終了するまで，繰り返し実行を再開する\n(gdb) ",
+      "value": "# main関数の銭湯にブレークポイントを設定し，実行を開始する\n(gdb) \n# 変数xにウォッチポイントを設定し，実行を再開する\n(gdb) \n",
       "languageId": "gdb_command"
     },
     {
@@ -27,23 +27,18 @@
     },
     {
       "kind": "code",
-      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g fact.c\n$ gdb -q ./a.out",
+      "value": "# watch.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g watch.c\n$ gdb -q ./a.out",
       "languageId": "shellscript"
     },
     {
       "kind": "code",
-      "value": "# fact関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break fact\n(gdb) run\n# fact関数の先頭行でブレークする\n# Breakpoint 1, fact (n=5) at fact.c:5\n# 5\t    if (n <= 0) {",
+      "value": "# main関数の銭湯にブレークポイントを設定し，実行を開始する\n(gdb) break main\n(gdb) run\n# 変数xにウォッチポイントを設定し，実行を再開する\n(gdb) watch x\n# Hardware watchpoint 2: x\n(gdb) continue\n# Hardware watchpoint 2: x\n# Old value = 21845\n# New value = 10\n# main () at watch.c:4\n# 4\t    x += 3;\n(gdb) continue\n# Hardware watchpoint 2: x\n# Old value = 10\n# New value = 13\n# main () at watch.c:5\n# 5\t    x += 4;\n(gdb) continue\n# Hardware watchpoint 2: x\n# Old value = 13\n# New value = 17\n# main () at watch.c:6\n# 6\t    return x;\n(gdb) quit\ny",
       "languageId": "gdb_command"
     },
     {
-      "kind": "code",
-      "value": "# ブレーク後に実行を再開すると，再びfactの先頭行でブレークする\n(gdb) continue\n# Breakpoint 1, fact (n=4) at fact.c:5\n# 5\t    if (n <= 0) {",
-      "languageId": "gdb_command"
-    },
-    {
-      "kind": "code",
-      "value": "# 実行が終了するまで，繰り返し実行を再開する\n(gdb) continue\n# reakpoint 1, fact (n=3) at fact.c:5\n# 5           if (n <= 0) {\n(gdb) continue\n# reakpoint 1, fact (n=2) at fact.c:5\n# 5           if (n <= 0) {\n(gdb) continue\n# reakpoint 1, fact (n=1) at fact.c:5\n# 5           if (n <= 0) {\n(gdb) continue\n# reakpoint 1, fact (n=0) at fact.c:5\n# 5           if (n <= 0) {\n(gdb) continue\n# fact (5) = 120\n# [Inferior 1 (process 184430) exited normally]\n(gdb) quit\n",
-      "languageId": "gdb_command"
+      "kind": "markdown",
+      "value": "#### 補足\n- `watch`は「書き込み」を監視します．「読み込み」を監視したい時は`rwatch`， 「読み書き」の両方を監視したい時は`awatch`を使います．",
+      "languageId": "markdown"
     }
   ]
 }
