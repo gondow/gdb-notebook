@@ -528,7 +528,7 @@
 		abbr: "comm",
 		usage: [
 		    [
-			"commands\n> print n\n> continue\n> end",
+			"commands<pre/>&gt; print n<pre/>&gt; continue<pre/>&gt; end",
 			"ブレークポイントで一時停止するたびに，変数の表示(print n)と実行再開(continue)を行う"
 		    ],
 		],

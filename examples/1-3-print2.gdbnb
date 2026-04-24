@@ -17,7 +17,7 @@
     },
     {
       "kind": "code",
-      "value": "# main関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) \n# ブレーク後に式 fact(5) の値を表示する\n(gdb) ",
+      "value": "# main関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) \n# ブレーク後に式 fact(5) の値を表示する\n(gdb)",
       "languageId": "gdb_command"
     },
     {

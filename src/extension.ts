@@ -532,11 +532,14 @@ export async function activate(context: vscode.ExtensionContext) {
 				    },
 				    vscode.CompletionItemKind.Keyword);
 				item.detail = `(${cmd.abbr}) ` + cmd.exp;
-				item.documentation = new vscode.MarkdownString(
+				item.documentation = new vscode.MarkdownString ();
+				item.documentation.supportHtml = true;
+				item.documentation.appendMarkdown (
 				    "|使用例|説明|\n|--|--|\n" +
 					cmd.usage.map(([cmd, desc]) => {
-					    return `|\`${cmd}\`|${desc}|`
-					}).join("\n"));
+					    return `|${cmd}|${desc}|`
+					}).join("\n")
+				);
 				return item;
 			    });
 		    }
@@ -550,11 +553,14 @@ export async function activate(context: vscode.ExtensionContext) {
 				    { label: key, description: cmd.exp },
 				    vscode.CompletionItemKind.Keyword);
 				item.detail = `(${cmd.abbr}) ` + cmd.exp;
-				item.documentation = new vscode.MarkdownString(
+				item.documentation = new vscode.MarkdownString ();
+				item.documentation.supportHtml = true;
+				item.documentation.appendMarkdown (
 				    "|使用例|説明|\n|--|--|\n" +
 					cmd.usage.map(([cmd, desc]) => {
-					    return `|\`${cmd}\`|${desc}|`
-					}).join("\n"));
+					    return `|${cmd}|${desc}|`
+					}).join("\n")
+				);
 				return item;
 			    });
 		    }
@@ -573,7 +579,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				item.documentation = new vscode.MarkdownString(
 				    "|使用例|説明|\n|--|--|\n" +
 					cmd.usage.map(([cmd, desc]) => {
-					    return `|\`${cmd}\`|${desc}|`
+					    return `|${cmd}|${desc}|`
 					}).join("\n"));
 				return item;
 			    });
@@ -624,10 +630,12 @@ export async function activate(context: vscode.ExtensionContext) {
 					{ label: key, description: cmd.exp },
 					vscode.CompletionItemKind.Keyword);
 				    item.detail = cmd.exp;
-				    item.documentation = new vscode.MarkdownString(
+				    item.documentation = new vscode.MarkdownString ();
+				    item.documentation.supportHtml = true;
+				    item.documentation.appendMarkdown (
 					"|使用例|説明|\n|--|--|\n" +
 					    cmd.usage.map(([cmd, desc]) => {
-						return `|\`${cmd}\`|${desc}|`
+						return `|${cmd}|${desc}|`
 					    }).join("\n"));
 				    return item;
 				});
@@ -675,7 +683,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				item.documentation = new vscode.MarkdownString(
 				    "|使用例|説明|\n|--|--|\n" +
 					cmd.usage.map(([cmd, desc]) => {
-					    return `|\`${cmd}\`|${desc}|`
+					    return `|${cmd}|${desc}|`
 					}).join("\n"));
 				return item;
 			    });
@@ -691,7 +699,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			    item.documentation = new vscode.MarkdownString(
 				"|使用例|説明|\n|--|--|\n" +
 				    cmd.usage.map(([cmd, desc]) => {
-					return `|\`${cmd}\`|${desc}|`
+					return `|${cmd}|${desc}|`
 				    }).join("\n"));
 			    return item;
 			});
