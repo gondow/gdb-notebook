@@ -39,6 +39,11 @@
       "kind": "code",
       "value": "# ブレークポイントを確認し，ブレークポイントを無効化して，実行を再開する\n(gdb) info breakpoints\n# Num     Type           Disp Enb Address            What\n# 1       breakpoint     keep y   0x0000555555555158 in fact at fact.c:5\n#         breakpoint already hit 1 time\n#\n# ブレークポイントの1番目を無効化 \n(gdb) disable 1\n(gdb) info breakpoints\n# Num     Type           Disp Enb Address            What\n# 1       breakpoint     keep n   0x0000555555555158 in fact at fact.c:5\n#         breakpoint already hit 1 time\n(gdb) continue\nact (5) = 120\n[Inferior 1 (process 185266) exited normally]\n(gdb) quit",
       "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- ブレークポイントは複数設定できます．`disable`とすると，すべてのブレークポイントを無効化できます．無効化ではなく，削除したい場合は`delete`コマンドを使います．",
+      "languageId": "markdown"
     }
   ]
 }
