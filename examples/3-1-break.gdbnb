@@ -1,0 +1,44 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### ブレークポイントの確認や有効化・無効化を行う\n#### 説明\n- `info breakpoints` (`i b`)で設定したブレークポイント一覧を表示できます\n- `disable`と`enable`でブレークポイントを有効化・無効化できます\n#### 問題\n- [`fact.c`](fact.c)の`fact`関数の先頭行にブレークポイントを設定して，そこで実行を一時停止させる．次に，ブレークポイントを無効化してから実行を再開しよう",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# fact関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) \n# ブレークポイントを確認し，ブレークポイントを無効化して，実行を再開する\n(gdb) ",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g fact.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# fact関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break fact\n(gdb) run\n# fact関数の先頭行でブレークする\n# Breakpoint 1, fact (n=5) at fact.c:5\n# 5\t    if (n <= 0) {",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "code",
+      "value": "# ブレークポイントを確認し，ブレークポイントを無効化して，実行を再開する\n(gdb) info breakpoints\n# Num     Type           Disp Enb Address            What\n# 1       breakpoint     keep y   0x0000555555555158 in fact at fact.c:5\n#         breakpoint already hit 1 time\n#\n# ブレークポイントの1番目を無効化 \n(gdb) disable 1\n(gdb) info breakpoints\n# Num     Type           Disp Enb Address            What\n# 1       breakpoint     keep n   0x0000555555555158 in fact at fact.c:5\n#         breakpoint already hit 1 time\n(gdb) continue\nact (5) = 120\n[Inferior 1 (process 185266) exited normally]\n(gdb) quit",
+      "languageId": "gdb_command"
+    }
+  ]
+}
