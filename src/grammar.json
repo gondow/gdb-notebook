@@ -19,6 +19,10 @@
 	    dis: "disable",
 	    en: "enable",
 	    d: "delete",
+	    comm: "commands",
+	    tb: "tbreak",
+	    rb: "rbreak",
+	    wa: "watch",
 	},
 	commandMap: {
 	    break: {
@@ -456,7 +460,7 @@
 		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E3%82%B9%E3%82%B3%E3%83%BC%E3%83%97%E3%81%AE%E6%8C%87%E5%AE%9A-:~:text=%E3%81%AB%E5%BD%93%E3%81%9F%E3%82%8B%E3%81%BE%E3%81%A7%E5%AE%9F%E8%A1%8C-,until,-%E5%A0%B4%E6%89%80",
 	    },
 	    list: {
-		exp: "list",
+		exp: "ソースコードを少し表示する",
 		abbr: "l",
 		usage: [
 		    [
@@ -475,7 +479,7 @@
 		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E3%82%B9%E3%82%B3%E3%83%BC%E3%83%97%E3%81%AE%E6%8C%87%E5%AE%9A-:~:text=%E8%AA%AC%E6%98%8E-,list,-%E5%A0%B4%E6%89%80",
 	    },
 	    disable: {
-		exp: "disable",
+		exp: "ブレークポイントを無効化する",
 		abbr: "dis",
 		usage: [
 		    [
@@ -490,7 +494,7 @@
 		url: "",
 	    },
 	    enable: {
-		exp: "enable",
+		exp: "ブレークポイントを有効化する",
 		abbr: "en",
 		usage: [
 		    [
@@ -505,7 +509,7 @@
 		url: "",
 	    },
 	    delete: {
-		exp: "delete",
+		exp: "ブレークポイントを削除する",
 		abbr: "d",
 		usage: [
 		    [
@@ -518,6 +522,50 @@
 		    ],
 		],
 		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E3%82%B9%E3%82%B3%E3%83%BC%E3%83%97%E3%81%AE%E6%8C%87%E5%AE%9A-:~:text=end%E3%81%A7%E7%B5%82%E4%BA%86)-,delete,-%E7%95%AA%E5%8F%B7",
+	    },
+	    commands: {
+		exp: "コマンド付きブレークポイントを設定する",
+		abbr: "comm",
+		usage: [
+		    [
+			"commands\n> print n\n> continue\n> end",
+			"ブレークポイントで一時停止するたびに，変数の表示(print n)と実行再開(continue)を行う"
+		    ],
+		],
+		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#break-with-commands",
+	    },
+	    tbreak: {
+		exp: "一時的なブレークポイントを設定する",
+		abbr: "tb",
+		usage: [
+		    [
+			"tbreak fact",
+			"fact関数に一時的なブレークポイントを設定する"
+		    ],
+		],
+		url: "",
+	    },
+	    rbreak: {
+		exp: "正規表現にマッチするすべての関数にブレークポイントを設定する",
+		abbr: "rb",
+		usage: [
+		    [
+			"rbreak ^test.*",
+			"関数名がtestで始まるすべての関数にブレークポイントを設定する"
+		    ],
+		],
+		url: "",
+	    },
+	    watch: {
+		exp: "ウォッチポイント(書き込み)を設定する",
+		abbr: "wa",
+		usage: [
+		    [
+			"watch x",
+			"変数xにウォッチポイント(書き込み)を設定する"
+		    ],
+		],
+		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E5%A4%89%E6%95%B0%E3%82%84%E5%BC%8F%E3%81%AE%E5%A4%89%E6%9B%B4%E7%9B%A3%E8%A6%96-watch",
 	    },
 	},
     },
