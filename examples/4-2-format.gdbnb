@@ -1,0 +1,44 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "#### 説明\n- `printf`では`print/x`，`print /x`とすることで出力フォーマットを指定できます．`/x`は「16進数で出力」を意味します．`/`の前の空白はあってもなくても構いません．\n- 以下のフォーマットを指定できます．\n\n|フォーマット指定| 説明|\n|:-:|-|\n|x|\t16進数 (hexadecimal)|\n|z|\t16進数 (上位バイトのゼロも表示)|\n|o|\t8進数 (octal)|\n|d|\t符号あり10進数 (decimal)|\n|u|\t符号なし10進数 (unsigned)|\n|t|\t2進数 (two)|\n|c|\t文字 (char)|\n|s|\t文字列 (string)|\n|i|\t機械語命令 (instruction)|\n|a|\tアドレス (address)|\n|f|\t浮動小数点数 (float)|",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 問題\n- [`format.c`](format.c)の`printf`文の行でブレークし，変数`x`の値を「16進数」「2進数」「10進数」で表示してみよう",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# format.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# format.cのprintf文の行でブレークし，\n(gdb) \n# 変数の値を16進数で表示する\n(gdb) \n# 変数の値を2進数で表示する\n(gdb) \n# 変数の値を10進数で表示する\n(gdb) ",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# format.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g format.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# format.cのprintf文の行でブレークし，\n(gdb) break 5\n# Breakpoint 1 at 0x115c: file format.c, line 5.\n(gdb) run\n# Breakpoint 1, main () at format.c:5\n# 5           printf (\"%d\\n\", x);\n#\n# 変数の値を16進数で表示する\n(gdb) print/x x\n# $1 = 0x3e7\n#\n# 変数の値を2進数で表示する\n(gdb) print/t x\n# $2 = 1111100111\n#\n# 変数の値を10進数で表示する\n(gdb) print/d x\n# $3 = 999\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    }
+  ]
+}

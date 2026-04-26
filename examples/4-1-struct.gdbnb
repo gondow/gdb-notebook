@@ -1,0 +1,44 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "#### 説明\n- `print`を使うと構造体の中身を全部表示できます．`print *p->next`などと，C言語の式の値を表示できます．このように，`print`を使ってデータ構造の中身を調べると，`printf`デバッグより効率よくデバッグできます．\n#### 問題\n- [`list.c`](list.c)の`main`関数の最終行にブレークポイントを設定して，そこで実行を一時停止させる．その後，`print`コマンドでリスト構造の中身を表示してみよう．\n- `main`関数の最終行で，リスト構造は以下のようになってます．\n\n<div style=\"background-color: white; padding: 5px; display: inline-block;\">  \n\n![](https://gondow.github.io/linux-x86-64-programming/figs/list.svg)\n</div>",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# list.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の最終行にブレークポイントを設定し，実行を開始する\n(gdb) \n# 変数`p`が指すリスト構造の中身を表示する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# list.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g list.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の最終行にブレークポイントを設定し，実行を開始する\n(gdb) break 13\n# Breakpoint 1 at 0x119e: file list.c, line 13.\n# 変数`p`が指すリスト構造の中身を表示する\n(gdb) run\n# reakpoint 1, main () at list.c:13\n# 13      }\n(gdb) print p\n# $1 = (struct list *) 0x7fffffffde10\n(gdb) print *p\n# $2 = {data = 30, next = 0x7fffffffde00}\n(gdb) print *p->next\n# $3 = {data = 20, next = 0x7fffffffddf0}\n(gdb) print *p->next->next\n# $4 = {data = 10, next = 0x0}\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- `*p->next` は `*(p->next)` と同じです．`*p->next->next` は `*((p->next)->next)` と同じです．gdb上で確認してみましょう．",
+      "languageId": "markdown"
+    }
+  ]
+}

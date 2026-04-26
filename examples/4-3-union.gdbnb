@@ -1,0 +1,44 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "#### 説明\n- `print`で共用体を表示すると，どのメンバが使われているかがgdbには分からないので，すべての可能性を表示します（共用体なので，どれか1つのメンバーだけが使われています）\n- 明示的にメンバーを指定すると（例：`print f.u1`），そのメンバに対する値を表示します．\n#### 問題\n- [`union.c`](union.c)の`main`関数の最終行にブレークポイントを設定して，そこで実行を一時停止させる．その後，`print`コマンドで共用体の中身を表示してみよう．",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# union.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の最終行にブレークポイントを設定し，実行を開始する\n(gdb) \n# 共用体fの中身を表示する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# union.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g union.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の最終行にブレークポイントを設定し，実行を開始する\n(gdb) break 13\n# Breakpoint 1 at 0x114a: file union.c, line 13.\n(gdb) run\n# Breakpoint 1, main () at union.c:13\n13      }\n# 共用体fの中身を表示する\n(gdb) print f\n# $1 = {u1 = 1123477881, u2 = 123.456001}\n(gdb) print f.u1\n# $2 = 1123477881\n(gdb) print f.u2\n# $3 = 123.456001\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- `*p->next` は `*(p->next)` と同じです．`*p->next->next` は `*((p->next)->next)` と同じです．gdb上で確認してみましょう．",
+      "languageId": "markdown"
+    }
+  ]
+}
