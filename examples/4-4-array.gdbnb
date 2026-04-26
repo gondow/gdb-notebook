@@ -1,0 +1,44 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "#### 説明\n- 普通の配列は`print`で一度にすべての要素を表示できますが，`malloc`で確保した場合は配列の要素数がgdbには分からないため，表示できません．`print *p@4`などと`@`を使って要素数を指定すれば表示できます．\n#### 問題\n- [`array.c`](array.c)の`main`関数の最終行でブレークし，配列`array`，`p`が指す配列を表示しよう．\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# array.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の最終行にブレークポイントを設定し，実行を開始する\n(gdb) \n# 配列arrayと，ポインタpが指す配列の内容を表示する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# array.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g array.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の最終行にブレークポイントを設定し，実行を開始する\n(gdb) b 10\n# Breakpoint 1 at 0x11e7: file array.c, line 10.\n(gdb) run\n# Breakpoint 1, main () at array.c:10\n# 10      }\n# 配列arrayと，ポインタpが指す配列の内容を表示する\n(gdb) print array\n# 1 = {0, 10, 20, 30}\n(gdb) print *p\n# @を使わないと，配列の先頭要素だけを表示\n# $2 = 40\n(gdb) print *p@4\n# $3 = {40, 50, 60, 70}\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- `*p->next` は `*(p->next)` と同じです．`*p->next->next` は `*((p->next)->next)` と同じです．gdb上で確認してみましょう．",
+      "languageId": "markdown"
+    }
+  ]
+}
