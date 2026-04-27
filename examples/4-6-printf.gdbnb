@@ -1,0 +1,44 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### `printf`でC言語のprintf風の表示をする\n#### 説明\n-  `printf`コマンドを使うと，C言語の`printf`のような書式を指定して表示できます\n- 例えば，`printf \"n = %d\\n\", n` のようにカンマ区切りで引数を指定します(`printf`の直後にはカンマがないことに注意)\n#### 問題\n- [`fact.c`](fact.c)の`fact`関数の先頭行でブレークし，`printf`を使って，`\"n = %d\\n\"`という書式で変数`n`の値を表示しよう",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# fact関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) \n# printfを使って，\"n = %d\\n\"という書式で変数nの値を表示する\n(gdb) ",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g fact.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# fact関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break fact\n# Breakpoint 1 at 0x1158: file fact.c, line 5.\n(gdb) run\n# reakpoint 1, fact (n=5) at fact.c:5\n# 5           if (n <= 0) {\n#\n# printfを使って，\"n = %d\\n\"という書式で変数nの値を表示する\n(gdb) printf \"n = %d\\n\", n\n# n = 5\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- 以下のように引数で型キャストもできるので，特定のアドレスの値を読む時に便利です (`x`コマンド [`xxx.gdbnb`](xxx.gdbnb)でもメモリの内容は読めます)\n```\n(gdb) printf \"%d\\n\", *(int *)ptr\n```",
+      "languageId": "markdown"
+    }
+  ]
+}

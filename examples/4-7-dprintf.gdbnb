@@ -1,0 +1,49 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### dprintf`で動的なprintfを設定する\n#### 説明\n- `dprintf`を使うと（ソースコードを変更せず）`printf`をプログラムに埋め込んだ効果を出せます\n  - より正確にはコマンド付きブレークポイント([`3-3-commands.gdbnb`](3-3-commands.gdbnb))を使って，ブレークするたびに`printf`と`continue`を実行するのと同じです\n- 例えば，`dprintf fact, \"n = %d\\n\", n` とすると，ソースコードの`fact`関数の先頭に`printf (\"n = %d\\n\", n);`と書いたのと同じになります\n\n#### 問題\n- [`fact.c`](fact.c)で，`dprintf fact, \"n = %d\\n\", n`を設定し，実行しよう\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# dprintf fact, \"n = %d\\n\", n を設定し，実行しよう\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g fact.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# dprintf fact, \"n = %d\\n\", n を設定し，実行しよう\n(gdb) dprintf fact, \"n = %d\\n\", n\n# Dprintf 1 at 0x1158: file fact.c, line 5.\n(gdb) run\n# n = 5\n# n = 4\n# n = 3\n# n = 2\n# n = 1\n# n = 0\n# fact (5) = 120\n(gdb) quit",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- コマンド付きブレークポイント([`3-3-commands.gdbnb`](3-3-commands.gdbnb))でも同じ事ができますが，`dprintf`の方が簡単です\n- `dprintf`はブレークポイントの一種なので，`disable`，`enable`，`delete`コマンドで，それぞれ無効化，有効化，削除を行えます\n- `printf`と`dprintf`の違いは，`printf`は「今の状態を表示しろ」，`dprintf`は「ここを通るたびに表示しろ」です．このため`dprintf`では「実行が通るたびに何度も出力される」点が大きく違います\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "",
+      "languageId": "markdown"
+    }
+  ]
+}

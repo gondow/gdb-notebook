@@ -1,0 +1,39 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### スコープを指定して， `print`で変数の値を表示する\n\n#### 説明\n- '::'を使ってスコープを指定すると，特定のファイルや関数中の変数の値を表示できます．\n  - `print 'scope.c'::x` は[`scope.c`](scope.c)のグローバル変数xの値を表示します． (ファイル名をクオート文字 ' で囲む必要があります)．\n  - `print  main::x` は関数main中の静的変数xの値を表示します．\n#### 問題\n- [`scope.c`](scope.c)の`main`関数の8行目でブレークし，そこで2行目の変数`x`の値と，5行目の変数`x`の値を表示してみよう\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# scope.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の8行目でブレークする\n(gdb) \n# 2行目の変数`x`の値と，5行目の変数`x`の値を表示する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# list.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g scope.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の8行目でブレークする\n(gdb) break 8\n# Breakpoint 1 at 0x115c: file scope.c, line 8.\n(gdb) run\n# Breakpoint 1, main () at scope.c:8\n# 8               printf (\"x=%d\\n\", x);\n#\n# 2行目の変数`x`の値と，7行目の変数`x`の値を表示する\n(gdb) print x\n# スコープを指定しないと7行目の変数xの値が表示される\n# $1 = 333\n(gdb) print 'scope.c'::x\n# ファイル名を指定して2行目の変数xを表示\n# $2 = 111\n(gdb) print main::x\n# 関数名を指定して5行目の変数xを表示\n# $3 = 222\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    }
+  ]
+}
