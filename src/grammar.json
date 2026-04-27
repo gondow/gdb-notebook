@@ -3,27 +3,29 @@
     // GDBコマンド用のデータ
     "gdb_command": {
 	aliasMap: {
-	    if: "if", // これだけ特別
 	    b: "break",
-	    r: "run",
+	    bt: "backtrace",
 	    c: "continue",
+	    comm: "commands",
+	    d: "delete",
+	    do: "down",
+	    dis: "disable",
+	    disp: "display",
+	    en: "enable",
+	    f:  "frame",
+	    fin: "finish",
 	    i: "info",
+	    if: "if", // これだけ特別
+	    n: "next",
+	    ni: "nexti",
 	    p: "print",
 	    q: "quit",
-	    s: "step",
-	    n: "next",
-	    si: "stepi",
-	    ni: "nexti",
-	    fin: "finish",
-	    disp: "display",
-	    dis: "disable",
-	    en: "enable",
-	    d: "delete",
-	    comm: "commands",
-	    tb: "tbreak",
+	    r: "run",
 	    rb: "rbreak",
+	    s: "step",
+	    si: "stepi",
+	    tb: "tbreak",
 	    wa: "watch",
-	    bt: "backtrace",
 	},
 	commandMap: {
 	    break: {
@@ -590,6 +592,69 @@
 		    [
 			"end",
 			"commandsで入力するコマンド列の最後を示す"
+		    ],
+		],
+		url: "",
+	    },
+	    up: {
+		exp: "注目するスタックフレームを1つ上(呼び出した側)に移動",
+		abbr: "",
+		usage: [
+		    [
+			"up",
+			"注目するスタックフレームを1つ上(呼び出した側)に移動"
+		    ],
+		],
+		url: "",
+	    },
+	    down: {
+		exp: "注目するスタックフレームを1つ下(呼び出された側)に移動",
+		abbr: "do",
+		usage: [
+		    [
+			"down",
+			"注目するスタックフレームを1つ下(呼び出された側)に移動"
+		    ],
+		],
+		url: "",
+	    },
+	    frame: {
+		exp: "現在注目しているスタックフレームを表示，または指定したスタックフレームを選択",
+		abbr: "f",
+		usage: [
+		    [
+			"frame",
+			"現在注目しているスタックフレームを表示"
+		    ],
+		    [
+			"frame 5",
+			"5番目のスタックフレームを選択"
+		    ],
+		],
+		url: "",
+	    },
+	    printf: {
+		exp: "C言語のprintf風の表示をする",
+		abbr: "",
+		usage: [
+		    [
+			'printf "n=%d", n',
+			'変数nの値を書式"n=%d\n"で表示'
+		    ],
+		    [
+			'printf "%d", *(int *)ptr',
+			"アドレスptrの中身をint型にキャストして表示",
+		    ],
+		],
+		url: "",
+	    },
+	    dprintf: {
+		exp: "動的なprintfを設定する",
+		abbr: "",
+		usage: [
+		    [
+			'dprintf fact, "n=%d", n',
+			'fact関数の先頭行にprintfを設定(通るたびに表示)'
 		    ],
 		],
 		url: "",
