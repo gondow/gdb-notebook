@@ -1,0 +1,39 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### up，down，frameで注目するスタックフレームを変更する\n#### 説明：スタックフレーム\n- 関数呼び出しは**スタック**を使って管理されています．\n- 関数を呼び出すと，**スタックフレーム**というデータがスタックに追加(プッシュ)されて， スタックは上に成長します．その関数からリターンすると， そのスタックフレームはスタックから削除(ポップ)されて縮みます． \n- 例えば，`main`関数が`fact(5)`を呼び，その`fact(5)`が`fact(4)`を呼ぶと，以下の図の上半分のように`main`と`fact(5)`と`fact(4)`のスタックフレームがスタックに積まれます．`fact(4)`からリターンすると，`fact(4)`のスタックフレームは削除されます．\n- このようにスタックフレームは「関数呼び出しごとに1つのスタックフレーム」が作られます．\n \n\n<div style=\"background-color: white; padding: 5px; display: inline-block;\">  \n\n![](https://gondow.github.io/linux-x86-64-programming/figs/fact.svg)\n</div>\n\n\n- スタックフレームは関数呼び出し1回分のデータで， 局所変数，引数，返り値，戻り番地(リターンアドレス)，退避したレジスタの値などを含みます．\n  - ただし，これらのデータの一部はレジスタが保持する場合もあります．\n- `backtrace`が表示するバックトレースは「スタック上のスタックフレーム一覧を表示したもの」とも言えます．\n\n#### 説明：`up`，`down`，`frame`\n- ブレーク時にgdbは「一番上のスタックフレーム」に注目しています(下図では`fact(0)`のスタックフレーム)．\n- `up`コマンドで「この関数を呼び出した関数のスタックフレーム」に注目を移します．(下図では例えば`fact(0)`から`fact(1)`に移動．図やバックトレースでは「下」に移ることに注意)\n- `down`コマンドで「この関数が呼び出した関数のスタックフレーム」に注目を移します(下図では例えば`fact(1)`から`fact(0)`に移動)．\n- 現在，注目しているスタックフレームは`frame`で表示されます．`frame 3`などと番号を指定すると，その番号のスタックフレームに注目を移します．\n\n<div style=\"background-color: white; padding: 5px; display: inline-block;\">  \n\n![](https://gondow.github.io/linux-x86-64-programming/figs/fact2.svg)\n</div>\n\n#### 問題\n- [`fact.c`](fact.c)に対して，`break fact if n==0`を設定し，ブレークした後に，以下を行おう\n  - バックトレースを表示しよう\n  - `up`で`fact(0)`から`fact(1)`のスタックフレームに移動しよう\n  - `frame`コマンドで`fact(1)`のスタックフレームに居ることを確認しよう\n  - `down`で`fact(1)`から`fact(0)`のスタックフレームに戻ろう\n  - `frame 5`で，5番目のスタックフレームに移動しよう，そして`print n`の出力を確かめよう\n  ",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# break fact if n==0を設定し，ブレークさせる\n(gdb) \n# バックトレースを表示する\n(gdb)\n# upでfact(0)からfact(1)のスタックフレームに移動する\n(gdb) \n# frameコマンドでfact(1)のスタックフレームに居ることを確認する\n(gdb)\n# downでfact(1)からfact(0)のスタックフレームに戻る\n(gdb)\n# frame 5で，5番目のスタックフレームに移動し，print nの出力を確かめる",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g fact.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# break fact if n==0を設定し，ブレークさせる\n(gdb) break fact if n==0\n# Breakpoint 1 at 0x1158: file fact.c, line 5.\n(gdb) run\n# Breakpoint 1, fact (n=0) at fact.c:5\n# 5           if (n <= 0) {\n#\n# バックトレースを表示する\n(gdb) backtrace\n# #0  fact (n=0) at fact.c:5\n# #1  0x0000555555555172 in fact (n=1) at fact.c:8\n# #2  0x0000555555555172 in fact (n=2) at fact.c:8\n# #3  0x0000555555555172 in fact (n=3) at fact.c:8\n# #4  0x0000555555555172 in fact (n=4) at fact.c:8\n# #5  0x0000555555555172 in fact (n=5) at fact.c:8\n# #6  0x000055555555518a in main () at fact.c:14\n#\n# upでfact(0)からfact(1)のスタックフレームに移動する\n(gdb) up\n# #1  0x0000555555555172 in fact (n=1) at fact.c:8\n# 8               return n * fact (n - 1);\n#\n# frameコマンドでfact(1)のスタックフレームに居ることを確認する\n(gdb) frame\n# #1  0x0000555555555172 in fact (n=1) at fact.c:8\n# 8               return n * fact (n - 1);\n#\n# downでfact(1)からfact(0)のスタックフレームに戻る\n(gdb) down\n# frame 5で，5番目のスタックフレームに移動し，print nの出力を確かめる\n(gdb) frame 5\n# #5  0x0000555555555172 in fact (n=5) at fact.c:8\n# 8               return n * fact (n - 1);\n(gdb) print n\n# fact(5)のフレームに居るので，nの値は5を出力\n# $1 = 5\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    }
+  ]
+}

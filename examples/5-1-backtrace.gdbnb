@@ -1,0 +1,49 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### バックトレースを表示する\n#### 説明\n- バックトレースとは「今，実行中の関数から遡って`main`関数に至るまでの 関数呼び出し系列」のことです．まだリターンしていない関数呼び出しだけが表示されます．リターン済みの関数呼び出しは表示されません．\n- gdbの`backtrace`コマンドを使うと，バックトレースが表示されます．\n#### 問題\n- [`fact.c`](fact.c)に対して，条件付きブレークポイントを使って，引数`n`の値が`0`のときだけ`fact`関数でブレークするように設定しよう．ブレークしたら，そこでバックトレースを表示しよう．\n  ",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# 条件付きブレークポイントを使って，引数nの値が0のときだけfact関数でブレークするように設定し，実行を開始する\n(gdb) \n# ブレークポイントに到達したらbactraceコマンドでバックトレースを表示する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g fact.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# 条件付きブレークポイントを使って，引数nの値が0のときだけfact関数でブレークするように設定し，実行を開始する\n(gdb) break fact if n==0\n# Breakpoint 1 at 0x1158: file fact.c, line 5.\n(gdb) run\n# fact関数の先頭行でブレークする（nはゼロ）\n# Breakpoint 1, fact (n=0) at fact.c:5\n# 5\t    if (n <= 0) {",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "code",
+      "value": "# ブレークポイントに到達したらbactraceコマンドでバックトレースを表示する\n(gdb) backtrace\n#0  fact (n=0) at fact.c:5\n#1  0x0000555555555172 in fact (n=1) at fact.c:8\n#2  0x0000555555555172 in fact (n=2) at fact.c:8\n#3  0x0000555555555172 in fact (n=3) at fact.c:8\n#4  0x0000555555555172 in fact (n=4) at fact.c:8\n#5  0x0000555555555172 in fact (n=5) at fact.c:8\n#6  0x000055555555518a in main () at fact.c:14\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n\n- スタックとスタックフレームについて，[こちら](https://gondow.github.io/linux-x86-64-programming/2-asm-intro.html#%E3%82%B9%E3%82%BF%E3%83%83%E3%82%AF%E3%81%A8%E3%82%B9%E3%82%BF%E3%83%83%E3%82%AF%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0)にも説明があります．",
+      "languageId": "markdown"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### 概要：\n- デバッガは，ブレーク中のプログラムの状態（例えば変数）を調べることが出来ます\n- 例えば，`print`コマンドを使うと，変数の値を表示できます（`print n`で変数`n`の値を表示）\n---\n![](../images/print.png)",
+      "value": "### 概要：\n- デバッガは，ブレーク中のプログラムの状態（例えば変数）を調べることが出来ます\n- 例えば，`print`コマンドを使うと，変数の値を表示できます（`print n`で変数`n`の値を表示）\n---\n![](https://gondow.github.io/linux-x86-64-programming/figs/print.png)",
       "languageId": "markdown"
     },
     {

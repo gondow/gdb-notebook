@@ -27,7 +27,7 @@
     },
     {
       "kind": "markdown",
-      "value": "#### ←ここを押すと「答え」が開きます\n- 以下のセルを実行すると，コンパイルや実行ができます\n- ターミナルに直接，コマンドを入力しても同じ事ができる（ので，ぜひやってみよう）\n\n<details>\n<summary>説明図</summary>\n\n![説明図](./execute-cell.png)\n</details>",
+      "value": "#### ←ここを押すと「答え」が開きます\n- 以下のセルを実行すると，コンパイルや実行ができます\n- ターミナルに直接，コマンドを入力しても同じ事ができる（ので，ぜひやってみよう）\n\n<details>\n<summary>説明図</summary>\n\n![説明図](https://gondow.github.io/linux-x86-64-programming/figs/execute-cell.png)\n</details>",
       "languageId": "markdown"
     },
     {
