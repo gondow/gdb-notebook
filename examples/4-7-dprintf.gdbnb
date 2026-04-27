@@ -39,11 +39,6 @@
       "kind": "markdown",
       "value": "#### 補足\n- コマンド付きブレークポイント([`3-3-commands.gdbnb`](3-3-commands.gdbnb))でも同じ事ができますが，`dprintf`の方が簡単です\n- `dprintf`はブレークポイントの一種なので，`disable`，`enable`，`delete`コマンドで，それぞれ無効化，有効化，削除を行えます\n- `printf`と`dprintf`の違いは，`printf`は「今の状態を表示しろ」，`dprintf`は「ここを通るたびに表示しろ」です．このため`dprintf`では「実行が通るたびに何度も出力される」点が大きく違います\n\n",
       "languageId": "markdown"
-    },
-    {
-      "kind": "markdown",
-      "value": "",
-      "languageId": "markdown"
     }
   ]
 }

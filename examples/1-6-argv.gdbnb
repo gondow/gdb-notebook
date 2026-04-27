@@ -1,0 +1,39 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### コマンドライン引数を与えて実行する\n#### 説明\n- [`argv.c`](argv.c)はコマンドライン引数を表示するプログラムです．例えば以下のようになります．\n```\n$ gcc -g argv.c\n$ ./a.out a b c d\nargv[0]=./a.out\nargv[1]=a\nargv[2]=b\nargv[3]=c\nargv[4]=d\n```\n- gdb上でコマンドライン引数を与えて実行するには，`run`コマンドに続けて引数を指定します(例：`run a b c d`)\n#### 問題\n- [`argv.c`](argv.c)をデバッガ上で実行しよう．その際，コマンドライン引数として`a b c d`を与えよう",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# argv.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# コマンドライン引数として「a b c d」を与えて実行を開始する\n(gdb) ",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gcc -g argv.c\n$ gdb -q ./a.out\n# もし，--Type <RET> for more, q to quit, c to continue without paging-- と表示されたら，c Return をターミナル上で入力して下さい",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# ターミナルの一番下に(gdb)が表示されてる状態で，以下のrunコマンドを実行しよう．a.outがデバッガ上で実行されます．\n(gdb) run a b c d\n(gdb) quit",
+      "languageId": "gdb_command"
+    }
+  ]
+}
