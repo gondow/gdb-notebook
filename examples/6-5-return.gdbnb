@@ -1,0 +1,54 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### `return`を使って，関数の返り値を変更する\n\n#### 説明\n- `return`コマンドを使うと(選択中のスタックフレームから)指定した返り値でリターンできます．リターン直後に実行は停止します．\n\n#### 問題\n- [`inf2-loop.c`](inf2-loop.c)に対して，以下の手順で無限ループから脱出させよう\n  - 実行後にCtrl-Cで無限ループをブレークさせる\n  - システムコール`time`にブレークポイントを設定し，実行を再開する\n  - `time`でブレークしたら，`return (time_t)0`してから，実行を再開する (`time`の返り値の型は`time_t`なのでキャストが必要になります)",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# inf2-loop.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# 実行を開始する\n(gdb) \n# 無限ループでgdbに制御が戻ってこない(gdbのプロンプトが表示されない)\n# ここで，ターミナル上でCtrl-Cを押すか，右上の「Ctrl-Cを送る」ボタンを押す",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "code",
+      "value": "# システムコールtimeにブレークポイントを設定し，実行を再開する\n(gdb)\n# timeでブレークしたら，return (time_t)0してから，実行を再開する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# inf2-loop.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g inf2-loop.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# 実行を開始する\n(gdb) run\n# 無限ループでgdbに制御が戻ってこない(gdbのプロンプトが表示されない)\n# ここで，ターミナル上でCtrl-Cを押すか，右上の「Ctrl-Cを送る」ボタンを押す\n#\n# ^C\n# Program received signal SIGINT, Interrupt.\n# 0x0000555555555070 in time@plt ()",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "code",
+      "value": "# システムコールtimeにブレークポイントを設定し，実行を再開する\n(gdb) break time\n# Breakpoint 1 at 0x7ffff7fc1be0\n(gdb) continue\n# reakpoint 1, 0x00007ffff7fc1be0 in time ()\n#\n# timeでブレークしたら，return (time_t)0してから，実行を再開する\n(gdb) return (time_t)0\ny\n# Make selected stack frame return now? (y or n) y\n# #0  0x000055555555518c in main () at inf2-loop.c:6\n# 6           while (time (NULL)) {\n(gdb) continue\n# hello, world\n(gdb) quit",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- システムコールやライブラリ関数にもブレークポイントを設定できます．ただし，デバッグ情報が無いことが多いので，行番号などの情報は表示されなくなります．",
+      "languageId": "markdown"
+    }
+  ]
+}
