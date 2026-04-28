@@ -37,7 +37,7 @@
     },
     {
       "kind": "markdown",
-      "value": "#### 補足\n- `compile file`コマンドもあります．ファイルに書いたCコードをプログラムに埋め込んで`gdb`上で実行できます．例えば，`ccompile file code.c`とします．[`code.c`](code.c)はこちらです．\n",
+      "value": "#### 補足\n- `compile file`コマンドもあります．ファイルに書いたCコードをプログラムに埋め込んで`gdb`上で実行できます．例えば，`ccompile file code.c`とします．[`code.c`](code.c)はこちらです．Cコード中で関数定義を書きたい場合は`compile file -raw code.c`のように`-raw`オプションをつけます．(`-raw`オプションがない場合，指定したコードを`void _gdb_expr () { CODE }`でラップします)\n",
       "languageId": "markdown"
     }
   ]
