@@ -1,0 +1,39 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### 変数の値を変更して，無限ループから脱出する\n\n#### 説明\n- デバッガは(プログラム実行状態を観察できるだけでなく)プログラムの実行状態を変更できます\n- つまり「ここでもし変数`x`の値が99だったら」「ここでもしループを抜けていたら」という違う状態での実行結果を試せます\n\n![](https://gondow.github.io/linux-x86-64-programming/figs/modify.png)\n\n#### 問題\n- [`var.c`](var.c)に対して，`main`関数の先頭行でブレークし，変数`x`の値を`99`に変更し，実行を再開しよう",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# inf-loop.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# 実行を開始する(無限ループするのでプロンプトが返ってこない)\n(gdb) \n# 変数xの値を99に変更し，実行を再開する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# inf-loop.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g inf-loop.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "(gdb) run\n\\x03",
+      "languageId": "gdb_command"
+    }
+  ]
+}

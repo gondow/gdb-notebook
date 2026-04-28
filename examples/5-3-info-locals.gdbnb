@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### info localsやinfo argsで局所変数や引数の値を一括表示する\n\n#### 説明\n- `info locals`で「今注目してるスタックフレームの局所変数の値一覧」を表示します\n- `info args`で「今注目してるスタックフレームの引数変数の値一覧」を表示します\n\n#### 問題\n- [`frame.c`](frame.c)に対して，6行目でブレークし，\n  - `info locals`で局所変数一覧を表示し，`info args`で引数一覧を表示する\n  - `up`で一つ上のスタックフレーム(`func_A(10, 20)`)に移動する\n  - `info locals`で局所変数一覧を表示し，`info args`で引数一覧を表示する",
+      "value": "### `info locals`や`info args`で局所変数や引数の値を一括表示する\n\n#### 説明\n- `info locals`で「今注目してるスタックフレームの局所変数の値一覧」を表示します\n- `info args`で「今注目してるスタックフレームの引数変数の値一覧」を表示します\n\n#### 問題\n- [`frame.c`](frame.c)に対して，6行目でブレークし，\n  - `info locals`で局所変数一覧を表示し，`info args`で引数一覧を表示する\n  - `up`で一つ上のスタックフレーム(`func_A(10, 20)`)に移動する\n  - `info locals`で局所変数一覧を表示し，`info args`で引数一覧を表示する",
       "languageId": "markdown"
     },
     {
