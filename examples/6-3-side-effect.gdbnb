@@ -1,0 +1,39 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### 副作用を持つ関数を呼び出して，実行状態を変更する\n\n#### 説明\n- [`6-1-assignment.gdbnb`](6-1-assignment.gdbnb)や[`6-2-infinite-loop.gdbnb`](6-2-infinite-loop.gdb`)で分かる通り，`print`コマンドの引数は副作用がある式でも構いません．当然，副作用を持つ関数を`print`コマンドを使って呼び出す(そして実行状態を変化させる)ことも可能です．\n\n#### 問題\n- [`inc.c`](inc.c)に対して，`inc`関数を`print`を使って何度か呼び出して，最終的な画面出力が`x = 5`になるようにしよう",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# innc.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数でブレークさせる\n(gdb) \n# printを使って，inc関数を何度か呼び出してから，実行を再開する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# inc.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g inc.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数でブレークさせる\n(gdb) break main\n# Breakpoint 1 at 0x116b: file inc.c, line 12.\n(gdb) run\n# Breakpoint 1, main () at inc.c:12\n# 12          printf (\"x = %d\\n\", x);\n#\n# printを使って，inc関数を何度か呼び出してから，実行を再開する\n(gdb) print inc()\n# $1 = void\n(gdb) print inc()\n# $2 = void\n(gdb) continue\n# x = 5\n(gdb) quit",
+      "languageId": "gdb_command"
+    }
+  ]
+}
