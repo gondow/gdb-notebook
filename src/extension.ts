@@ -32,9 +32,6 @@ let helpProvider: CommandHelpViewProvider;
 let aliasMap: Record<string, string>;
 let commandMap: Record<string, CommandData>;
 let shellCommandMap: Record<string, CommandData>;
-const extensionCommandMap: Record<string, string> = {
-    "gdbnb-reopen": "GDBNBファイルを再オープンして，このノートブックをリセット"
-};
 let gdbcodelens_provider: GdbCodeLensProvider;
 
 // 0: smart_long, 1: smart_short, 2: all
@@ -181,25 +178,34 @@ export async function activate(context: vscode.ExtensionContext) {
     shellCommandMap = grammar_data.shell_command.commandMap;
     // console.log (JSON.stringify (shellCommandMap, null, 2));
 
-    context.subscriptions.push(
-	vscode.commands.registerCommand('gdb-notebook.helloWorld', () => {
+    context.subscriptions.push (
+	vscode.commands.registerCommand ('gdb-notebook.helloWorld', () => {
 	    vscode.window.showInformationMessage('Hello from gdb-notebook!');
 	})
     );
 
-    context.subscriptions.push(
-	vscode.commands.registerCommand('gdb-notebook.reopenGDBNBFile', () => {
+    context.subscriptions.push (
+	vscode.commands.registerCommand ('gdb-notebook.reopenGDBNBFile', () => {
 	    reopenGDBNBFile();
 	})
     );
 
-    context.subscriptions.push(
-	vscode.workspace.registerNotebookSerializer(
+    context.subscriptions.push (
+	vscode.commands.registerCommand ('gdb-notebook.sendCtrlC', async () => {
+	    await vscode.commands.executeCommand (
+		'workbench.action.terminal.sendSequence',
+		{ text: '\u0003' }  // Ctrl+C
+	    );
+	})
+    );
+
+    context.subscriptions.push (
+	vscode.workspace.registerNotebookSerializer (
 	    "gdb-notebook", new GdbSerializer(), { transientOutputs: false }
 	)
     );
 
-    controller = vscode.notebooks.createNotebookController(
+    controller = vscode.notebooks.createNotebookController (
 	"gdb-controller", "gdb-notebook", "Gdb Controller");
     controller.supportedLanguages = ["code", "markdown", "shellscript", "gdb_command"];
     controller.executeHandler = async (cells, notebook) => {

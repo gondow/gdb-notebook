@@ -30,6 +30,11 @@
                 "icon": "$(debug-restart)"
             },
             {
+                "command": "gdb-notebook.sendCtrlC",
+                "title": "Ctrl-Cを送る",
+                "icon": "$(debug-pause)"
+            },
+            {
                 "command": "gdb-notebook.showHelp",
                 "title": "show help"
             },
@@ -70,6 +75,11 @@
                     "command": "gdb-notebook.reopenGDBNBFile",
                     "when": "notebookType == 'gdb-notebook'",
                     "group": "navigation@1"
+                },
+                {
+                    "command": "gdb-notebook.sendCtrlC",
+                    "when": "notebookType == 'gdb-notebook'",
+                    "group": "navigation@2"
                 }
             ]
         },
