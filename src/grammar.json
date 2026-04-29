@@ -10,6 +10,7 @@
 	    d: "delete",
 	    do: "down",
 	    dis: "disable",
+	    disas: "disassemble",
 	    disp: "display",
 	    en: "enable",
 	    f:  "frame",
@@ -704,7 +705,6 @@
 			"compile print ({int s = 0; for (int i = 0; i < n; i++) s += p[i]; s; })",
 			"Cコードをコンパイルして，プログラムに埋め込んで実行し，結果を表示する"
 		    ],
-
 		],
 		url: "",
 		subcommands: {
@@ -790,6 +790,21 @@
 			url: "",
 		    },
 		},
+	    },
+	    disassemble: {
+		exp: "逆アセンブルする",
+		abbr: "disas",
+		usage: [
+		    [
+			"disassemble",
+			"選択したフレームの関数を逆アセンブルする"
+		    ],
+		    [
+			"disassemble main",
+			"main関数を逆アセンブルする"
+		    ],
+		],
+		url: "",
 	    },
 	},
     },

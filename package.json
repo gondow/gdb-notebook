@@ -31,7 +31,7 @@
             },
             {
                 "command": "gdb-notebook.sendCtrlC",
-                "title": "Ctrl-Cを送る",
+                "title": "ctrl-cを送る",
                 "icon": "$(debug-pause)"
             },
             {
