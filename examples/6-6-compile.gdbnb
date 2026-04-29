@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### `compile code`を使って，プログラムを埋め込む\n\n#### 説明\n- `compile code`を使うと，C言語で記述した文をプログラムに埋め込んで，`gdb`上で実行できます．例えば，繰り返し`printf`したい場合などで便利です．\n- 使用例1： `compile code  { for (int i = 0; i < 4; i++) { p[i] = 999; }}`  // 1行の場合\n- 使用例2:  複数行の場合はコマンド付きブレークポイントと同様に最後に`end`を入れます (`printf`の宣言が無いと警告が出るので，宣言を入れてます)\n```\n(gdb) compile code\n> { int printf (const char *, ...);\n>   for (int i = 0; i < 4; i++) {\n>     printf (\"p[%d]=%d\\n\", i, p[i]);\n>   }\n> }\n> end\n```\n\n#### 問題\n- [`array.c`](array.c)に対して，`main`関数の最後の行でブレークさせ，`compile code`コマンドを使って，ループを使って`p[0]`から`p[3]`の値を表示してみよう\n",
+      "value": "### `compile code`を使って，プログラムを埋め込む\n\n#### 説明\n- `compile code`を使うと，C言語で記述した文をプログラムに埋め込んで，`gdb`上で実行できます．例えば，繰り返し`printf`したい場合などに便利です．\n- 使用例1： `compile code  { for (int i = 0; i < 4; i++) { p[i] = 999; }}`  // 1行の場合\n- 使用例2:  複数行で入力する場合はコマンド付きブレークポイントと同様に最後に`end`を入れます (`printf`の宣言が無いと警告が出るので，宣言を入れてます)\n```\n(gdb) compile code\n> { int printf (const char *, ...);\n>   for (int i = 0; i < 4; i++) {\n>     printf (\"p[%d]=%d\\n\", i, p[i]);\n>   }\n> }\n> end\n```\n\n#### 問題\n- [`array.c`](array.c)に対して，`main`関数の最後の行でブレークさせ，`compile code`コマンドを使って，ループを使って`p[0]`から`p[3]`の値を表示してみよう\n",
       "languageId": "markdown"
     },
     {
@@ -32,7 +32,7 @@
     },
     {
       "kind": "code",
-      "value": "# main関数の最後の行でブレークさせる\n(gdb) break 10\n# Breakpoint 1 at 0x11e7: file array.c, line 10.\n(gdb) run\n# Breakpoint 1, main () at array.c:10\n# 10      }\n#\n# compile codeコマンドを使って，ループを使ってp[0]からp[3]の値を表示する\n(gdb) compile code\n> { int printf (const char *, ...);\n>   for (int i = 0; i < 4; i++) {\n>     printf (\"p[%d]=%d\\n\", i, p[i]);\n>   }\n> }\n> end\n# [0]=40\n# p[1]=50\n# p[2]=60\n# p[3]=70\n(gdb) quit\ny",
+      "value": "# main関数の最後の行でブレークさせる\n(gdb) break 10\n# Breakpoint 1 at 0x11e7: file array.c, line 10.\n(gdb) run\n# Breakpoint 1, main () at array.c:10\n# 10      }\n#\n# compile codeコマンドを使って，ループを使ってp[0]からp[3]の値を表示する\n(gdb) compile code\n> { int printf (const char *, ...);\n>   for (int i = 0; i < 4; i++) {\n>     printf (\"p[%d]=%d\\n\", i, p[i]);\n>   }\n> }\n> end\n# p[0]=40\n# p[1]=50\n# p[2]=60\n# p[3]=70\n(gdb) quit\ny",
       "languageId": "gdb_command"
     },
     {

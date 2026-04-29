@@ -1,0 +1,44 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### `stepi`と`nexti`で，機械語命令単位でステップ実行する\n\n#### 説明\n- `stepi`と`nexti`で，機械語命令単位のステップ実行ができます．\n  - `stepi`はステップイン，つまり関数呼び出しで関数の中に入ります．\n  - `nexti`はステップオーバー，つまり関数呼び出しをまたぎます(関数の中に入りません)\n- `display/i $rip`を使って，実行停止ごとに「次に実行する機械語命令」を表示できます．`/i`は出力フォーマットを機会ご命令にすることを意味します．`$rip`はx86-64のプログラムカウンタである「RIPレジスタ」の値を意味します．\n  - プログラムカウンタは「次に実行する機械語命令のアドレス」を保持するレジスタです．\n  - `display/i $pc`とすることで，アーキテクチャに依存せず，プログラムカウンタを参照できます．\n#### 問題\n- [`fact.c`](fact.c)に対して以下を行おう\n  - `main`関数の先頭行でブレークさせる\n  - `display/i $rip`で，「次に実行する機会語命令」を表示する設定をする\n  - `disassemble main`で逆アセンブル結果を表示する\n  - `call`命令(x86-64の関数呼び出し命令)が来るまで，`stepi`でステップ実行を続ける\n  - `call`命令が来たら，`nexti`でステップ実行する",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の先頭行でブレークさせる\n(gdb) \n# display/i $ripで，「次に実行する機会語命令」を表示する設定をする\n(gdb)\n# disassemble mainで逆アセンブル結果を表示する\n(gdb)\n# call命令(x86-64の関数呼び出し命令)が来るまで，stepiでステップ実行を続ける\n(gdb) \n# call命令が来たら，nextiでステップ実行する",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え\n- 以下の`(gdb) break *0x0000555555555178`のアドレスは，皆さんの実行環境ごとに異なるアドレスになる可能性が高いです．皆さんが`disassemble main`で調べたアドレスで必ず書き換えて下さい．\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gcc -g fact.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# disassemble結果のページングを(念のため)オフにする\n(gdb) set pagination off\n# main関数の先頭行でブレークさせる\n(gdb) break main\n# Breakpoint 1 at 0x1180: file fact.c, line 14.\n(gdb) run\n# Breakpoint 1, main () at fact.c:14\n# 14          printf (\"fact (%d) = %d\\n\", 5, fact (5));\n#\n# display/i $ripで，「次に実行する機会語命令」を表示する設定をする\n(gdb) display/i $rip\n# 1: x/i $rip\n#\n# disassemble mainで逆アセンブル結果を表示する\n(gdb) disassemble main\n# Dump of assembler code for function main:\n# stepi\n#    0x0000555555555178 <+0>:     endbr64 \n#    0x000055555555517c <+4>:     push   %rbp\n#    0x000055555555517d <+5>:     mov    %rsp,%rbp\n# => 0x0000555555555180 <+8>:     mov    $0x5,%edi  # <- ここでブレークしている\n#    0x0000555555555185 <+13>:    call   0x555555555149 <fact>\n#    0x000055555555518a <+18>:    mov    %eax,%edx\n#    0x000055555555518c <+20>:    mov    $0x5,%esi\n#    0x0000555555555191 <+25>:    lea    0xe6c(%rip),%rax        # 0x555555556004\n#    0x0000555555555198 <+32>:    mov    %rax,%rdi\n#    0x000055555555519b <+35>:    mov    $0x0,%eax\n#    0x00005555555551a0 <+40>:    call   0x555555555050 <printf@plt>\n#    0x00005555555551a5 <+45>:    mov    $0x0,%eax\n#    0x00005555555551aa <+50>:    pop    %rbp\n#    0x00005555555551ab <+51>:    ret    \n# End of assembler dump.\n#\n# call命令(x86-64の関数呼び出し命令)が来るまで，stepiでステップ実行を続ける\n(gdb) stepi\n# 0x0000555555555185      14          printf (\"fact (%d) = %d\\n\", 5, fact (5));\n# 1: x/i $rip\n# => 0x555555555185 <main+13>:    call   0x555555555149 <fact>\n#\n# call命令が来たら，nextiでステップ実行する\n(gdb) nexti\n# x000055555555518a      14          printf (\"fact (%d) = %d\\n\", 5, fact (5));\n# 1: x/i $rip\n# => 0x55555555518a <main+18>:    mov    %eax,%edx\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- アセンブリコード(機械語命令)を表示するために，ここでは`display/i $rip`を使いました．別の方法として`layout asm`として，TUI表示モードをアセンブリコードにする方法もあります．元に戻すには`Ctrl-X a`を入力します．",
+      "languageId": "markdown"
+    }
+  ]
+}

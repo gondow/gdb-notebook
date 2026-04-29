@@ -1,0 +1,44 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### アドレスを指定してブレークする\n#### 説明\n- `break`コマンドは，`break main`や`break 10`や`break fact.c:10`などと，関数名や行番号を指定してブレークポイントを設定できました．\n- さらに`break`コマンドは，機械語命令の**アドレス**を指定してブレークポイントを設定できます．例えば，`break *0x0000555555555178`とします．アドレスの前に`*`を付ける必要があります．\n  - 機械語命令もデータも実行時はメモリ上に配置されているので，アドレスで「この機械語命令」と指定できます．\n- 機械語命令の`disassemble`(短縮は`disas`)を使うと，逆アセンブルして機械語命令のアドレスを表示できます．\n#### 問題\n- [`fact.c`](fact.c)に対して以下を行おう\n  - `main`関数の先頭行でブレークさせる\n  - `disassemble main`を行い，`main`関数中の先頭の機械語命令のアドレスを調べる\n  - そのアドレスにブレークポイントを設定する\n  - `run`で最初から実行をやりなおし，ブレークさせる\n  - ブレークしたアドレスが，`print main`で得られる，`main`関数の先頭アドレスと一致することを確認する",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の先頭行でブレークさせる\n(gdb)\n# disassemble mainを行い，main関数中の先頭の機械語命令のアドレスを調べる\n(gdb)\n# そのアドレスにブレークポイントを設定する\n(gdb)\n# runで最初から実行をやりなおし，ブレークさせる\n(gdb)\n# ブレークしたアドレスが，print mainで得られる，main関数の先頭アドレスと一致することを確認する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え\n- 以下の`(gdb) break *0x0000555555555178`のアドレスは，皆さんの実行環境ごとに異なるアドレスになる可能性が高いです．皆さんが`disassemble main`で調べたアドレスで必ず書き換えて下さい．\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gcc -g fact.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# disassemble結果のページングを(念のため)オフにする\n(gdb) set pagination off\n# main関数の先頭行でブレークさせる\n(gdb) break main\n# Breakpoint 2 at 0x555555555180: file fact.c, line 14. \n(gdb) run\n# Breakpoint 1, main () at fact.c:14\n# 14          printf (\"fact (%d) = %d\\n\", 5, fact (5));\n#\n# disassemble mainを行い，main関数中の先頭の機械語命令のアドレスを調べる\n(gdb) disassemble main\n# Dump of assembler code for function main:\n# break *x0000555555555178\n#    0x0000555555555178 <+0>:     endbr64   # <- これが先頭の機械語命令\n#    0x000055555555517c <+4>:     push   %rbp\n#    0x000055555555517d <+5>:     mov    %rsp,%rbp\n# => 0x0000555555555180 <+8>:     mov    $0x5,%edi\n#    0x0000555555555185 <+13>:    call   0x555555555149 <fact>\n#    0x000055555555518a <+18>:    mov    %eax,%edx\n#    0x000055555555518c <+20>:    mov    $0x5,%esi\n#    0x0000555555555191 <+25>:    lea    0xe6c(%rip),%rax        # 0x555555556004\n#    0x0000555555555198 <+32>:    mov    %rax,%rdi\n#    0x000055555555519b <+35>:    mov    $0x0,%eax\n#    0x00005555555551a0 <+40>:    call   0x555555555050 <printf@plt>\n#    0x00005555555551a5 <+45>:    mov    $0x0,%eax\n#    0x00005555555551aa <+50>:    pop    %rbp\n#    0x00005555555551ab <+51>:    ret    \n# End of assembler dump.\n#\n# そのアドレスにブレークポイントを設定する\n(gdb) break *0x0000555555555178\n# Breakpoint 2 at 0x555555555178: file fact.c, line 13.\n#\n# runで最初から実行をやりなおし，ブレークさせる\n(gdb) run\ny\n# Breakpoint 2, main () at fact.c:13\n#\n# ブレークしたアドレスが，print mainで得られる，main関数の先頭アドレスと一致することを確認する\n(gdb) print main\n# $1 = {int (void)} 0x555555555178 <main>\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- `objdump -d`(これは`gdb`のコマンドではなく，シェル上で動かすコマンド)でも[逆アセンブル](https://gondow.github.io/linux-x86-64-programming/2-asm-intro.html#%E9%80%86%E3%82%A2%E3%82%BB%E3%83%B3%E3%83%96%E3%83%AB)して，機械語命令のアドレスを調べることができますが，このアドレスは「ファイル中のアドレス」であり，「メモリ上のアドレス」ではありません\n  - 実行可能ファイル`a.out`がメモリ上にロード(コピー)される際に，コピー先のアドレスはセキュリティ上の理由でランダム化されることが多いからです．この機能(ASLRとPIE)については[こちら](https://gondow.github.io/linux-x86-64-programming/3-binary.html?highlight=ASLR#ASLR-PIE)をご覧ください．\n  - `disassemble`コマンドも，`run`で実行開始する前だと，「メモリ上のアドレス」ではなく「ファイル中のアドレス」を表示するので要注意です．`run`してから`disassemble`しましょう．\n- `set pagination off`は`--Type <RET> for more, q to quit, c to continue without paging--`という表示を抑制するためです．これは表示が画面に収まらないときに少しずつ表示する機能（ページング機能）ですが，自動実行の際に扱いにくいので，オフにしました．",
+      "languageId": "markdown"
+    }
+  ]
+}

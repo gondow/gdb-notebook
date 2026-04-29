@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### 変数の値を変更して，無限ループから脱出する\n\n#### 説明\n- gdb上で無限ループするプログラムを動かした場合，Ctrl-C (キーボードでcntrolキーを押しながら`c`を押す)で，強制的にプログラムをブレークできます\n- ブレークした状態で，ループ変数を変更すれば，無限ループから脱出できます\n- なお，GDBNBのコードセルからCtrl-Cの送信はできないので，ターミナルでCtrl-Cを入力するか，右上の「Ctrl-Cを送る」ボタンを押して下さい\n\n#### 問題\n- [`inf-loop.c`](inf-loop.c)に対して，以下の手順で無限ループから脱出させよう\n  - 実行後にCtrl-Cで無限ループをブレークさせる\n  - 変数`x`の値を`0`に変更して，実行を再開する",
+      "value": "### 変数の値を変更して，無限ループから脱出する\n\n#### 説明\n- gdb上で無限ループするプログラムを動かした場合，ctrl-c (キーボードでcntrolキーを押しながら`c`を押す)で，強制的にプログラムをブレークできます\n- ブレークした状態で，ループ変数を変更すれば，無限ループから脱出できます\n- なお，GDBNBのコードセルからCtrl-Cの送信はできないので，ターミナルでctrl-cを入力するか，右上の「ctrl-cを送る」ボタンを押して下さい\n\n#### 問題\n- [`inf-loop.c`](inf-loop.c)に対して，以下の手順で無限ループから脱出させよう\n  - 実行後にCtrl-Cで無限ループをブレークさせる\n  - 変数`x`の値を`0`に変更して，実行を再開する",
       "languageId": "markdown"
     },
     {
@@ -17,7 +17,7 @@
     },
     {
       "kind": "code",
-      "value": "# 実行を開始する\n(gdb) \n# 無限ループでgdbに制御が戻ってこない(gdbのプロンプトが表示されない)\n# ここで，ターミナル上でCtrl-Cを押すか，右上の「Ctrl-Cを送る」ボタンを押す",
+      "value": "# 実行を開始する\n(gdb) \n# 無限ループでgdbに制御が戻ってこない(gdbのプロンプトが表示されない)\n# ここで，ターミナル上でctrl-cを押すか，右上の「ctrl-cを送る」ボタンを押す",
       "languageId": "gdb_command"
     },
     {
@@ -37,7 +37,7 @@
     },
     {
       "kind": "code",
-      "value": "# 実行を開始する\n(gdb) run\n# 無限ループでgdbに制御が戻ってこない(gdbのプロンプトが表示されない)\n# ここで，ターミナル上でCtrl-Cを押すか，右上の「Ctrl-Cを送る」ボタンを押す\n#\n# ^C\n# Program received signal SIGINT, Interrupt.\n# main () at inf-loop.c:6\n# 6               n++;",
+      "value": "# 実行を開始する\n(gdb) run\n# 無限ループでgdbに制御が戻ってこない(gdbのプロンプトが表示されない)\n# ここで，ターミナル上でctrl-cを押すか，右上の「ctrl-cを送る」ボタンを押す\n#\n# ^C\n# Program received signal SIGINT, Interrupt.\n# main () at inf-loop.c:6\n# 6               n++;",
       "languageId": "gdb_command"
     },
     {
