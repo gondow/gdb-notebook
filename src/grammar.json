@@ -22,6 +22,7 @@
 	    n: "next",
 	    ni: "nexti",
 	    p: "print",
+	    pt: "ptype",
 	    q: "quit",
 	    r: "run",
 	    rb: "rbreak",
@@ -29,6 +30,7 @@
 	    si: "stepi",
 	    tb: "tbreak",
 	    wa: "watch",
+	    wha: "whatis",
 	},
 	commandMap: {
 	    break: {
@@ -805,6 +807,44 @@
 		    ],
 		],
 		url: "",
+	    },
+	    whatis: {
+		exp: "型情報を表示する",
+		abbr: "wha",
+		usage: [
+		    [
+			"whatis x",
+			"変数xの型情報を表示する"
+		    ],
+		    [
+			"whatis printf",
+			"関数printfの型情報を表示する"
+		    ],
+		    [
+			"whatis x+y",
+			"式x+yの型情報を表示する"
+		    ],
+		    [
+			"whatis f.a",
+			"構造体fのメンバーaの型情報を表示する"
+		    ],
+		],
+		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E5%9E%8B%E3%81%AE%E8%A1%A8%E7%A4%BA-whatis-ptype",
+	    },
+	    ptype: {
+		exp: "型の詳細な情報を表示する(typedefはすべて展開する)",
+		abbr: "pt",
+		usage: [
+		    [
+			"ptype x",
+			"変数xの型情報を表示する"
+		    ],
+		    [
+			"ptype/o f",
+			"構造体fのフィールドのオフセット等の情報も表示する"
+		    ],
+		],
+		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E5%9E%8B%E3%81%AE%E8%A1%A8%E7%A4%BA-whatis-ptype",
 	    },
 	},
     },
