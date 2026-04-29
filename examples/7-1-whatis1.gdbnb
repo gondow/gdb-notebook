@@ -1,0 +1,44 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### whatisで型を素早く知る(1)\n#### 説明\n- `whatis`コマンドは型情報を表示します．`ptype` ([`7-2-ptype.gdbnb`](7-2-ptype.gdbnb)参照) も型情報を表示しますが，`ptype`の方が，より詳細な情報を表示します．型情報を素早く知るには`whatis`が便利です．\n  - 例えば，`whatis`は`typedef`を1レベル分しか展開しません．`ptype`はすべて展開します．\n- `whatis`は次のような場面で便利です．\n  - 変数や関数の型を知りたい時．例：`whatis x`，`whatis printf`\n  - 暗黙の型変換の結果の型を知りたい時．例：`whatis i + u` (`int i; unsigned int u;` の場合)\n  - ポインタか配列かの，どちらであるかを知りたい時．例：`whatis a`，`whatis p` (`int a[10]; int *p=a;` の場合)\n#### 問題\n- [`whatis1.c`](whatis1.c)に対して以下を行おう\n  - `main`関数の先頭行でブレークさせる\n  - `whatis`で，`main`と`printf`の型をそれぞれ表示してみよう\n  - `whatis`で，`i`，`u`，`i+u`の型をそれぞれ表示してみよう\n    - C言語の「通常の算術型変換」の規則により，`(unsigned int)i + u`という暗黙の型変換が起こるので，`i+u`の型は`unsigned int`になるはず\n  - `whatis`で，`c`，`+c`の型をそれぞれ表示してみよう\n    - C言語の「整数拡張」の規則により，式中では小さい整数型(ここでは`+c`中の`c`)は`int` (または`unsigned int`) に暗黙の型変換が起こるはず\n      - ただし，式中でも，`sizeof`や`&`のオペランドの場合などは，この型変換は起こりません\n  - `whatis`で，`array`の型を表示してみよう\n  - `dump_array`関数の先頭行でブレークさせて，`whatis`で引数`a`の型を表示してみよう\n    - `dump_array`中で`a[i]`としてるので，一見，`a`は配列に見えますが，正しくは`int *`です．`a[i]`は`*(a+i)`と同じ意味であり，ポインタと整数の足し算が行われています．(これは配列の要素にアクセスする際も同じです)",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# whatis1.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の先頭行でブレークさせる\n(gdb)\n# whatisで，mainとprintfの型をそれぞれ表示する\n(gdb)\n# whatisで，i,u，i+uの型をそれぞれ表示する\n(gdb)\n# whatisで，c，+cの型をそれぞれ表示する\n(gdb)\n# whatisで，arrayの型を表示する\n(gdb)\n# dump_array関数の先頭行でブレークさせて，whatisで引数aの型を表示する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gcc -g whatis1.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の先頭行でブレークさせる\n(gdb) break main\n(gdb) run\n# Breakpoint 1, main () at whatis1.c:11\n# 11      {\n#\n# whatisで，mainとprintfの型をそれぞれ表示する\n(gdb) whatis main\n# type = int (void)\n(gdb) whatis printf\n# type = int (const char *, ...)\n# whatisで，i,u，i+uの型をそれぞれ表示する\n(gdb) whatis i\n# type = int\n(gdb) whatis u\n# type = unsigned int\n(gdb) whatis i+u\n# type = unsigned int\n# whatisで，c，+cの型をそれぞれ表示する\n(gdb) whatis c\n# type = char\n(gdb) whatis +c\n# type = int\n# whatisで，arrayの型を表示する\n(gdb) whatis array\n# type = int [4]\n# dump_array関数の先頭行でブレークさせて，whatisで引数aの型を表示する\n(gdb) break dump_array\n(gdb) continue\n# reakpoint 2, dump_array (a=0x7fffffffde10, n=4) at whatis1.c:5\n# 5           for (int i = 0; i < n; i++) {\n(gdb) whatis a\n# type = int *\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- `whatis`と`ptype`はとても重要です．C言語の暗黙の型変換や，システム型(例：`size_t`)はなかなか難しいのですが，C言語の中ではこれらの型を確認する手段が限定されているからです．\n- しかし，`whatis`と`ptype`にも不十分な点があります．例えば，関数が式中で「関数へのポインタ」に暗黙の型変換されることを直接確かめる正しい手段は(おそらく)ありません．`whatis main+0`で，`type = int (*)()`と返ってきますが，関数ポインタを使ったポインタ算術演算は未定義動作のはずなので．",
+      "languageId": "markdown"
+    }
+  ]
+}

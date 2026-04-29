@@ -1,0 +1,44 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### whatisで型を素早く知る(2)\n#### 説明\n- `whatis`コマンドは構造体のメンバーの型を調べることもできます．例えば，`whatis f.a`は「構造体`f`のメンバー`a`の型」を表示します．\n#### 問題\n- [`whatis2.c`](whatis2.c)に対して以下を行おう\n  - `main`関数の先頭行でブレークさせる\n  - `whatis f`で，`f`の型を表示する\n  - `whatis f.a1`，`whatis f.a2`，`whatis.a3`で，構造体の各メンバーの型を表示する",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# whatis2.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の先頭行でブレークさせる\n(gdb) \n# whatis fで，fの型を表示する\n(gdb)\nwhatis f.a1，whatis f.a2，whatis.a3で，構造体の各メンバーの型を表示する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gcc -g whatis2.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の先頭行でブレークさせる\n(gdb) break main\n(gdb) run\n# whatis fで，fの型を表示する\n(gdb) whatis f\n# type = struct foo\n# whatis f.a1，whatis f.a2，whatis.a3で，構造体の各メンバーの型を表示する\n(gdb) whatis f.a1\n# type = int\n(gdb) whatis f.a2\n# type = char\n(gdb) whatis f.a3\n# type = size_t\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- `whatis`と`ptype`はとても重要です．C言語の暗黙の型変換や，システム型(例：`size_t`)はなかなか難しいのですが，C言語の中ではこれらの型を確認する手段が限定されているからです．\n- しかし，`whatis`と`ptype`にも不十分な点があります．例えば，関数が式中で「関数へのポインタ」に暗黙の型変換されることを直接確かめる正しい手段は(おそらく)ありません．`whatis main+0`で，`type = int (*)()`と返ってきますが，関数ポインタを使ったポインタ算術演算は未定義動作のはずなので．",
+      "languageId": "markdown"
+    }
+  ]
+}
