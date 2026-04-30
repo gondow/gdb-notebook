@@ -1,0 +1,39 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### `x`で構造体の中身を確認する\n\n#### 問題\n- [`struct.c`](struct.c)で，構造体`f`のメンバー`f.x1`と`f.x2`がメモリ上でどうなっているかを`print`と`x`コマンドで確認しよう．\n  - 以下の図のようになっています．アドレスは皆さんの実行環境ごとに異なる可能性が高いです．この図の通り，構造体のメンバーは連続せず，[パディング](https://gondow.github.io/linux-x86-64-programming/9-code.html?highlight=%E3%83%91%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0#%E6%A7%8B%E9%80%A0%E4%BD%93)が入ることがあります．これは[アラインメント制約](https://gondow.github.io/linux-x86-64-programming/4-data.html?highlight=%E3%82%A2%E3%83%A9%E3%82%A4%E3%83%B3%E3%83%A1%E3%83%B3%E3%83%88#alignment)を満たすためです．\n  - パディング中にも何か値が入っています．以下ではたまたまゼロが入っていましたが，別の値のこともあります．\n- 具体的には以下を行おう\n  - 9行目でブレークさせる\n  - `print`を使って，`f`，`f.x1`，`f.x2`の値を表示する\n  - `print`を使って，`f`，`f.x1`，`f.x2`のアドレスを表示する\n  - `x/8bx`を使って，構造体`f`の中身を1バイトずつ表示する\n\n\n<div style=\"background-color: white; padding: 5px; display: inline-block;\">  \n\n![](https://gondow.github.io/linux-x86-64-programming/figs/struct.svg)\n</div>\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# struct.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# 9行目でブレークさせる\n(gdb)\n# printを使って，f，f.x1，f.x2 の値を表示する\n(gdb)\n# printを使って，f，f.x1，f.x2のアドレスを表示する\n(gdb)\n# x/8bx を使って，構造体fの中身を1バイトずつ表示する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え\n\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gcc -g struct.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# 9行目でブレークさせる\n(gdb) break 9\n(gdb) run\n# printを使って，f，f.x1，f.x2 の値を表示する\n(gdb) print/x f\n# $1 = {x1 = 0x41, x2 = 0x11223344}\n(gdb) print f.x1\n# $2 = 65 'A'  # 16進数だと0x41\n(gdb) print/x f.x2\n# $3 = 0x11223344\n#\n# printを使って，f，f.x1，f.x2のアドレスを表示する\n(gdb) print &f\n# $4 = (struct foo *) 0x7fffffffddf8\n(gdb) print &f.x1\n# $5 = 0x7fffffffddf8 \"A\"\n(gdb) print &f.x2\n# $6 = (int *) 0x7fffffffddfc\n#\n# x/8bx を使って，構造体fの中身を1バイトずつ表示する\n(gdb) x/8bx &f\n# 0x7fffffffddf8: 0x41    0x00    0x00    0x00    0x44    0x33    0x22    0x11\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    }
+  ]
+}

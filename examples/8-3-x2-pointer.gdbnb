@@ -1,0 +1,39 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### `x`でポインタと実体の違いを確認する\n\n#### 問題\n- [`pointer.c`](pointer.c)で，変数`x`とポインタ変数`p`がメモリ上でどうなっているかを`print`と`x`コマンドで確認しよう．\n- 以下の図のようになっています．アドレスは皆さんの実行環境ごとに異なる可能性が高いです．\n  - この図では変数`x`と`p`が隣り合ってますが，これは「たまたま偶然」です．一方，配列の要素は必ず隣り合っています．その一方で，構造体の各メンバーは必ずしも隣り合わず，隙間が空くことがあります(隙間はパディングと呼ばれます)\n\n<div style=\"background-color: white; padding: 5px; display: inline-block;\">  \n\n![](https://gondow.github.io/linux-x86-64-programming/figs/pointer.svg)\n</div>",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# endian.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の5行目でブレークさせる\n(gdb)\n# 変数xのアドレスを表示する\n(gdb)\n# x/1xw &x として，xの4バイトの値全体を表示する\n(gdb)\n# x/4xb &x として，xの値を1バイトごと表示する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え\n\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gcc -g endian.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の5行目でブレークさせる\n(gdb) break 5\n(gdb) run\n# 変数xのアドレスを表示する\n(gdb) p/x &x\n# $1 = 0x7fffffffde2c\n# \n# x/1xw &x として，xの4バイトの値全体を表示する\n(gdb) x /1xw &x\n# 0x7fffffffde2c: 0x11223344\n#\n# x/4xb &x として，xの値を1バイトごと表示する\n(gdb) x /4xb &x\n# 0x7fffffffde2c: 0x44    0x33    0x22    0x11  # <- 確かにリトルエンディアンで格納されている\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    }
+  ]
+}

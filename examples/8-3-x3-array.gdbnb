@@ -1,0 +1,39 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### `x`で配列の中身を確認する\n\n#### 問題\n- [`array.c`](array.c)で，配列`array`，ポインタ変数`p`，`malloc`で確保したメモリがメモリ上でどうなっているかを`print`と`x`コマンドで確認しよう．\n  - 以下の図のようになっています．アドレスは皆さんの実行環境ごとに異なる可能性が高いです．この図の通り，配列の要素は必ず隣り合っています．\n- 具体的には以下を行おう\n  - 10行目でブレークさせる\n  - `print array`で，配列`array`の内容を表示する\n  - `print`を使って，配列`array`の先頭アドレスを表示する\n  - `x`を使って，配列`array`の先頭アドレスから，4バイトデータを4つ表示する(配列要素がメモリ上で連続してることを確認できる)\n  - `print *p@4`で，`p`が指す配列の内容を表示する\n  - `print`を使って，`p`が指す配列の先頭アドレスを表示する\n  - `x`を使って，`p`が指す配列の先頭アドレスから，4バイトデータを4つ表示する(配列要素がメモリ上で連続してることを確認できる)\n\n\n<div style=\"background-color: white; padding: 5px; display: inline-block;\">  \n\n![](https://gondow.github.io/linux-x86-64-programming/figs/array5.svg)\n</div>\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# array.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# 10行目でブレークさせる\n(gdb)\n# print arrayで，配列arrayの内容を表示する\n(gdb)\n# printを使って，配列arrayの先頭アドレスを表示する\n(gdb)\n# xを使って，配列arrayの先頭アドレスから，4バイトデータを4つ表示する(配列要素がメモリ上で連続してることを確認できる)\n(gdb)\n# print *p@4で，pが指す配列の内容を表示する\n(gdb)\n# printを使って，pが指す配列の先頭アドレスを表示する\n(gdb)\n# xを使って，pが指す配列の先頭アドレスから，4バイトデータを4つ表示する(配列要素がメモリ上で連続してることを確認できる)\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え\n\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gcc -g array.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# 10行目でブレークさせる\n(gdb) break 10\n(gdb) run\n# print arrayで，配列arrayの内容を表示する\n(gdb) print array\n# $1 = {0, 10, 20, 30}\n#\n# printを使って，配列arrayの先頭アドレスを表示する\n(gdb) print &array\n# $2 = (int (*)[4]) 0x7fffffffdde0\n#\n# xを使って，配列arrayの先頭アドレスから，4バイトデータを4つ表示する(配列要素がメモリ上で連続してることを確認できる)\n(gdb) x/4wd &array\n# 0x7fffffffdde0: 0       10      20      30\n# \n# print *p@4で，pが指す配列の内容を表示する\n(gdb) print *p@4\n# $3 = {40, 50, 60, 70}\n#\n# printを使って，pが指す配列の先頭アドレスを表示する\n(gdb) print/x p\n# $4 = 0x5555555592a0\n#\n# xを使って，pが指す配列の先頭アドレスから，4バイトデータを4つ表示する(配列要素がメモリ上で連続してることを確認できる)\n(gdb) x/4wd p\n# 0x5555555592a0: 40      50      60      70\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    }
+  ]
+}

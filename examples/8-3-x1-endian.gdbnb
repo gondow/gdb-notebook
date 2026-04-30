@@ -32,7 +32,7 @@
     },
     {
       "kind": "code",
-      "value": "# main関数の5行目でブレークさせる\n(gdb) break 5\n(gdb) run\n# 変数xのアドレスを表示する\n(gdb) p/x &x\n# $1 = 0x7fffffffde2c\n# \n# x/1xw &x として，xの4バイトの値全体を表示する\n(gdb) x/1xw &x\n# 0x7fffffffde2c: 0x11223344\n#\n# x/4xb &x として，xの値を1バイトごと表示する\n(gdb) x/4xb &x\n# 0x7fffffffde2c: 0x44    0x33    0x22    0x11\n(gdb) quit\ny",
+      "value": "# main関数の5行目でブレークさせる\n(gdb) break 5\n(gdb) run\n# 変数xのアドレスを表示する\n(gdb) p/x &x\n# $1 = 0x7fffffffde2c\n# \n# x/1xw &x として，xの4バイトの値全体を表示する\n(gdb) x /1xw &x\n# 0x7fffffffde2c: 0x11223344\n#\n# x/4xb &x として，xの値を1バイトごと表示する\n(gdb) x /4xb &x\n# 0x7fffffffde2c: 0x44    0x33    0x22    0x11  # <- 確かにリトルエンディアンで格納されている\n(gdb) quit\ny",
       "languageId": "gdb_command"
     },
     {
