@@ -3,6 +3,7 @@
     // GDBコマンド用のデータ
     "gdb_command": {
 	aliasMap: {
+	    apr: "apropos",
 	    b: "break",
 	    bt: "backtrace",
 	    c: "continue",
@@ -15,6 +16,7 @@
 	    en: "enable",
 	    f:  "frame",
 	    fin: "finish",
+	    h: "help",
 	    i: "info",
 	    if: "if", // これだけ特別
 	    j: "jump",
@@ -209,6 +211,21 @@
 			    [
 				"info signals",
 				"gdbのシグナル処理状態を表示"
+			    ],
+			],
+			url: "",
+		    },
+		    line: {
+			exp: "行情報を表示",
+			abbr: "li",
+			usage: [
+			    [
+				"info line main",
+				"main関数の行情報を表示"
+			    ],
+			    [
+				"info line *0x555555555178",
+				"指定したアドレスの行情報を表示"
 			    ],
 			],
 			url: "",
@@ -741,7 +758,7 @@
 			abbr: "di",
 			usage: [
 			    [
-				"info display)",
+				"info display",
 				"displayの設定を表示"
 			    ],
 			],
@@ -752,7 +769,7 @@
 			abbr: "lo",
 			usage: [
 			    [
-				"info locals)",
+				"info locals",
 				"局所変数の値を表示"
 			    ],
 			],
@@ -787,6 +804,17 @@
 			    [
 				"info signals",
 				"gdbのシグナル処理状態を表示"
+			    ],
+			],
+			url: "",
+		    },
+		    frame: {
+			exp: "スタックフレーム情報を表示",
+			abbr: "f",
+			usage: [
+			    [
+				"info frame",
+				"スタックフレーム情報を表示"
 			    ],
 			],
 			url: "",
@@ -845,6 +873,36 @@
 		    ],
 		],
 		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#%E5%9E%8B%E3%81%AE%E8%A1%A8%E7%A4%BA-whatis-ptype",
+	    },
+	    help: {
+		exp: "コマンドの説明(ヘルプ)を表示する",
+		abbr: "h",
+		usage: [
+		    [
+			"help break",
+			"breakコマンドの説明を表示する"
+		    ],
+		    [
+			"help",
+			"helpコマンド自体の説明を表示する"
+		    ],
+		],
+		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#help%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89",
+	    },
+	    apropos: {
+		exp: "正規表現にマッチするコマンドを表示する",
+		abbr: "apr",
+		usage: [
+		    [
+			"apropos break",
+			"breakにマッチする(breakに関連する)コマンドを表示する"
+		    ],
+		    [
+			"apropos -v break",
+			"breakに関連する，より多くの説明を表示する"
+		    ],
+		],
+		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#apropos%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89",
 	    },
 	},
     },
