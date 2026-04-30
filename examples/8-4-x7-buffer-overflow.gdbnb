@@ -1,0 +1,39 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### `x`でバッファオーバーフローを確認する\n\n#### 問題\n- [`buf-overflow.c`](buf-overflow.c)はバッファオーバーフローが起きる「悪いプログラム」です．このバッファオーバーフローを観察します．\n  - このままコンパイルして実行すると，以下のようにスタックガード機構が働いて，プログラムが強制的に終了させられます．\n\n```\n$ ./a.out\nbuf = AAAAAAAABBBBBBBBCCCCCCCCDDDDDDDD\n*** stack smashing detected ***: terminated\nAborted (core dumped)\n```\n  - そこで，ここでは`-fno-stack-protector`オプションで，スタックガード機構をわざと外してコンパイルします．(警告が出ますが無視します)\n  - `main`関数のスタックフレームは以下の図のようになっています(1つの四角が8バイトです)．アドレスは皆さんの実行環境ごとに異なる可能性が高いです\n\n<div style=\"background-color: white; padding: 5px; display: inline-block;\">  \n\n![](https://gondow.github.io/linux-x86-64-programming/figs/buf-overflow.svg)\n</div>\n\n- 具体的には以下を行おう\n  - `gcc -fno-stack-protector -g buf-overflow.c` でコンパイルし，`gdb`を起動する\n  - `main`関数の先頭行でブレークさせる\n  - `print`で`&buf`と`$rbp`の値を確認する\n  - `x/4gx &buf`で，`&buf`を先頭アドレスとする，32バイトのメモリ領域の値を表示する\n  - `next`で，`strcpy`の次の行までステップ実行する\n  - 再び，`x/4gx &buf`を実行し，`buf`だけでなく，リターンアドレスの領域も書き換わっていることを確認する\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# buf-overflow.c を -fno-stack-protector -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -fno-stack-protector -g buf-overflow.c",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の先頭行でブレークさせる\n(gdb)\n# print`で &buf と $rbp の値を確認する\n(gdb)\n# x/4gx &buf で，&buf を先頭アドレスとする，32バイトのメモリ領域の値を表示する\n(gdb)\n# nextで，strcpy の次の行までステップ実行する\n(gdb)\n# 再び，x/4gx &bufを実行し，bufだけでなく，リターンアドレスの領域も書き換わっていることを確認する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え\n\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gcc -fno-stack-protector -g buf-overflow.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# main関数の先頭行でブレークさせる\n(gdb) break main\n(gdb) run\n# Breakpoint 1, main () at buf-overflow.c:6\n# 6           strcpy (buf, \"AAAAAAAABBBBBBBBCCCCCCCCDDDDDDDD\");\n#\n# print`で &buf と $rbp の値を確認する\n(gdb) print/x &buf\n# $1 = 0x7fffffffddf8\n(gdb) print $rbp\n# $2 = (void *) 0x7fffffffde00\n#\n# x/4gx &buf で，&buf を先頭アドレスとする，32バイトのメモリ領域の値を表示する\n(gdb) x/4gx &buf\n# 0x7fffffffddf8: 0x0000000000000000      0x0000000000000001\n# 0x7fffffffde08: 0x00007ffff7db3d90      0x0000000000000000\n#\n# nextで，strcpy の次の行までステップ実行する\n(gdb) next\n# 7           printf (\"buf = %s\\n\", buf);\n#\n# 再び，x/4gx &bufを実行し，bufだけでなく，リターンアドレスの領域も書き換わっていることを確認する\n(gdb) x/4gx &buf\n# 0x7fffffffddf8: 0x4141414141414141      0x4242424242424242 # 0x41='A', 0x42='B', 0x43='C', 0x44='D'\n# 0x7fffffffde08: 0x4343434343434343      0x4444444444444444 # <- リターンアドレスの領域も変更されている！\n(gdb) quit\ny",
+      "languageId": "gdb_command"
+    }
+  ]
+}

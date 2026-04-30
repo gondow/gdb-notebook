@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "###`x`でスタックフレームのレイアウトを確認する\n\n#### 問題\n- [`fact.c`](fact.c)で，`main`関数が`fact(5)`を呼び出した時，スタックフレームがメモリ上でどうなっているかを`x`コマンドで確認しよう．\n  - 以下の図のようになっています．アドレスは皆さんの実行環境ごとに異なる可能性が高いです\n  - ここでは「戻り番地(リターンアドレス)」と「古い`%rbp`」の値を確認します\n- 具体的には以下を行おう\n  - `main`関数と`fact`関数の先頭行にブレークポイントを設定し，実行を開始する\n  - `main`でブレークしたら，`disassemble main`で逆アセンブルを行い，`call fact`命令の次の命令のアドレスを確認する(ここでは`0x000055555555518a`)\n  - `print`で`%rbp`の値を確認する(ここでは`0x7fffffffde00`)．その後，実行を再開する\n  - `fact`でブレークしたら，`x/1gx $rbp`を行い，`fact(5)`のスタックフレームの最下部に「古い`%rbp`」の値として，`0x7fffffffde00`が入っていることを確認する\n  - 次に，`x/1gx $rbp+8`を行い，戻り番地(リターンアドレス)として(ここでは)`0x000055555555518a`が入っていることを確認する．\n\n<div style=\"background-color: white; padding: 5px; display: inline-block;\">  \n\n![](https://gondow.github.io/linux-x86-64-programming/figs/stack-fact.svg)\n</div>\n\n",
+      "value": "###`x`でスタックフレームのレイアウトを確認する\n\n#### 問題\n- [`fact.c`](fact.c)で，`main`関数が`fact(5)`を呼び出した時，スタックフレームがメモリ上でどうなっているかを`x`コマンドで確認しよう．\n  - 以下の図のようになっています(1つの四角が8バイト分なことに注意)．アドレスは皆さんの実行環境ごとに異なる可能性が高いです\n  - ここでは「戻り番地(リターンアドレス)」と「古い`%rbp`」の値を確認します\n- 具体的には以下を行おう\n  - `main`関数と`fact`関数の先頭行にブレークポイントを設定し，実行を開始する\n  - `main`でブレークしたら，`disassemble main`で逆アセンブルを行い，`call fact`命令の次の命令のアドレスを確認する(ここでは`0x000055555555518a`)\n  - `print`で`%rbp`の値を確認する(ここでは`0x7fffffffde00`)．その後，実行を再開する\n  - `fact`でブレークしたら，`x/1gx $rbp`を行い，`fact(5)`のスタックフレームの最下部に「古い`%rbp`」の値として，`0x7fffffffde00`が入っていることを確認する\n  - 次に，`x/1gx $rbp+8`を行い，戻り番地(リターンアドレス)として(ここでは)`0x000055555555518a`が入っていることを確認する．\n\n<div style=\"background-color: white; padding: 5px; display: inline-block;\">  \n\n![](https://gondow.github.io/linux-x86-64-programming/figs/stack-fact.svg)\n</div>\n\n",
       "languageId": "markdown"
     },
     {
