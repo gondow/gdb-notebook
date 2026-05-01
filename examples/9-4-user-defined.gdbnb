@@ -1,0 +1,39 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### ユーザ定義コマンドを使ってみる\n\n#### 説明\n- `define`と`end`を使うと，ユーザ定義コマンドを定義できます．よく使うものは`~/.gdbinit`に書いておくと`gdb`起動時に自動的に定義してくれるので便利です．\n- 例：`break main`と`run`をまとめて行う`breakrun`を定義する\n```\n(gdb) define breakrun\n> break main\n> run\n> end  \n```\n- 例： コマンド`hello`を定義する．`hello`の引数を`echo`に与える(`hello hogehoge`のように)\n  - `echo`は(シェルコマンドの`echo`と同様に)文字列を出力します．\n  - ユーザ定義コマンドの引数は，`$arg0`，`$arg1`，…と参照します．\n  - ここでは説明しませんが，`if`，`while`，`set`などを組み合わせてスクリプト的にユーザ定義コマンドを定義することも可能です．\n```\n(gdb) define hello\n> echo hello, $arg0\\n\n> end\n```\n\n- 例：`hook`で始まるユーザ定義コマンドは特別な意味を持ちます．例えば，`hook-foo`というユーザ定義コマンドが定義されると，そのコマンドは`foo`が実行される前に`hook-foo`が実行されます．さらに`hook-stop`は特別です．`hook-stop`は「実行が止まるたびに自動的に実行されるコマンド」になります．以下のように`hook-stop`を定義すると，実行が止まるたびに`$rip`が指す機械語命令を表示します\n```\n(gdb) define hook-stop\n> x/i $rip\n> end\n```\n\n#### 問題\n- [`fact.c`](fact.c)を対象として，上の3つのユーザ定義コマンドを定義して，使ってみよう\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# 上記の3つのユーザ定義コマンドを定義する\n(gdb) \n# 定義したユーザ定義コマンドを使ってみる\n(gdb)\n",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え\n\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# fact.c を -gオプション付きでコンパイルし，gdb を起動する\n$ gcc -g fact.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# 上記の3つのユーザ定義コマンドを定義する\n(gdb) define breakrun\n> break main\n> run\n> end  \n(gdb) define hello\n> echo hello, $arg0\\n\n> end\n(gdb) define hook-stop\n> x/i $rip\n> end\n# 定義したユーザ定義コマンドを使ってみる\n(gdb) breakrun\n# Breakpoint 1 at 0x1180: file fact.c, line 14.\n# => 0x555555555180 <main+8>:     mov    $0x5,%edi   # <- hook-stop の効果\n(gdb) hello hogehoge\n# hello, hogehoge\n(gdb) stepi\n# => 0x555555555185 <main+13>:    call   0x555555555149 <fact>  # <- hook-stop の効果\n# 0x0000555555555185      14          printf (\"fact (%d) = %d\\n\", 5, fact (5));\n(gdb) quit\ny\n",
+      "languageId": "gdb_command"
+    }
+  ]
+}

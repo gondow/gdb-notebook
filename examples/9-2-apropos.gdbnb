@@ -1,0 +1,39 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### `apropos`で正規表現にマッチするコマンドを表示する\n\n#### 説明\n- `apropos` (`apr`)は指定した正規表現をヘルプに含むコマンドを表示します．例えば，`apropos break`とすると，`break`という単語を含んだコマンド一覧を表示します．`break`に関係するコマンドを調べるのに便利です．\n\n\n```\n(gdb) apropos break\nadvance -- Continue the program up to the given location (same form as args for break command).\nbreak, brea, bre, br, b -- Set breakpoint at specified location.\nbreak, brea, bre, br, b -- Set breakpoint at specified location.\nbreak-range -- Set a breakpoint for an address range.\nbreakpoints -- Making program stop at certain points.\nclear, cl -- Clear breakpoint at specified location.\n(長いので以下省略 )\n```\n\n#### 問題\n- 引数なしで`gdb`を起動し，`apropos break`してみよう\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# 引数なしで gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# apropos break を実行する\n(gdb) \n",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え\n\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gdb -q ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "(gdb) set pagination off\n# apropos break を実行する\n(gdb) apropos break\n# advance -- Continue the program up to the given location (same form as args for break command).\n# break, brea, bre, br, b -- Set breakpoint at specified location.\n# break, brea, bre, br, b -- Set breakpoint at specified location.\n# break-range -- Set a breakpoint for an address range.\n# breakpoints -- Making program stop at certain points.\n# clear, cl -- Clear breakpoint at specified location.\n# commands -- Set commands to be executed when the given breakpoints are hit.\n# condition -- Specify breakpoint number N to break only if COND is true.\n# continue, fg, c -- Continue program being debugged, after signal or breakpoint.\n# delete, del, d -- Delete all or some breakpoints.\n# delete breakpoints -- Delete all or some breakpoints or auto-display expressions.\n# disable, disa, dis -- Disable all or some breakpoints.\n# disable breakpoints -- Disable all or some breakpoints.\n# disassemble -- Disassemble a specified section of memory.\n# enable, en -- Enable all or some breakpoints.\n# enable breakpoints -- Enable all or some breakpoints.\n# enable breakpoints count -- Enable some breakpoints for COUNT hits.\n# enable breakpoints delete -- Enable some breakpoints and delete when hit.\n# enable breakpoints once -- Enable some breakpoints for one hit.\n# enable count -- Enable some breakpoints for COUNT hits.\n# enable delete -- Enable some breakpoints and delete when hit.\n# enable once -- Enable some breakpoints for one hit.\n# ftrace -- Set a fast tracepoint at specified location.\n# hbreak -- Set a hardware assisted breakpoint.\n# ignore -- Set ignore-count of breakpoint number N to COUNT.\n# info breakpoints, info b -- Status of specified breakpoints (all user-settable breakpoints if no argument).\n# info breakpoints, info b -- Status of specified breakpoints (all user-settable breakpoints if no argument).\n# maintenance info breakpoints -- Status of all breakpoints, or breakpoint number NUMBER.\n# maintenance set show-debug-regs -- Set whether to show variables that mirror the x86 debug registers.\n# maintenance show show-debug-regs -- Show whether to show variables that mirror the x86 debug registers.\n# rbreak -- Set a breakpoint for all functions matching REGEXP.\n# reverse-continue, rc -- Continue program being debugged but run it in reverse.\n# save -- Save breakpoint definitions as a script.\n# save breakpoints -- Save current breakpoint definitions as a script.\n# set breakpoint -- Breakpoint specific settings.\n# set breakpoint always-inserted -- Set mode for inserting breakpoints.\n# set breakpoint auto-hw -- Set automatic usage of hardware breakpoints.\n# set breakpoint condition-evaluation -- Set mode of breakpoint condition evaluation.\n# set breakpoint pending -- Set debugger's behavior regarding pending breakpoints.\n# set debug py-breakpoint -- Set Python breakpoint debugging.\n# set displaced-stepping -- Set debugger's willingness to use displaced stepping.\n# set may-insert-breakpoints -- Set permission to insert breakpoints in the target.\n# set non-stop -- Set whether gdb controls the inferior in non-stop mode.\n# set observer -- Set whether gdb controls the inferior in observer mode.\n# set remote Z-packet -- Set use of remote protocol `Z' packets.\n# set remote breakpoint-commands-packet -- Set use of remote protocol `BreakpointCommands' (breakpoint-commands) packet.\n# set remote conditional-breakpoints-packet -- Set use of remote protocol `ConditionalBreakpoints' (conditional-breakpoints) packet.\n# set remote hardware-breakpoint-limit -- Set the maximum number of target hardware breakpoints.\n# set remote hardware-breakpoint-packet -- Set use of remote protocol `Z1' (hardware-breakpoint) packet.\n# set remote hwbreak-feature-packet -- Set use of remote protocol `hwbreak-feature' (hwbreak-feature) packet.\n# set remote interrupt-sequence -- Set interrupt sequence to remote target.\n# set remote software-breakpoint-packet -- Set use of remote protocol `Z0' (software-breakpoint) packet.\n# set remote swbreak-feature-packet -- Set use of remote protocol `swbreak-feature' (swbreak-feature) packet.\n# set remotebreak -- Set whether to send break if interrupted.\n# show breakpoint -- Breakpoint specific settings.\n# show breakpoint always-inserted -- Show mode for inserting breakpoints.\n# show breakpoint auto-hw -- Show automatic usage of hardware breakpoints.\n# show breakpoint condition-evaluation -- Show mode of breakpoint condition evaluation.\n# show breakpoint pending -- Show debugger's behavior regarding pending breakpoints.\n# show debug py-breakpoint -- Show Python breakpoint debugging.\n# show displaced-stepping -- Show debugger's willingness to use displaced stepping.\n# show may-insert-breakpoints -- Show permission to insert breakpoints in the target.\n# show non-stop -- Show whether gdb controls the inferior in non-stop mode.\n# show observer -- Show whether gdb controls the inferior in observer mode.\n# show remote Z-packet -- Show use of remote protocol `Z' packets.\n# show remote breakpoint-commands-packet -- Show current use of remote protocol `BreakpointCommands' (breakpoint-commands) packet.\n# show remote conditional-breakpoints-packet -- Show current use of remote protocol `ConditionalBreakpoints' (conditional-breakpoints) packet.\n# show remote hardware-breakpoint-limit -- Show the maximum number of target hardware breakpoints.\n# show remote hardware-breakpoint-packet -- Show current use of remote protocol `Z1' (hardware-breakpoint) packet.\n# show remote hwbreak-feature-packet -- Show current use of remote protocol `hwbreak-feature' (hwbreak-feature) packet.\n# show remote interrupt-sequence -- Show interrupt sequence to remote target.\n# show remote software-breakpoint-packet -- Show current use of remote protocol `Z0' (software-breakpoint) packet.\n# show remote swbreak-feature-packet -- Show current use of remote protocol `swbreak-feature' (swbreak-feature) packet.\n# show remotebreak -- Show whether to send break if interrupted.\n# strace -- Set a static tracepoint at location or marker.\n# tbreak -- Set a temporary breakpoint.\n# thbreak -- Set a temporary hardware assisted breakpoint.\n# trace, trac, tra, tr, tp -- Set a tracepoint at specified location.\n# until, u -- Execute until past the current line or past a LOCATION.\n(gdb) quit\n",
+      "languageId": "gdb_command"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### `help`でコマンドの説明を表示する\n\n#### 説明\n- `help`はコマンドの説明(ヘルプ)を表示します．例えば，`help step`とすると以下の表示となり，`step`にステック回数を指定できることが分かりました．(`[N]`のカギカッコは省略可能な引数を意味します)\n```\n(gdb) help step\nstep, s\nStep program until it reaches a different source line.\nUsage: step [N]\nArgument N means step N times (or till program stops for another reason).\n```\n\n#### 問題\n- 引数なしで`gdb`を起動し，`help step`してみよう\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# 引数なしで gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# help step を実行する\n(gdb) \n",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え\n\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gdb -q ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# help step を実行する\n(gdb) help step\n# step, s\n# Step program until it reaches a different source line.\n# Usage: step [N]\n# Argument N means step N times (or till program stops for another reason).\n(gdb) quit\n",
+      "languageId": "gdb_command"
+    }
+  ]
+}
