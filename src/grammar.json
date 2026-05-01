@@ -13,6 +13,7 @@
 	    dis: "disable",
 	    disas: "disassemble",
 	    disp: "display",
+	    ec: "echo",
 	    en: "enable",
 	    f:  "frame",
 	    fin: "finish",
@@ -903,6 +904,28 @@
 		    ],
 		],
 		url: "https://gondow.github.io/linux-x86-64-programming/10-gdb.html#apropos%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89",
+	    },
+	    echo: {
+		exp: "引数で与えられた文字列を表示する",
+		abbr: "ec",
+		usage: [
+		    [
+			"echo hello",
+			"文字列helloを表示する"
+		    ],
+		],
+		url: "",
+	    },
+	    define: {
+		exp: "ユーザ定義コマンドを定義する",
+		abbr: "",
+		usage: [
+		    [
+			"define breakrun<pre/>&gt; break main<pre/>&gt; run<pre/>&gt; end",
+			"break mainとrunを実行するユーザ定義コマンドbreakrunを定義する"
+		    ],
+		],
+		url: "",
 	    },
 	},
     },
