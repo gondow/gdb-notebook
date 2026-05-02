@@ -2,5 +2,5 @@
 int main (void)
 {
     int x;
-    printf ("x=%d\n", x);
+    printf ("x=%x\n", x);
 }

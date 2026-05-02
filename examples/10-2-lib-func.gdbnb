@@ -1,0 +1,39 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### ライブラリ関数中でクラッシュした原因を探る\n\n#### 説明\n- `printf`や`strlen`などのライブラリ関数中で segmentation fault が起きることがあります．\n- その原因は多くの場合，ライブラリ関数のバグではなく，あなたのライブラリ関数の使い方が間違っているからです．例えば，間違った引数を渡すなどです．\n\n#### 問題\n- [`bad-strlen.c`](bad-strlen.c)を`gdb`上で実行して，segmentation faultの原因を探ろう．segmentation faultが起こった行で，`backtrace`でバックトレースを表示し，`main`関数のスタックフレームを選択肢，`strlen`の引数を調べてみよう．\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# bad-strlen.cを -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# runで実行を開始し，segmentation fault後，バックトレースを表示し，main関数のスタックフレームを選択肢，strlenの引数を調べる\n(gdb) \n",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え\n\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gcc -g bad-strlen.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# runで実行を開始し，segmentation fault後，バックトレースを表示し，main関数のスタックフレームを選択肢，strlenの引数を調べる\n(gdb) run\n# Program received signal SIGSEGV, Segmentation fault.\n# __strlen_sse2 () at ../sysdeps/x86_64/multiarch/strlen-vec.S:126\n# 126     ../sysdeps/x86_64/multiarch/strlen-vec.S: No such file or directory.\n(gdb) backtrace\n# 0  __strlen_sse2 () at ../sysdeps/x86_64/multiarch/strlen-vec.S:126\n# #1  0x000055555555518a in main () at bad-strlen.c:7\n(gdb) up\n# 1  0x000055555555518a in main () at bad-strlen.c:7\n# 7           printf (\"%ld\\n\", strlen (s)); # <- strlenの引数は s\n(gdb) print/x s\n# $1 = 0xdeadbeef  # <- 引数sに怪しいアドレスが入ってた\n(gdb) print/x *s\n# Cannot access memory at address 0xdeadbeef #  やはりアクセスできない -> 引数sの値が不正だった\n(gdb) quit\ny\n",
+      "languageId": "gdb_command"
+    }
+  ]
+}

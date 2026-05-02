@@ -1,0 +1,49 @@
+{
+  "cells": [
+    {
+      "kind": "markdown",
+      "value": "### 未初期化変数の使用を探る\n\n#### 説明\n- C言語では，グローバル変数や静的変数はゼロ初期化されます．一方，局所変数は初期化されません．未初期化の局所変数を読むことは未定義動作であり，プログラムの挙動は保証されなくなります．ただし多くの場合，クラッシュせずに「それらしい値」が読めてしまいます．\n- `-Wall -Wextra`などの警告オプションで，コンパイラが未初期化変数の使用を警告してくれる場合もあります．しかし，ポインタ経由の読み取りや，条件分岐が複雑な場合は，未検出になることがあります．\n- `clang`には`-ftrivial-auto-var-init=zero|pattern`というオプションがあり，「未初期化の局所変数の値をすべて特定の値で初期化」してくれます．ただし，2026年5月現在，`gcc`にはこれと類似のオプションは存在しないようです．\n- `valgrind`など動的解析を行う検知器は未初期化の局所変数の読み取りを検出してくれます(`valgrind`をインストールして，`valgrind ./a.out`すればOK)．ただし実行時オーバーヘッドが大きいので，実行時間が数倍以上になることが多いです．\n- 関数からリターンする際，破棄されるスタックフレームの内容が自動的に消去されることは通常ありません．そのため，同じスタック領域が再利用された場合，未初期化の局所変数が「過去の関数の局所変数の値を引き継いだ」ように見えることがあります．\n- 未初期化の局所変数は「たまたま動く」ことが多いため，発見が遅れやすく，実運用で深刻なバグになります．さらに未初期の局所変数の読み取りは，過去の機密データを露出させる可能性があり，セキュリティ上の問題にもなりえます．\n\n#### 問題\n- [`bad-local.c`](bad-local.c)は，`funcB`中で未初期化の局所変数`z`の値を(`print_p`中で)参照しているが，コンパイラの警告も無く，実行時エラーも起こらず，動いてしまう．`funcB`の局所変数`z`の未初期化の値が，`funcA`の`y`と同じ値(`0xDEADBEEF`)になる(これは皆さんの実行環境に依存して，同じにならない可能性もあります)．\n- 現在の`gdb`で「すべての関数のリターンをフックすること」は難しいので(`finish`すればリターン直後でブレークできますが，その前に別のブレークポイントにぶつかると`finish`の効果が消えてしまうため)，ここでは話を単純化します．つまり，ここでは「`funcB`中で未初期化の局所変数が読まれていると推測できた」「`funcB`が呼び出される直前に，`funcA`が使っていたスタックフレームを`0xAB`で埋める」「変数`z`の値が`0xAB`を含めば，`z`は未初期化の値を読んでいると判明した」とします．(もっとうまい方法があれば，教えてください)\n- 以下をやってみよう：\n  - 関数`funcA`でブレークさせる\n  - `finish`で，`funcA`のリターン直後まで実行を進める\n  - `print memset ((void*)$rsp-32, 0xAB, 32)`で，`%rsp`より上部32ビットを`0xAB`で埋める(32バイトというサイズはえいやで適当に決めてます)\n  - 実行を再開して，変数`z`の値が変化するかを観察する\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 練習場所",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "# bad-strlen.cを -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# 関数funcAでブレークさせる\n(gdb)\n# finishで，funcAのリターン直後まで実行を進める\n(gdb)\n# memset を呼び出して，%rspより上部32バイトを値0xABで埋める\n(gdb)\n# 実行を再開して，変数zの値が変化するかを観察する\n(gdb)",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 答え\n\n\n",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gcc -g bad-local.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# funcAでブレークさせる\n(gdb) break funcA\n(gdb) run\n# reakpoint 1, funcA () at bad-local.c:10\n# 10      {\n#\n# finishで，funcAのリターン直後まで実行を進める\n(gdb) finish\n# Run till exit from #0  funcA () at bad-local.c:10\n# p = 0x7fffffffdde4, *p = deadbeef\n# main () at bad-local.c:24\n# 1124          funcB ();\n#\n# memset を呼び出して，%rspより上部32バイトを値0xABで埋める\n(gdb) print memset ((void*)$rsp-32, 0xAB, 32)\n# 実行を再開して，変数zの値が変化するかを観察する\n(gdb) continue\n# p = 0x7fffffffdde4, *p = abababab  # 変数zの値がABを含んでいる -> 未初期化の値を読んでいる!\n(gdb) quit",
+      "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- `gcc`の`-finstrument-functions`オプションを使うと，すべての関数の入口と出口をフックできます．この機能を使って，**すべての**関数の出口で使用済みのスタックフレームを`0xAB`で埋めるようにしたのが`bad-local2.c`です．(スタック保護機能のカナリアや，リターンアドレスなどを書き換えないようにしています．) ",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gcc -g -finstrument-functions bad-local2.c\n$ ./a.out\n# p = 0x7fffffffde34, *p = deadbeef\n# this function: 0x555555555240, rsp=0x7fffffffde00, rbp=0x7fffffffde20\n# this function: 0x5555555552a0, rsp=0x7fffffffde20, rbp=0x7fffffffde40\n# p = 0x7fffffffde34, *p = abababab # <- 値が 0xAB になった\n# this function: 0x555555555240, rsp=0x7fffffffde00, rbp=0x7fffffffde20\n# this function: 0x555555555313, rsp=0x7fffffffde20, rbp=0x7fffffffde40\n# this function: 0x55555555537d, rsp=0x7fffffffde40, rbp=0x7fffffffde60",
+      "languageId": "shellscript"
+    }
+  ]
+}
