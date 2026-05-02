@@ -120,15 +120,9 @@
 |[`10-4-buf-overflow1-next-var.gdbnb`](10-4-buf-overflow1-next-var.gdbnb)|バッファオーバーフローで隣の変数の値が上書きされた|
 |[`10-4-buf-overflow2-return-addr.gdbnb`](10-4-buf-overflow2-return-addr.gdbnb)|バッファオーバーフローでリターンアドレスと古い`%rbp`の値が上書きされた|
 
-
-
-
-
 - 古い%rbpを上書きし，その後，ライブラリ関数を呼び出してクラッシュした原因を探る
   watch *(long*)$rbp
 - ダングリングポインタ
-- スタック上のリターンアドレスを壊した
-- スタック上のベースポインタを壊した
 - $rspのアラインメント違反 `movq $4, %rsp`
 - 間違った longjmp
 
