@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### `printf`でC言語のprintf風の表示をする\n#### 説明\n-  `printf`コマンドを使うと，C言語の`printf`のような書式を指定して表示できます\n- 例えば，`printf \"n = %d\\n\", n` のようにカンマ区切りで引数を指定します(`printf`の直後にはカンマがないことに注意)\n#### 問題\n- [`fact.c`](fact.c)の`fact`関数の先頭行でブレークし，`printf`を使って，`\"n = %d\\n\"`という書式で変数`n`の値を表示しよう",
+      "value": "### `printf`でC言語の`printf`風の表示をする\n#### 説明\n-  `printf`コマンドを使うと，C言語の`printf`のような書式を指定して表示できます\n- 例えば，`printf \"n = %d\\n\", n` のようにカンマ区切りで引数を指定します(`printf`の直後にはカンマがないことに注意)\n#### 問題\n- [`fact.c`](fact.c)の`fact`関数の先頭行でブレークし，`printf`を使って，`\"n = %d\\n\"`という書式で変数`n`の値を表示しよう",
       "languageId": "markdown"
     },
     {
@@ -37,7 +37,7 @@
     },
     {
       "kind": "markdown",
-      "value": "#### 補足\n- 以下のように引数で型キャストもできるので，特定のアドレスの値を読む時に便利です (`x`コマンド [`xxx.gdbnb`](xxx.gdbnb)でもメモリの内容は読めます)\n```\n(gdb) printf \"%d\\n\", *(int *)ptr\n```",
+      "value": "#### 補足\n- 以下のように引数で型キャストもできるので，特定のアドレスの値を読む時に便利です．`x`コマンド ([`8-4-x1-endian.gdbnb`](8-4-x1-endian.gdbnb))でもメモリの内容を読めます．\n```\n(gdb) printf \"%d\\n\", *(int *)ptr\n```",
       "languageId": "markdown"
     }
   ]

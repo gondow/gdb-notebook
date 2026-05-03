@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### dprintf`で動的なprintfを設定する\n#### 説明\n- `dprintf`を使うと（ソースコードを変更せず）`printf`をプログラムに埋め込んだ効果を出せます\n  - より正確にはコマンド付きブレークポイント([`3-3-commands.gdbnb`](3-3-commands.gdbnb))を使って，ブレークするたびに`printf`と`continue`を実行するのと同じです\n- 例えば，`dprintf fact, \"n = %d\\n\", n` とすると，ソースコードの`fact`関数の先頭に`printf (\"n = %d\\n\", n);`と書いたのと同じになります\n\n#### 問題\n- [`fact.c`](fact.c)で，`dprintf fact, \"n = %d\\n\", n`を設定し，実行しよう\n\n",
+      "value": "### `dprintf`で動的な`printf`を設定する\n#### 説明\n- `dprintf`を使うと（ソースコードを変更せず）`printf`をプログラムに埋め込んだ効果を出せます\n  - より正確にはコマンド付きブレークポイント([`3-3-commands.gdbnb`](3-3-commands.gdbnb))を使って，ブレークするたびに`printf`と`continue`を実行するのと同じです\n- 例えば，`dprintf fact, \"n = %d\\n\", n` とすると，ソースコードの`fact`関数の先頭に`printf (\"n = %d\\n\", n);`と書いたのと同じになります\n\n#### 問題\n- [`fact.c`](fact.c)で，`dprintf fact, \"n = %d\\n\", n`を設定し，実行しよう\n\n",
       "languageId": "markdown"
     },
     {

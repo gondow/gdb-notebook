@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### 概要：ステップ実行（２）\n- ステップ実行には大きく次の3種類があります\n  - ステップイン(`step`)：1行実行を進める(関数呼び出しは中に入って1行を数える)\n  - ステップオーバー(`next`)：1行実行を進める(関数呼び出しはまたいで1行を数える)\n  - ステップアウト (`finish`)：今の関数がリターンするまで実行を進める\n\n<div style=\"background-color: white; padding: 5px; display: inline-block;\">  \n\n![](https://gondow.github.io/linux-x86-64-programming/figs/step.svg)\n</div>\n\n---\n#### 説明\n- ここではまず`step`を使い，ステップインで関数の中に入ることを確認しよう\n#### 問題\n- [`step2.c`](step2.c)の`A`関数の先頭行にブレークポイントを設定して，そこで実行を一時停止させる．その後，`step`コマンドを使い，`B`関数にステップ実行が進むことを確認しよう",
+      "value": "### 概要：ステップ実行（２）\n- ステップ実行には大きく次の3種類があります\n  - ステップイン(`step`)：1行実行を進める(関数呼び出しは中に入って1行を数える)\n  - ステップオーバー(`next`)：1行実行を進める(関数呼び出しはまたいで1行を数える)\n  - ステップアウト (`finish`)：今の関数がリターンするまで実行を進める\n\n<div style=\"background-color: white; padding: 5px; display: inline-block;\">  \n\n![](https://gondow.github.io/linux-x86-64-programming/figs/step.svg)\n</div>\n\n---\n#### 説明\n- ここではまず`step`コマンド(`s`)を使い，ステップインで関数の中に入ることを確認しよう\n#### 問題\n- [`step2.c`](step2.c)の`A`関数の先頭行にブレークポイントを設定して，そこで実行を一時停止させる．その後，`step`コマンドを使い，`B`関数にステップ実行が進むことを確認しよう",
       "languageId": "markdown"
     },
     {

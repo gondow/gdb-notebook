@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "#### 説明\n- `print`コマンドは変数だけでなく，**式**を指定することができます．例えば，`print n+3` や `print fact(5)`と書けます．\n#### 問題\n- [`fact.c`](fact.c)の`main`関数の先頭行にブレークポイントを設定して，そこで実行を一時停止させる．その後，`print`コマンドで式`fact(5)`の値を表示してみよう",
+      "value": "#### 説明\n- `print`コマンド(`p`)は変数だけでなく，**式**を指定することができます．例えば，`print n+3` や `print fact(5)`と書けます．\n#### 問題\n- [`fact.c`](fact.c)の`main`関数の先頭行にブレークポイントを設定して，そこで実行を一時停止させる．その後，`print`コマンドで式`fact(5)`の値を表示してみよう",
       "languageId": "markdown"
     },
     {
@@ -42,7 +42,7 @@
     },
     {
       "kind": "markdown",
-      "value": "#### 補足\n- `fact`関数にブレークポイントが設定されていると，`print fact(5)`をうまく実行できません．この場合は一時的にブレークポイントを無効にする必要があります．\n```\n(gdb) disable breakpoints\n(gdb) print fact(5)\n$1 = 120\n(gdb) enable breakpoints\n```",
+      "value": "#### 補足\n- `fact`関数にブレークポイントが設定されていると，`print fact(5)`をうまく実行できません．この場合は一時的にブレークポイントを無効にする必要があります．\n```\n(gdb) disable breakpoints\n(gdb) print fact(5)\n$1 = 120\n(gdb) enable breakpoints\n```\n- 例えば，`print foo()`と関数呼び出しする時，`foo()`に副作用があっても構いません．ただし，その副作用がプログラムの状態を変更してしまうことに注意が必要です．",
       "languageId": "markdown"
     }
   ]

@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### `tbreak`で一時的なブレークポイントを設定する\n#### 説明\n- `tbreak`は一時的なブレークポイントを設定します．一度，ブレークすると，この一時的なブレークポイントは解除されます．\n#### 問題\n- [`until.c`](until.c)の6行目までステップ実行し，そこから`tbreak`コマンドを使ってループ直後の8行目まで実行を進めよう",
+      "value": "### `tbreak`で一時的なブレークポイントを設定する\n#### 説明\n- `tbreak`コマンド(`tb`)は一時的なブレークポイントを設定します．一度，ブレークすると，この一時的なブレークポイントは解除されます．\n#### 問題\n- [`until.c`](until.c)の6行目までステップ実行し，そこから`tbreak`コマンドを使ってループ直後の8行目まで実行を進めよう",
       "languageId": "markdown"
     },
     {
@@ -32,7 +32,7 @@
     },
     {
       "kind": "code",
-      "value": "# main関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break main\n(gdb) run\n# Breakpoint 1, main () at until.c:4\n# 4           int sum = 0;\n\n# ステップ実行で6行目まで実行を進める\n(gdb) step\n# 5           for (int i = 0; i < 100; i++) {\n(gdb) step\n# 6               sum += i;\n# listコマンドでループ直後の行番号を確認する\n(gdb) list\n# 1       #include <stdio.h>\n# 2       int main (void)\n# 3       {\n# 4           int sum = 0;\n# 5           for (int i = 0; i < 100; i++) {\n# 6               sum += i;\n# 7           }\n# 8           printf (\"sum=%d\\n\", sum);\n# 9       }\n# tbreakコマンドでループ直後まで実行を進める\n(gdb) tbreak 8\n# main () at until.c:8\n# 8           printf (\"sum=%d\\n\", sum);\n(gdb) quit\ny",
+      "value": "(gdb) set pagination off\n# main関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break main\n(gdb) run\n# Breakpoint 1, main () at until.c:4\n# 4           int sum = 0;\n#\n# ステップ実行で6行目まで実行を進める\n(gdb) step\n# 5           for (int i = 0; i < 100; i++) {\n(gdb) step\n# 6               sum += i;\n# listコマンドでループ直後の行番号を確認する\n(gdb) list\n# 1       #include <stdio.h>\n# 2       int main (void)\n# 3       {\n# 4           int sum = 0;\n# 5           for (int i = 0; i < 100; i++) {\n# 6               sum += i;\n# 7           }\n# 8           printf (\"sum=%d\\n\", sum);\n# 9       }\n#\n# tbreakコマンドでループ直後まで実行を進める\n(gdb) tbreak 8\n# main () at until.c:8\n# 8           printf (\"sum=%d\\n\", sum);\n(gdb) continue\n# Continuing.\n# \n# Temporary breakpoint 2, main () at until.c:8  # <- ループ直後まで実行を進められた\n# 8           printf (\"sum=%d\\n\", sum);\n(gdb) quit\ny",
       "languageId": "gdb_command"
     }
   ]

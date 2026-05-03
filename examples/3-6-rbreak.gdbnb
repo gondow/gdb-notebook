@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### `rbreak`で正規表現にマッチするすべての関数にブレークポイントを設定する\n#### 説明\n- `rbreak`はブレークポイントを設定する関数名を正規表現で指定できます．\n  - 例えば，`rbreak test`は「関数名に`test`を含む関数すべて」にブレークポイントを設定します．\n  - 例えば，`rbreak ^test`は「関数名が`test`で始まる関数すべて」にブレークポイントを設定します．\n#### 問題\n- [`rbreak.c`](rbreak.c)で「関数名に`test`を含む関数すべて」にブレークポイントを設定しよう．`delete`ですべてのブレークポイントを削除してから，次は「関数名が`test`で始まる関数すべて」にブレークポイントを設定しよう",
+      "value": "### `rbreak`で正規表現にマッチするすべての関数にブレークポイントを設定する\n#### 説明\n- `rbreak`コマンド(`rb`)はブレークポイントを設定する関数名を正規表現で指定できます．\n  - 例：`rbreak test`は「関数名に`test`を含む関数すべて」にブレークポイントを設定します．\n  - 例：`rbreak ^test`は「関数名が`test`で始まる関数すべて」にブレークポイントを設定します．\n  - 例：`rbreak main.c:.*`は「ファイル`main.c`中の関数すべて」にブレークポイントを設定します．\n#### 問題\n- [`rbreak.c`](rbreak.c)で「関数名に`test`を含む関数すべて」にブレークポイントを設定しよう．`delete`ですべてのブレークポイントを削除してから，次は「関数名が`test`で始まる関数すべて」にブレークポイントを設定しよう",
       "languageId": "markdown"
     },
     {
@@ -32,7 +32,7 @@
     },
     {
       "kind": "code",
-      "value": "# 「関数名に`test`を含む関数すべて」にブレークポイントを設定する\n(gdb) rbreak test\n# Breakpoint 1 at 0x114f: file rbreak.c, line 4.\n# int C_test();\n# Breakpoint 2 at 0x1131: file rbreak.c, line 2.\n# int test_A();\n# Breakpoint 3 at 0x1140: file rbreak.c, line 3.\n# int test_B();\n\n# すべてのブレークポイントを削除する\n(gdb) delete\ny\n# Delete all breakpoints? (y or n) y\n\n# 「関数名が`test`で始まる関数すべて」にブレークポイントを設定する\n(gdb) rbreak ^test\n# reakpoint 4 at 0x1131: file rbreak.c, line 2.\n# int test_A();\n# Breakpoint 5 at 0x1140: file rbreak.c, line 3.\n# int test_B();\n(gdb) quit",
+      "value": "(gdb) set pagination off\n# 「関数名に`test`を含む関数すべて」にブレークポイントを設定する\n(gdb) rbreak test\n# Breakpoint 1 at 0x114f: file rbreak.c, line 4.\n# int C_test();\n# Breakpoint 2 at 0x1131: file rbreak.c, line 2.\n# int test_A();\n# Breakpoint 3 at 0x1140: file rbreak.c, line 3.\n# int test_B();\n#\n# すべてのブレークポイントを削除する\n(gdb) delete\ny\n# Delete all breakpoints? (y or n) y\n#\n# 「関数名が`test`で始まる関数すべて」にブレークポイントを設定する\n(gdb) rbreak ^test\n# reakpoint 4 at 0x1131: file rbreak.c, line 2.\n# int test_A();\n# Breakpoint 5 at 0x1140: file rbreak.c, line 3.\n# int test_B();\n(gdb) quit",
       "languageId": "gdb_command"
     },
     {

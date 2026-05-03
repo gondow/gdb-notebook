@@ -32,7 +32,7 @@
     },
     {
       "kind": "code",
-      "value": "# fact関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break fact if n==0\n(gdb) run\n# fact関数の先頭行でブレークする（nはゼロ）\n# Breakpoint 1, fact (n=0) at fact.c:5\n# 5\t    if (n <= 0) {",
+      "value": "# fact関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break fact if n==0\n(gdb) run\n# fact関数の先頭行でブレークする（nがゼロなことに注意）\n# Breakpoint 1, fact (n=0) at fact.c:5\n# 5\t    if (n <= 0) {",
       "languageId": "gdb_command"
     },
     {
@@ -42,7 +42,7 @@
     },
     {
       "kind": "markdown",
-      "value": "#### 補足\n- バックトレースを見ると，下から main()→fact(5)→fact(4)→…→fact(0)と関数呼び出されていることが分かります．「どうやってここまで来たか」が分かるので，バックトレースの情報はデバッグにおいてとても重要です．",
+      "value": "#### 補足\n- バックトレースを見ると，下から main()→fact(5)→fact(4)→…→fact(0)と関数呼び出されていることが分かります．「どうやって実行がここまで来たか」が分かるので，バックトレースの情報はデバッグにおいてとても重要です．",
       "languageId": "markdown"
     }
   ]

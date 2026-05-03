@@ -15,7 +15,7 @@
 |[`1-3-print2.gdbnb`](1-3-print2.gdbnb)|`print`で式の値を表示する|
 |[`1-4-step.gdbnb`](1-4-step.gdbnb)|`step`でステップ実行する|
 |[`1-5-display.gdbnb`](1-5-display.gdbnb)|`display`で変数の値を自動表示する|
-|[`1-6-args.gdbnb`](1-6-args.gdbnb)|コマンドライン引数を与えて実行する|
+|[`1-6-argv.gdbnb`](1-6-argv.gdbnb)|コマンドライン引数を与えて実行する|
 |[`1-7-redirection.gdbnb`](1-7-redirection.gdbnb)|標準入出力を切り替えて実行する|
 
 ### ステップ実行

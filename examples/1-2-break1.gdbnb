@@ -7,7 +7,7 @@
     },
     {
       "kind": "markdown",
-      "value": "### 関数名を指定してブレークポイントを設定し，実行を再開する\n#### 説明\n- ブレークポイントの設定には`break`コマンドを使います．`break main`とすると，`main`関数の先頭行にブレークポイントを設定します．その後，`run`で実行開始すると`main`関数の先頭行で実行が一時停止します\n- 一時停止後，`continue`コマンドを使うと，実行が再開します\n#### 問題\n- [`fact.c`](fact.c)の`main`関数の先頭行にブレークポイントを設定して，そこで実行を一時停止させる．その後，実行を再開させよう",
+      "value": "### 関数名を指定してブレークポイントを設定し，実行を再開する\n#### 説明\n- ブレークポイントの設定には`break`コマンド(`b`)を使います．`break main`とすると，`main`関数の先頭行にブレークポイントを設定します．その後，`run`で実行開始すると`main`関数の先頭行で実行が一時停止します\n- 一時停止後，`continue`コマンド(`c`)を使うと，実行が再開します\n#### 問題\n- [`fact.c`](fact.c)の`main`関数の先頭行にブレークポイントを設定して，そこで実行を一時停止させる．その後，実行を再開させよう",
       "languageId": "markdown"
     },
     {
@@ -37,7 +37,7 @@
     },
     {
       "kind": "code",
-      "value": "# main関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break main\n(gdb) run\n# ↓以下の表示が出て，14行目で実行が一時停止する（14行目はまだ実行されていない）\n# Breakpoint 1, main () at fact.c:14\n# 14\t    printf (\"fact (%d) = %d\\n\", 5, fact (5));",
+      "value": "# main関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break main\n# Breakpoint 1 at 0x1180: file fact.c, line 14.\n(gdb) run\n# ↓以下の表示が出て，14行目で実行が一時停止する（14行目はまだ実行されていない）\n# Breakpoint 1, main () at fact.c:14\n# 14\t    printf (\"fact (%d) = %d\\n\", 5, fact (5));",
       "languageId": "gdb_command"
     },
     {

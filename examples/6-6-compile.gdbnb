@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### `compile code`を使って，プログラムを埋め込む\n\n#### 説明\n- `compile code`を使うと，C言語で記述した文をプログラムに埋め込んで，`gdb`上で実行できます．例えば，繰り返し`printf`したい場合などに便利です．\n- 使用例1： `compile code  { for (int i = 0; i < 4; i++) { p[i] = 999; }}`  // 1行の場合\n- 使用例2:  複数行で入力する場合はコマンド付きブレークポイントと同様に最後に`end`を入れます (`printf`の宣言が無いと警告が出るので，宣言を入れてます)\n```\n(gdb) compile code\n> { int printf (const char *, ...);\n>   for (int i = 0; i < 4; i++) {\n>     printf (\"p[%d]=%d\\n\", i, p[i]);\n>   }\n> }\n> end\n```\n\n#### 問題\n- [`array.c`](array.c)に対して，`main`関数の最後の行でブレークさせ，`compile code`コマンドを使って，ループを使って`p[0]`から`p[3]`の値を表示してみよう\n",
+      "value": "### `compile code`を使って，プログラムを埋め込む\n\n#### 説明\n- `compile code`コマンドを使うと，C言語で記述した文をプログラムの今の場所に埋め込んで，`gdb`上で実行できます．例えば，繰り返し`printf`したい場合などに便利です．\n- 例： `compile code  { for (int i = 0; i < 4; i++) { p[i] = 999; }}`  // 1行の場合\n- 例:  複数行で入力する場合はコマンド付きブレークポイントと同様に最後に`end`を入れます (`printf`の宣言が無いと警告が出るので，宣言を入れてます)\n```\n(gdb) compile code\n> { int printf (const char *, ...);\n>   for (int i = 0; i < 4; i++) {\n>     printf (\"p[%d]=%d\\n\", i, p[i]);\n>   }\n> }\n> end\n```\n\n#### 問題\n- [`array.c`](array.c)に対して，`main`関数の最後の行でブレークさせ，`compile code`コマンドを使って，ループを使って`p[0]`から`p[3]`の値を表示してみよう\n",
       "languageId": "markdown"
     },
     {

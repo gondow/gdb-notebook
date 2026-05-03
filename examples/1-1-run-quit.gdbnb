@@ -37,12 +37,12 @@
     },
     {
       "kind": "code",
-      "value": "# ターミナルの一番下に(gdb)が表示されてる状態で，以下のrunコマンドを実行しよう．a.outがデバッガ上で実行されます．\n(gdb) run\n(gdb) quit",
+      "value": "# ターミナルの一番下に(gdb)が表示されてる状態で，以下のrunコマンドを実行しよう．a.outがデバッガ上で実行されます．\n(gdb) run\n# fact (5) = 120\n(gdb) quit",
       "languageId": "gdb_command"
     },
     {
       "kind": "markdown",
-      "value": "#### 補足\n- `gdb`の`-q`オプションは，`gdb`の起動時メッセージを非表示にします．`~/.gdbearlyinit`に以下を設定しても非表示にできます．\n```\n   set startup-quietly on\n```\n- `gdb`の以下の表示中のInferiorは「デバッグ対象のプログラム」のことです．`gdb`から見て「下位のプログラム」だからでしょう．そして「プロセス番号27716で，正常に実行終了した」と言っています．デバッグされているプログラムを「デバッギ (debuggee)」と呼ぶこともあります．\n  - inferiorというgdb用語は英語圏の人でも奇妙に感じるようです．「デバッガに，劣ったプログラムだってディスられたんですけど？」と\n```\n[Inferior 1 (process 27716) exited normally]\n```",
+      "value": "#### 補足\n- `gdb`の`-q`オプションは，`gdb`の起動時メッセージを非表示にします．`~/.gdbearlyinit`に以下を設定しても非表示にできます．\n```\n   set startup-quietly on\n```\n- `run`コマンドは`r`に，`quit`コマンドは`q`に省略できます．慣れてきたら省略コマンドを使いましょう(コマンド入力が楽になるので)．\n- `gdb`の以下の表示中のInferiorは「デバッグ対象のプログラム」のことです．`gdb`から見て「下位のプログラム」だからでしょう．そして「プロセス番号27716で，正常に実行終了した」と言っています．デバッグされているプログラムを「デバッギ (debuggee)」と呼ぶこともあります．\n  - inferiorというgdb用語は英語圏の人でも奇妙に感じるようです．「デバッガに，劣ったプログラムだってディスられたんですけど？」と\n```\n[Inferior 1 (process 27716) exited normally]\n```",
       "languageId": "markdown"
     }
   ]

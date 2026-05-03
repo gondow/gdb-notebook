@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### ブレークした時に自動実行するコマンド列を指定する\n#### 説明\n- `commands`コマンドを使うと，ブレークした時に自動実行するコマンド列を指定できます．例えば，以下のように入力すると，ブレークするたびに`print n`と`continue`が自動的に実行されます．`end`はコマンド列の最後を示すものです．\n```\n(gdb) commands\n> print n\n> continue\n> end\n```\n- 引数なしの`commands`は「最後に設定したブレークポイント」に対しての指定になります．`commands 5`や`commands 5-7`などで，対象のブレークポイントの指定も可能です．\n#### 問題\n- [`fact.c`](fact.c)の`fact`関数の先頭行にブレークポイントを設定し，ブレークした時に自動実行するコマンド列として`print n`と`continue`を設定して，プログラムを実行してみよう．",
+      "value": "### ブレークした時に自動実行するコマンド列を指定する\n#### 説明\n- `commands`コマンド(`comm`)を使うと，ブレークした時に自動実行するコマンド列を指定できます．例えば，以下のように入力すると，ブレークするたびに`print n`と`continue`が自動的に実行されます．`end`はコマンド列の最後を示すものです．\n```\n(gdb) commands\n> print n\n> continue\n> end\n```\n- 引数なしの`commands`は「最後に設定したブレークポイント」に対しての指定になります．`commands 5`や`commands 5-7`などで，対象のブレークポイントの指定も可能です．\n#### 問題\n- [`fact.c`](fact.c)の`fact`関数の先頭行にブレークポイントを設定し，ブレークした時に自動実行するコマンド列として`print n`と`continue`を設定して，プログラムを実行してみよう．",
       "languageId": "markdown"
     },
     {
@@ -17,7 +17,7 @@
     },
     {
       "kind": "code",
-      "value": "# fact関数の先頭行にブレークポイントを設定する\n(gdb)\n# ブレークした時に自動実行するコマンド列として`print n`と`continue`を設定する\n(gdb)\n# プログラムの実行を開始する\n(gdb)",
+      "value": "# fact関数の先頭行にブレークポイントを設定する\n(gdb)\n# ブレークした時に自動実行するコマンド列として print n と continue を設定する\n(gdb)\n# プログラムの実行を開始する\n(gdb)",
       "languageId": "gdb_command"
     },
     {
