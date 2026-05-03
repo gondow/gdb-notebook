@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### `x`で配列の中身を確認する\n\n#### 問題\n- [`array.c`](array.c)で，配列`array`，ポインタ変数`p`，`malloc`で確保したメモリがメモリ上でどうなっているかを`print`と`x`コマンドで確認しよう．\n  - 以下の図のようになっています．アドレスは皆さんの実行環境ごとに異なる可能性が高いです．この図の通り，配列の要素は必ず隣り合っています．\n- 具体的には以下を行おう\n  - 10行目でブレークさせる\n  - `print array`で，配列`array`の内容を表示する\n  - `print`を使って，配列`array`の先頭アドレスを表示する\n  - `x`を使って，配列`array`の先頭アドレスから，4バイトデータを4つ表示する(配列要素がメモリ上で連続してることを確認できる)\n  - `print *p@4`で，`p`が指す配列の内容を表示する\n  - `print`を使って，`p`が指す配列の先頭アドレスを表示する\n  - `x`を使って，`p`が指す配列の先頭アドレスから，4バイトデータを4つ表示する(配列要素がメモリ上で連続してることを確認できる)\n\n\n<div style=\"background-color: white; padding: 5px; display: inline-block;\">  \n\n![](https://gondow.github.io/linux-x86-64-programming/figs/array5.svg)\n</div>\n\n",
+      "value": "### `x`で配列の中身を確認する\n\n#### 問題\n- [`array.c`](array.c)で，配列`array`，ポインタ変数`p`，`malloc`で確保したメモリがメモリ上でどうなっているかを`print`と`x`コマンドで確認しよう．\n  - 以下の図のようになっています．アドレスは皆さんの実行環境ごとに異なる可能性が高いです．この図の通り，配列の要素は必ず隣り合っています．\n\n<div style=\"background-color: white; padding: 5px; display: inline-block;\">  \n\n![](https://gondow.github.io/linux-x86-64-programming/figs/array5.svg)\n</div>\n\n\n- 具体的には以下を行おう\n  - 10行目でブレークさせる\n  - `print array`で，配列`array`の内容を表示する\n  - `print`を使って，配列`array`の先頭アドレスを表示する\n  - `x`を使って，配列`array`の先頭アドレスから，4バイトデータを4つ表示する(配列要素がメモリ上で連続してることを確認できる)\n  - `print *p@4`で，`p`が指す配列の内容を表示する\n  - `print`を使って，`p`が指す配列の先頭アドレスを表示する\n  - `x`を使って，`p`が指す配列の先頭アドレスから，4バイトデータを4つ表示する(配列要素がメモリ上で連続してることを確認できる)\n\n\n",
       "languageId": "markdown"
     },
     {
