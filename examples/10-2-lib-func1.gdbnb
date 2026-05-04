@@ -2,7 +2,7 @@
   "cells": [
     {
       "kind": "markdown",
-      "value": "### ライブラリ関数中でクラッシュした原因を探る\n\n#### 説明\n- `printf`や`strlen`などのライブラリ関数中で segmentation fault が起きることがあります．\n- その原因は多くの場合，ライブラリ関数のバグではなく，あなたのライブラリ関数の使い方が間違っているからです．例えば，間違った引数を渡すなどです．\n\n#### 問題\n- [`bad-strlen.c`](bad-strlen.c)を`gdb`上で実行して，segmentation faultの原因を探ろう．segmentation faultが起こった行で，`backtrace`でバックトレースを表示し，`main`関数のスタックフレームを選択肢，`strlen`の引数を調べてみよう．\n",
+      "value": "### ライブラリ関数中でクラッシュした原因を探る(1)\n\n#### 説明\n- `printf`や`strlen`などのライブラリ関数中で segmentation fault が起きることがあります．\n- その原因は多くの場合，ライブラリ関数のバグではなく，あなたのライブラリ関数の使い方が間違っているからです．例えば，間違った引数を渡すなどです．\n\n#### 問題\n- [`bad-strlen.c`](bad-strlen.c)を`gdb`上で実行して，segmentation faultの原因を探ろう．segmentation faultが起こった行で，`backtrace`でバックトレースを表示し，`main`関数のスタックフレームを選択肢，`strlen`の引数を調べてみよう．\n",
       "languageId": "markdown"
     },
     {
