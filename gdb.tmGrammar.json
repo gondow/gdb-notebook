@@ -2,7 +2,7 @@
   "scopeName": "source.gdb",
   "patterns": [
     {
-      "match": "\\b(apr|b|bt|c|comm|d|do|dis|disas|disp|ec|en|f|fin|h|i|if|j|l|n|ni|p|pt|q|r|rb|s|si|tb|wa|wha|break|if|run|continue|info|print|x|quit|step|next|stepi|nexti|finish|display|until|list|disable|enable|delete|commands|tbreak|rbreak|watch|backtrace|end|up|down|frame|printf|dprintf|return|jump|compile|disassemble|whatis|ptype|help|apropos|echo|define)\\b",
+      "match": "\\b(apr|b|bt|c|comm|d|do|dis|disas|disp|ec|en|f|fin|h|i|if|j|l|n|ni|p|pt|q|r|rb|ret|s|si|tb|u|wa|wha|break|if|run|continue|info|print|x|quit|step|next|stepi|nexti|finish|display|until|list|disable|enable|delete|commands|tbreak|rbreak|watch|backtrace|end|up|down|frame|printf|dprintf|return|jump|compile|disassemble|whatis|ptype|help|apropos|echo|define|find)\\b",
       "name": "keyword.control.gdb"
     },
     {

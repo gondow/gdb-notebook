@@ -29,9 +29,11 @@
 	    q: "quit",
 	    r: "run",
 	    rb: "rbreak",
+	    ret: "return",
 	    s: "step",
 	    si: "stepi",
 	    tb: "tbreak",
+	    u: "until",
 	    wa: "watch",
 	    wha: "whatis",
 	},
@@ -688,7 +690,7 @@
 	    },
 	    return: {
 		exp: "選択中のスタックフレームから，指定した返り値でリターンする",
-		abbr: "",
+		abbr: "ret",
 		usage: [
 		    [
 			"return 999",
@@ -923,6 +925,17 @@
 		    [
 			"define breakrun<pre/>&gt; break main<pre/>&gt; run<pre/>&gt; end",
 			"break mainとrunを実行するユーザ定義コマンドbreakrunを定義する"
+		    ],
+		],
+		url: "",
+	    },
+	    find: {
+		exp: "指定したアドレス範囲から特定の値を探す",
+		abbr: "",
+		usage: [
+		    [
+			"find /w &arr[0], &arr[1000-1], 0xDEADBEEF",
+			"アドレス&arr[0]以上，&arr[1000-1]以下から，4バイトのxDEADBEEFを探す"
 		    ],
 		],
 		url: "",

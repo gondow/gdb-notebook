@@ -354,6 +354,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push (
 	vscode.workspace.onDidCloseNotebookDocument (nb => {
+	    console.log ("onDidCloseNotebookDocument");
 	    closeTerminal (nb);
 	})
     );
@@ -734,11 +735,13 @@ export function deactivate() {
 }
 
 function closeTerminal(nb: vscode.NotebookDocument) {
-    const key = nb.uri.toString();
-    const term = terminalMap.get(key);
+    const key = nb.uri.toString ();
+    const term = terminalMap.get (key);
+    console.log ("closeTerminal: " + key);
     if (term) {
-	term.dispose();
-	terminalMap.delete(key);
+	console.log (key + " closed");
+	term.dispose ();
+	terminalMap.delete (key);
     }
 }
 
