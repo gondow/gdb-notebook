@@ -1,5 +1,7 @@
 # GDB-notebook README
 
+[![VSCode Marketplace](https://img.shields.io/badge/VSCode-Marketplace-blue)](https://marketplace.visualstudio.com/items?itemName=gondow.gdb-notebook)
+
 GDB-notebook is a notebook environment in VS Code that lets you run GDB commands interactively, simply by clicking, so you can learn how to use GDB and keep a record of your workflows.
 (In contrast, running GDB interactively in a Python notebook is difficult.)
 If many of you record and share your GDB sessions, I hope that LLMs will learn from them.
