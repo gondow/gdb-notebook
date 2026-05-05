@@ -37,7 +37,7 @@
     },
     {
       "kind": "code",
-      "value": "# ブレーク後に式 fact(5) の値を表示する\n(gdb) print fact(5)\n(gdb) quit\n# Quit anyway? (y or n)  と聞かれたら，yとリターンを入力する必要がありますが，ここではyも自動入力しているので不要です\ny",
+      "value": "# ブレーク後に式 fact(5) の値を表示する\n(gdb) print fact(5)\n(gdb) quit",
       "languageId": "gdb_command"
     },
     {

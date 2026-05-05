@@ -42,7 +42,7 @@
     },
     {
       "kind": "code",
-      "value": "# ブレーク後に引数nの値を表示する\n(gdb) print n\n# $1 = 5 と表示される\n(gdb) quit\n# Quit anyway? (y or n)  と聞かれたら，yとリターンを入力する必要がありますが，ここではyも自動入力しているので不要です\ny",
+      "value": "# ブレーク後に引数nの値を表示する\n(gdb) print n\n# $1 = 5 と表示される\n(gdb) quit",
       "languageId": "gdb_command"
     },
     {

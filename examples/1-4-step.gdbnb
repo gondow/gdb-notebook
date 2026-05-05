@@ -32,7 +32,7 @@
     },
     {
       "kind": "code",
-      "value": "# main関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break main\n(gdb) run\n# Breakpoint 1, main () at step1.c:4\n# 4           int x = 1;\n# ブレーク後にstepコマンドを複数回使ってステップ実行する\n(gdb) step\n# 5           x = x + 2;\n(gdb) step\n# 6           x = x + 3;\n(gdb) step\n# 7           return x;\n(gdb) step\n# 8       }\n(gdb) quit\ny",
+      "value": "# main関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break main\n(gdb) run\n# Breakpoint 1, main () at step1.c:4\n# 4           int x = 1;\n# ブレーク後にstepコマンドを複数回使ってステップ実行する\n(gdb) step\n# 5           x = x + 2;\n(gdb) step\n# 6           x = x + 3;\n(gdb) step\n# 7           return x;\n(gdb) step\n# 8       }\n(gdb) quit",
       "languageId": "gdb_command"
     },
     {

@@ -37,7 +37,7 @@
     },
     {
       "kind": "code",
-      "value": "# format.cのprintf文の行でブレークし，\n(gdb) break 5\n# Breakpoint 1 at 0x115c: file format.c, line 5.\n(gdb) run\n# Breakpoint 1, main () at format.c:5\n# 5           printf (\"%d\\n\", x);\n#\n# 変数の値を16進数で表示する\n(gdb) print/x x\n# $1 = 0x3e7\n#\n# 変数の値を2進数で表示する\n(gdb) print/t x\n# $2 = 1111100111\n#\n# 変数の値を10進数で表示する\n(gdb) print/d x\n# $3 = 999\n(gdb) quit\ny",
+      "value": "# format.cのprintf文の行でブレークし，\n(gdb) break 5\n# Breakpoint 1 at 0x115c: file format.c, line 5.\n(gdb) run\n# Breakpoint 1, main () at format.c:5\n# 5           printf (\"%d\\n\", x);\n#\n# 変数の値を16進数で表示する\n(gdb) print/x x\n# $1 = 0x3e7\n#\n# 変数の値を2進数で表示する\n(gdb) print/t x\n# $2 = 1111100111\n#\n# 変数の値を10進数で表示する\n(gdb) print/d x\n# $3 = 999\n(gdb) quit",
       "languageId": "gdb_command"
     }
   ]

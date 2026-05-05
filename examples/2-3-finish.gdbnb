@@ -32,7 +32,7 @@
     },
     {
       "kind": "code",
-      "value": "# A関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break A\n(gdb) run\n# ブレーク後にfinishコマンドを使い，A();の次の行にステップ実行が進むことを確認する\n(gdb) finish\n# main関数中のA();の次の行にステップ実行が進む\n# Run till exit from #0  A () at step2.c:8\n# B\n# A\n# main () at step2.c:14\n# 14          printf (\"main\\n\");\n(gdb) quit\ny",
+      "value": "# A関数の先頭行にブレークポイントを設定し，実行を開始する\n(gdb) break A\n(gdb) run\n# ブレーク後にfinishコマンドを使い，A();の次の行にステップ実行が進むことを確認する\n(gdb) finish\n# main関数中のA();の次の行にステップ実行が進む\n# Run till exit from #0  A () at step2.c:8\n# B\n# A\n# main () at step2.c:14\n# 14          printf (\"main\\n\");\n(gdb) quit",
       "languageId": "gdb_command"
     }
   ]
