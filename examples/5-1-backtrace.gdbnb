@@ -37,7 +37,7 @@
     },
     {
       "kind": "code",
-      "value": "# ブレークポイントに到達したらbactraceコマンドでバックトレースを表示する\n(gdb) backtrace\n#0  fact (n=0) at fact.c:5\n#1  0x0000555555555172 in fact (n=1) at fact.c:8\n#2  0x0000555555555172 in fact (n=2) at fact.c:8\n#3  0x0000555555555172 in fact (n=3) at fact.c:8\n#4  0x0000555555555172 in fact (n=4) at fact.c:8\n#5  0x0000555555555172 in fact (n=5) at fact.c:8\n#6  0x000055555555518a in main () at fact.c:14\n(gdb) quit\ny",
+      "value": "# ブレークポイントに到達したらbactraceコマンドでバックトレースを表示する\n(gdb) backtrace\n#0  fact (n=0) at fact.c:5\n#1  0x0000555555555172 in fact (n=1) at fact.c:8\n#2  0x0000555555555172 in fact (n=2) at fact.c:8\n#3  0x0000555555555172 in fact (n=3) at fact.c:8\n#4  0x0000555555555172 in fact (n=4) at fact.c:8\n#5  0x0000555555555172 in fact (n=5) at fact.c:8\n#6  0x000055555555518a in main () at fact.c:14\n(gdb) quit",
       "languageId": "gdb_command"
     },
     {

@@ -32,7 +32,7 @@
     },
     {
       "kind": "code",
-      "value": "# 上記の3つのユーザ定義コマンドを定義する\n(gdb) define breakrun\n> break main\n> run\n> end  \n(gdb) define hello\n> echo hello, $arg0\\n\n> end\n(gdb) define hook-stop\n> x/i $rip\n> end\n# 定義したユーザ定義コマンドを使ってみる\n(gdb) breakrun\n# Breakpoint 1 at 0x1180: file fact.c, line 14.\n# => 0x555555555180 <main+8>:     mov    $0x5,%edi   # <- hook-stop の効果\n(gdb) hello hogehoge\n# hello, hogehoge\n(gdb) stepi\n# => 0x555555555185 <main+13>:    call   0x555555555149 <fact>  # <- hook-stop の効果\n# 0x0000555555555185      14          printf (\"fact (%d) = %d\\n\", 5, fact (5));\n(gdb) quit\ny\n",
+      "value": "# 上記の3つのユーザ定義コマンドを定義する\n(gdb) define breakrun\n> break main\n> run\n> end  \n(gdb) define hello\n> echo hello, $arg0\\n\n> end\n(gdb) define hook-stop\n> x/i $rip\n> end\n# 定義したユーザ定義コマンドを使ってみる\n(gdb) breakrun\n# Breakpoint 1 at 0x1180: file fact.c, line 14.\n# => 0x555555555180 <main+8>:     mov    $0x5,%edi   # <- hook-stop の効果\n(gdb) hello hogehoge\n# hello, hogehoge\n(gdb) stepi\n# => 0x555555555185 <main+13>:    call   0x555555555149 <fact>  # <- hook-stop の効果\n# 0x0000555555555185      14          printf (\"fact (%d) = %d\\n\", 5, fact (5));\n(gdb) quit\n",
       "languageId": "gdb_command"
     }
   ]

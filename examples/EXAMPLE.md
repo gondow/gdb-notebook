@@ -117,14 +117,10 @@
 |[`10-1-segv.gdbnb`](10-1-segv.gdbnb)|segmentation fault (あるいは bus error)の原因を探る|
 |[`10-2-lib-func1.gdbnb`](10-2-lib-func1.gdbnb)|ライブラリ関数中でクラッシュした原因を探る(1)|
 |[`10-2-lib-func2.gdbnb`](10-2-lib-func2.gdbnb)|ライブラリ関数中でクラッシュした原因を探る(2)|
-|[`10-3-uninit.gdbnb`](10-2-uninit.gdbnb)|未初期化変数の使用を探る|
+|[`10-3-uninit.gdbnb`](10-3-uninit.gdbnb)|未初期化変数の使用を探る|
 |[`10-4-buf-overflow1-next-var.gdbnb`](10-4-buf-overflow1-next-var.gdbnb)|バッファオーバーフローで隣の変数の値が上書きされた|
 |[`10-4-buf-overflow2-return-addr.gdbnb`](10-4-buf-overflow2-return-addr.gdbnb)|バッファオーバーフローでリターンアドレスと古い`%rbp`の値が上書きされた|
 
-- 古い%rbpを上書きし，その後，ライブラリ関数を呼び出してクラッシュした原因を探る
-  watch *(long*)$rbp
-- ダングリングポインタ
-- $rspのアラインメント違反 `movq $4, %rsp`
-- 間違った longjmp
+
 
 

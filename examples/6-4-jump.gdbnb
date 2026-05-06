@@ -42,7 +42,7 @@
     },
     {
       "kind": "code",
-      "value": "# jumpコマンドで，ループ直後から実行を再開する\n(gdb) jump 9\n# hello, world\n(gdb) quit\ny",
+      "value": "# jumpコマンドで，ループ直後から実行を再開する\n(gdb) jump 9\n# hello, world\n(gdb) quit",
       "languageId": "gdb_command"
     }
   ]

@@ -12,7 +12,7 @@
     },
     {
       "kind": "code",
-      "value": "# innc.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
+      "value": "# inc.c を -gオプション付きでコンパイルし，gdb を起動する\n$ ",
       "languageId": "shellscript"
     },
     {

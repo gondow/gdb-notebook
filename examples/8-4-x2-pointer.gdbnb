@@ -32,7 +32,7 @@
     },
     {
       "kind": "code",
-      "value": "# main関数の6行目でブレークさせる\n(gdb) break 6\n(gdb) run\n# 変数xのアドレスを表示する\n(gdb) print/x &x\n# $1 = 0x7fffffffde1c\n#\n# x/4xb &x として，xの値を1バイトごと表示する\n(gdb) x/4xb &x\n# 0x7fffffffde1c: 0x44    0x33    0x22    0x11\n#\n# 変数pの値を表示する\n(gdb) print/x &p\n# $2 = 0x7fffffffde20\n#\n# x/8xb &p として，pの値を1バイトごと表示する\n(gdb) x/8xb &p\n# 0x7fffffffde20: 0x1c    0xde    0xff    0xff    0xff    0x7f    0x00    0x00\n(gdb) quit\ny",
+      "value": "# main関数の6行目でブレークさせる\n(gdb) break 6\n(gdb) run\n# 変数xのアドレスを表示する\n(gdb) print/x &x\n# $1 = 0x7fffffffde1c\n#\n# x/4xb &x として，xの値を1バイトごと表示する\n(gdb) x/4xb &x\n# 0x7fffffffde1c: 0x44    0x33    0x22    0x11\n#\n# 変数pの値を表示する\n(gdb) print/x &p\n# $2 = 0x7fffffffde20\n#\n# x/8xb &p として，pの値を1バイトごと表示する\n(gdb) x/8xb &p\n# 0x7fffffffde20: 0x1c    0xde    0xff    0xff    0xff    0x7f    0x00    0x00\n(gdb) quit",
       "languageId": "gdb_command"
     },
     {

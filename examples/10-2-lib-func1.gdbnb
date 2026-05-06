@@ -32,7 +32,7 @@
     },
     {
       "kind": "code",
-      "value": "# runで実行を開始し，segmentation fault後，バックトレースを表示し，main関数のスタックフレームを選択肢，strlenの引数を調べる\n(gdb) run\n# Program received signal SIGSEGV, Segmentation fault.\n# __strlen_sse2 () at ../sysdeps/x86_64/multiarch/strlen-vec.S:126\n# 126     ../sysdeps/x86_64/multiarch/strlen-vec.S: No such file or directory.\n(gdb) backtrace\n# 0  __strlen_sse2 () at ../sysdeps/x86_64/multiarch/strlen-vec.S:126\n# #1  0x000055555555518a in main () at bad-strlen.c:7\n(gdb) up\n# 1  0x000055555555518a in main () at bad-strlen.c:7\n# 7           printf (\"%ld\\n\", strlen (s)); # <- strlenの引数は s\n(gdb) print/x s\n# $1 = 0xdeadbeef  # <- 引数sに怪しいアドレスが入ってた\n(gdb) print/x *s\n# Cannot access memory at address 0xdeadbeef #  やはりアクセスできない -> 引数sの値が不正だった\n(gdb) quit\ny\n",
+      "value": "# runで実行を開始し，segmentation fault後，バックトレースを表示し，main関数のスタックフレームを選択肢，strlenの引数を調べる\n(gdb) run\n# Program received signal SIGSEGV, Segmentation fault.\n# __strlen_sse2 () at ../sysdeps/x86_64/multiarch/strlen-vec.S:126\n# 126     ../sysdeps/x86_64/multiarch/strlen-vec.S: No such file or directory.\n(gdb) backtrace\n# 0  __strlen_sse2 () at ../sysdeps/x86_64/multiarch/strlen-vec.S:126\n# #1  0x000055555555518a in main () at bad-strlen.c:7\n(gdb) up\n# 1  0x000055555555518a in main () at bad-strlen.c:7\n# 7           printf (\"%ld\\n\", strlen (s)); # <- strlenの引数は s\n(gdb) print/x s\n# $1 = 0xdeadbeef  # <- 引数sに怪しいアドレスが入ってた\n(gdb) print/x *s\n# Cannot access memory at address 0xdeadbeef #  やはりアクセスできない -> 引数sの値が不正だった\n(gdb) quit",
       "languageId": "gdb_command"
     }
   ]

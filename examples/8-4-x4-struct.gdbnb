@@ -32,7 +32,7 @@
     },
     {
       "kind": "code",
-      "value": "# 9行目でブレークさせる\n(gdb) break 9\n(gdb) run\n# printを使って，f，f.x1，f.x2 の値を表示する\n(gdb) print/x f\n# $1 = {x1 = 0x41, x2 = 0x11223344}\n(gdb) print f.x1\n# $2 = 65 'A'  # 16進数だと0x41\n(gdb) print/x f.x2\n# $3 = 0x11223344\n#\n# printを使って，f，f.x1，f.x2のアドレスを表示する\n(gdb) print &f\n# $4 = (struct foo *) 0x7fffffffddf8\n(gdb) print &f.x1\n# $5 = 0x7fffffffddf8 \"A\"\n(gdb) print &f.x2\n# $6 = (int *) 0x7fffffffddfc\n#\n# x/8bx を使って，構造体fの中身を1バイトずつ表示する\n(gdb) x/8bx &f\n# 0x7fffffffddf8: 0x41    0x00    0x00    0x00    0x44    0x33    0x22    0x11\n(gdb) quit\ny",
+      "value": "# 9行目でブレークさせる\n(gdb) break 9\n(gdb) run\n# printを使って，f，f.x1，f.x2 の値を表示する\n(gdb) print/x f\n# $1 = {x1 = 0x41, x2 = 0x11223344}\n(gdb) print f.x1\n# $2 = 65 'A'  # 16進数だと0x41\n(gdb) print/x f.x2\n# $3 = 0x11223344\n#\n# printを使って，f，f.x1，f.x2のアドレスを表示する\n(gdb) print &f\n# $4 = (struct foo *) 0x7fffffffddf8\n(gdb) print &f.x1\n# $5 = 0x7fffffffddf8 \"A\"\n(gdb) print &f.x2\n# $6 = (int *) 0x7fffffffddfc\n#\n# x/8bx を使って，構造体fの中身を1バイトずつ表示する\n(gdb) x/8bx &f\n# 0x7fffffffddf8: 0x41    0x00    0x00    0x00    0x44    0x33    0x22    0x11\n(gdb) quit",
       "languageId": "gdb_command"
     }
   ]

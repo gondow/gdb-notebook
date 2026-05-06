@@ -42,7 +42,7 @@
     },
     {
       "kind": "code",
-      "value": "# システムコールtimeにブレークポイントを設定し，実行を再開する\n(gdb) break time\n# Breakpoint 1 at 0x7ffff7fc1be0\n(gdb) continue\n# reakpoint 1, 0x00007ffff7fc1be0 in time ()\n#\n# timeでブレークしたら，return (time_t)0してから，実行を再開する\n(gdb) return (time_t)0\ny\n# Make selected stack frame return now? (y or n) y\n# #0  0x000055555555518c in main () at inf2-loop.c:6\n# 6           while (time (NULL)) {\n(gdb) continue\n# hello, world\n(gdb) quit",
+      "value": "# システムコールtimeにブレークポイントを設定し，実行を再開する\n(gdb) break time\n# Breakpoint 1 at 0x7ffff7fc1be0\n(gdb) continue\n# reakpoint 1, 0x00007ffff7fc1be0 in time ()\n#\n# timeでブレークしたら，return (time_t)0してから，実行を再開する\n(gdb) return (time_t)0\n# #0  0x000055555555518c in main () at inf2-loop.c:6\n# 6           while (time (NULL)) {\n(gdb) continue\n# hello, world\n(gdb) quit",
       "languageId": "gdb_command"
     },
     {

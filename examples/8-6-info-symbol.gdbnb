@@ -32,7 +32,7 @@
     },
     {
       "kind": "code",
-      "value": "# 実行前に info address mainを実行する\n(gdb) info address main\n# Symbol \"main\" is a function at address 0x1178.\n#\n# main関数でブレークさせる\n(gdb) break main\n(gdb) run\n# info address main を実行する\n(gdb) info address main\n# Symbol \"main\" is a function at address 0x555555555178.\n#\n# 上で得られたアドレスを使い，info symbol でそのアドレスを指定する\n(gdb) info symbol 0x555555555178\n# main in section .text of /home/gondow/gdb-notebook/examples/a.out\n#\n# info line main で行情報を表示する\n(gdb) info line main\n# Line 13 of \"fact.c\" starts at address 0x555555555178 <main>\n#    and ends at 0x555555555180 <main+8>.\n#\n# 上で調べたmain関数のアドレスを，info line に与えて行情報を表示する\n(gdb) info line *0x555555555178\n# Line 13 of \"fact.c\" starts at address 0x555555555178 <main>\n#   and ends at 0x555555555180 <main+8>.\n(gdb) quit\ny\n",
+      "value": "# 実行前に info address mainを実行する\n(gdb) info address main\n# Symbol \"main\" is a function at address 0x1178.\n#\n# main関数でブレークさせる\n(gdb) break main\n(gdb) run\n# info address main を実行する\n(gdb) info address main\n# Symbol \"main\" is a function at address 0x555555555178.\n#\n# 上で得られたアドレスを使い，info symbol でそのアドレスを指定する\n(gdb) info symbol 0x555555555178\n# main in section .text of /home/gondow/gdb-notebook/examples/a.out\n#\n# info line main で行情報を表示する\n(gdb) info line main\n# Line 13 of \"fact.c\" starts at address 0x555555555178 <main>\n#    and ends at 0x555555555180 <main+8>.\n#\n# 上で調べたmain関数のアドレスを，info line に与えて行情報を表示する\n(gdb) info line *0x555555555178\n# Line 13 of \"fact.c\" starts at address 0x555555555178 <main>\n#   and ends at 0x555555555180 <main+8>.\n(gdb) quit\n",
       "languageId": "gdb_command"
     }
   ]

@@ -32,13 +32,8 @@
     },
     {
       "kind": "code",
-      "value": "# main関数の先頭行でブレークさせる\n(gdb) break main\n(gdb) run\n# ptype struct fooを実行し，構造体の情報を表示させる\n(gdb) ptype struct foo\n# type = struct foo {\n#     int a1;\n#     char a2;\n#     size_t a3;\n# }\n#\n# ptype fを実行し，構造体の情報を表示させる\n(gdb) ptype f\n# type = struct foo {\n#     int a1;\n#     char a2;\n#     size_t a3;\n# }\n#\n# ptype/o fを実行し，オフセット情報なども表示させる\n(gdb) ptype/o f\n# /* offset      |    size */  type = struct foo {\n# /*      0      |       4 */    int a1;\n# /*      4      |       1 */    char a2;\n# /* XXX  3-byte hole      */\n# /*      8      |       8 */    size_t a3;\n# \n#                                /* total size (bytes):   16 */\n#                              }\n(gdb) quit\ny",
+      "value": "# main関数の先頭行でブレークさせる\n(gdb) break main\n(gdb) run\n# ptype struct fooを実行し，構造体の情報を表示させる\n(gdb) ptype struct foo\n# type = struct foo {\n#     int a1;\n#     char a2;\n#     size_t a3;\n# }\n#\n# ptype fを実行し，構造体の情報を表示させる\n(gdb) ptype f\n# type = struct foo {\n#     int a1;\n#     char a2;\n#     size_t a3;\n# }\n#\n# ptype/o fを実行し，オフセット情報なども表示させる\n(gdb) ptype/o f\n# /* offset      |    size */  type = struct foo {\n# /*      0      |       4 */    int a1;\n# /*      4      |       1 */    char a2;\n# /* XXX  3-byte hole      */\n# /*      8      |       8 */    size_t a3;\n# \n#                                /* total size (bytes):   16 */\n#                              }\n(gdb) quit",
       "languageId": "gdb_command"
-    },
-    {
-      "kind": "markdown",
-      "value": "#### 補足\n- `whatis`と`ptype`はとても重要です．C言語の暗黙の型変換や，システム型(例：`size_t`)はなかなか難しいのですが，C言語の中ではこれらの型を確認する手段が限定されているからです．\n- しかし，`whatis`と`ptype`にも不十分な点があります．例えば，関数が式中で「関数へのポインタ」に暗黙の型変換されることを直接確かめる正しい手段は(おそらく)ありません．`whatis main+0`で，`type = int (*)()`と返ってきますが，関数ポインタを使ったポインタ算術演算は未定義動作のはずなので．",
-      "languageId": "markdown"
     }
   ]
 }

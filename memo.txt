@@ -20,3 +20,6 @@ set debuginfod enabled off
 set height 0
 # 行の折り返しを無効化
 set width 0
+
+set debuginfod enabled off
+とかは環境によって，出たり出なかったりする．上記の ~/.gdbinit を要求せざるを得ない．

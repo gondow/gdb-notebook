@@ -32,7 +32,7 @@
     },
     {
       "kind": "code",
-      "value": "# runで実行を開始し，segmentation fault後，怪しい変数の値をprintで調べる\n(gdb) run\n# Program received signal SIGSEGV, Segmentation fault.\n# 0x0000555555555162 in main () at segv.c:6\n# 6           printf (\"%d\\n\", *p);    # <- この行で segmentation faultが発生した．pが怪しい😁\n(gdb) print/x p\n# $1 = 0xdeadbeef  # ポインタの値が怪しい\n(gdb) print/x *p\n# Cannot access memory at address 0xdeadbeef # *pでアクセスすると，アクセス禁止だった→pが原因で確定\n(gdb) quit\ny\n",
+      "value": "# runで実行を開始し，segmentation fault後，怪しい変数の値をprintで調べる\n(gdb) run\n# Program received signal SIGSEGV, Segmentation fault.\n# 0x0000555555555162 in main () at segv.c:6\n# 6           printf (\"%d\\n\", *p);    # <- この行で segmentation faultが発生した．pが怪しい😁\n(gdb) print/x p\n# $1 = 0xdeadbeef  # ポインタの値が怪しい\n(gdb) print/x *p\n# Cannot access memory at address 0xdeadbeef # *pでアクセスすると，アクセス禁止だった→pが原因で確定\n(gdb) quit",
       "languageId": "gdb_command"
     },
     {
