@@ -39,6 +39,7 @@ let smart_completion_mode = 0;
 
 const terminalMap = new Map<string, vscode.Terminal> ();
 const notebook_init = new WeakSet<vscode.NotebookDocument> ();
+// let prev_notebooks = new Set<string> ();
 
 // ****************************************************************
 function abort(msg: string): never {
@@ -259,7 +260,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	    execution.replaceOutput([
 		new vscode.NotebookCellOutput([
 		    vscode.NotebookCellOutputItem.text(
-			`[${executionCounter}] ` + "GDBNBターミナルにコマンド送信済み"
+			//`[${executionCounter}] ` + "GDBNBターミナルにコマンド送信済み"
+			"GDBNBターミナルにコマンド送信済み"
 		    )
 		])
 	    ]);
@@ -375,6 +377,21 @@ export async function activate(context: vscode.ExtensionContext) {
 	    }
 	})
     );
+
+    /*
+    context.subscriptions.push (
+	vscode.window.onDidChangeVisibleNotebookEditors (editors => {
+	    const current = new Set (editors.map (e => e.notebook.uri.toString()));
+	    // 消えたノートブック
+	    for (const uri of prev_notebooks) {
+		if (!current.has(uri)) {
+		    console.log("no longer visible:", uri);
+		}
+	    }
+	    prev_notebooks = current;
+	})
+    );
+    */
 
     /*
     // めっちゃ頻繁に呼ばれるので，なるべく使わない
@@ -734,7 +751,7 @@ export function deactivate() {
     vscode.window.terminals.forEach(terminal => { terminal.dispose(); });
 }
 
-function closeTerminal(nb: vscode.NotebookDocument) {
+function closeTerminal (nb: vscode.NotebookDocument) {
     const key = nb.uri.toString ();
     const term = terminalMap.get (key);
     console.log ("closeTerminal: " + key);
@@ -742,7 +759,20 @@ function closeTerminal(nb: vscode.NotebookDocument) {
 	console.log (key + " closed");
 	term.dispose ();
 	terminalMap.delete (key);
+    } else {
+	for (const [key, term] of terminalMap.entries()) {
+	    console.log ("entry: " + key);
+	}
+	console.log ("----------");
     }
+
+    /*
+    const notebooks = vscode.workspace.notebookDocuments;
+    for (const nb of notebooks) {
+	console.log (nb.uri.toString ());
+    }
+    console.log ("===========");
+    */
 }
 
 function getOrCreateTerminal(nb: vscode.NotebookDocument): vscode.Terminal {
@@ -1147,7 +1177,7 @@ class CommandTreeDataProvider implements vscode.TreeDataProvider<CommandTreeItem
     getChildren(element?: CommandTreeItem): CommandTreeItem[] {
 	if (!element) {
 	    return [
-		new CommandTreeItem("GDBNBの使い方", false, false),
+		// new CommandTreeItem("GDBNBの使い方", false, false),
 		new CommandTreeItem("シェルコマンド", false, false),
 		new CommandTreeItem("GDBコマンド", false, false)
 	    ];
@@ -1171,6 +1201,3 @@ class CommandTreeDataProvider implements vscode.TreeDataProvider<CommandTreeItem
     }
 }
 // ****************************************************************
-/*
-  Todo:
-*/

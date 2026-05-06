@@ -32,7 +32,7 @@
     },
     {
       "kind": "code",
-      "value": "(gdb) set pagination off\n# 「関数名に`test`を含む関数すべて」にブレークポイントを設定する\n(gdb) rbreak test\n# Breakpoint 1 at 0x114f: file rbreak.c, line 4.\n# int C_test();\n# Breakpoint 2 at 0x1131: file rbreak.c, line 2.\n# int test_A();\n# Breakpoint 3 at 0x1140: file rbreak.c, line 3.\n# int test_B();\n#\n# すべてのブレークポイントを削除する\n(gdb) delete\n# Delete all breakpoints? (y or n) y\n#\n# 「関数名が`test`で始まる関数すべて」にブレークポイントを設定する\n(gdb) rbreak ^test\n# reakpoint 4 at 0x1131: file rbreak.c, line 2.\n# int test_A();\n# Breakpoint 5 at 0x1140: file rbreak.c, line 3.\n# int test_B();\n(gdb) quit",
+      "value": "# 「関数名に test を含む関数すべて」にブレークポイントを設定する\n(gdb) rbreak test\n# Breakpoint 1 at 0x114f: file rbreak.c, line 4.\n# int C_test();\n# Breakpoint 2 at 0x1131: file rbreak.c, line 2.\n# int test_A();\n# Breakpoint 3 at 0x1140: file rbreak.c, line 3.\n# int test_B();\n#\n# すべてのブレークポイントを削除する\n(gdb) delete\n# Delete all breakpoints? (y or n) y\n#\n# 「関数名が test で始まる関数すべて」にブレークポイントを設定する\n(gdb) rbreak ^test\n# reakpoint 4 at 0x1131: file rbreak.c, line 2.\n# int test_A();\n# Breakpoint 5 at 0x1140: file rbreak.c, line 3.\n# int test_B();\n(gdb) quit",
       "languageId": "gdb_command"
     },
     {
