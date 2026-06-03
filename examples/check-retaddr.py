@@ -37,9 +37,15 @@ class ReturnBreakpoint(gdb.Breakpoint):
 
 
 class EntryBreakpoint(gdb.Breakpoint):
+    is_main_called = False
+
     def stop(self):
-        expected_retaddr = int(gdb.parse_and_eval("*(void**)($rsp)"))
         frame = gdb.newest_frame()
+        if frame.name() == "main":
+            EntryBreakpoint.is_main_called = True
+        if EntryBreakpoint.is_main_called == False:
+            return False
+        expected_retaddr = int(gdb.parse_and_eval("*(void**)($rsp)"))
         print(f"→{frame.name()}: expected={hex(expected_retaddr)} ")
 
         block = frame.block()

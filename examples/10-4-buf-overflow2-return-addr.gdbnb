@@ -29,6 +29,21 @@
       "kind": "code",
       "value": "(gdb) set output-radix 16\n# Output radix now set to decimal 16, hex 10, octal 20.\n(gdb) break buf_overflow\n(gdb) run\n(gdb) watch -l *(long *)($rbp+8)  \n# Hardware watchpoint 2: -location *(long *)($rbp+8) # ここではリターンアドレスの上書きを監視する\n(gdb) continue\n# Thread 3 hit Hardware watchpoint 2: -location *(long *)($rbp+8)\n# Old value = 0x100003f89\n# New value = 0xcdcdcdcd\n# 0x0000000100003f53 in buf_overflow () at buf-overflow-return-addr.c:13\n# 13\t    p [5] = 0xCDCDCDCD;   # <- ここでリターンアドレスの上書きしてた\n(gdb) quit",
       "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- gdb Python APIを使うと[`check-retaddr.py`](check-rettaddr.py)のように「全ての`ret`命令実行直前に，スタック上に積まれたリターンアドレスが改変されていないか」を自動的にチェックできます",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gcc -g buf-overflow-return-addr.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "(gdb) source check-retaddr.py\n(gdb) check-retaddr\n# Breakpoint 1 at 0x115b: file buf-overflow-return-addr2.c, line 9.\n# Breakpoint 2 at 0x11e8\n# Breakpoint 3 at 0x1000\n# Breakpoint 4 at 0x1149: file buf-overflow-return-addr2.c, line 4.\n# Breakpoint 5 at 0x11cf: file buf-overflow-return-addr2.c, line 16.\n# Breakpoint 6 at 0x1060\n(gdb) run\n# →main: expected=0x7ffff7db3d90 \n# Breakpoint 7 at 0x5555555551e7: file buf-overflow-return-addr2.c, line 18.\n# →buf_overflow: expected=0x5555555551e1 \n# Breakpoint 8 at 0x5555555551ce: file buf-overflow-return-addr2.c, line 14.\n# →laundering: expected=0x555555555194 \n# Breakpoint 9 at 0x55555555515a: file buf-overflow-return-addr2.c, line 6.\n# ←laundering: actual_retaddr=0x555555555194\n# ←buf_overflow: actual_retaddr=0xcdcdcdcd\n# [!] Return address changed: expected=0x5555555551e1 actual=0xcdcdcdcd\n#\n# Breakpoint 8, 0x00005555555551ce in buf_overflow () at buf-overflow-return-addr2.c:14\n# 14\t}",
+      "languageId": "shellscript"
     }
   ]
 }
