@@ -34,6 +34,21 @@
       "kind": "code",
       "value": "# runで実行を開始し，クラッシュするか試す．クラッシュしたら原因を探る．\n(gdb) run\n# Program received signal SIGSEGV, Segmentation fault.\n# 0x00007ffff7e2e4c0 in _int_malloc (av=av@entry=0x7ffff7fa4c80 <main_arena>, bytes=bytes@entry=640) at ./malloc/malloc.c:4375\n# 4375    ./malloc/malloc.c: No such file or directory.\n(gdb) backtrace\n# ライブラリ関数のすごく深い所でクラッシュしている\n# #0  0x00007ffff7e2e4c0 in _int_malloc (av=av@entry=0x7ffff7fa4c80 <main_arena>, bytes=bytes@entry=640) at ./malloc/malloc.c:4375\n# #1  0x00007ffff7e2e9c9 in tcache_init () at ./malloc/malloc.c:3245\n# #2  0x00007ffff7e2f1de in tcache_init () at ./malloc/malloc.c:3241\n# #3  __GI___libc_malloc (bytes=bytes@entry=1024) at ./malloc/malloc.c:3306\n# #4  0x00007ffff7e08ba4 in __GI__IO_file_doallocate (fp=0x7ffff7fa5780 <_IO_2_1_stdout_>) at ./libio/filedoalloc.c:101\n# #5  0x00007ffff7e17ce0 in __GI__IO_doallocbuf (fp=fp@entry=0x7ffff7fa5780 <_IO_2_1_stdout_>) at ./libio/libioP.h:947\n# #6  0x00007ffff7e16f60 in _IO_new_file_overflow (f=0x7ffff7fa5780 <_IO_2_1_stdout_>, ch=-1) at ./libio/fileops.c:744\n# #7  0x00007ffff7e156d5 in _IO_new_file_xsputn (n=5, data=<optimized out>, f=<optimized out>) at ./libio/libioP.h:947\n# #8  _IO_new_file_xsputn (f=0x7ffff7fa5780 <_IO_2_1_stdout_>, data=<optimized out>, n=5) at ./libio/fileops.c:1196\n# #9  0x00007ffff7e0af1c in __GI__IO_puts (str=0x555555556004 \"hello\") at ./libio/libioP.h:947\n# #10 0x0000555555555164 in main () at bad-printf.c:6\n(gdb) frame 10\n# #10 0x0000555555555164 in main () at bad-printf.c:6 # <- main関数のフレームを選択して\n# 6           printf (\"hello\\n\");\n(gdb) print/x $rsp\n# $1 = 0x7fffffffde08  # %rsp の値を調べると，16の倍数になっていない．これが原因だ．\n(gdb) break 6\n# Breakpoint 1 at 0x555555555155: file bad-printf.c, line 6. # 念のため printf が呼ばれる前にブレークポイントを設定し\n(gdb) run\n# Breakpoint 1, main () at bad-printf.c:6  # 実行し直しても\n# 6           printf (\"hello\\n\");\n(gdb) print/x $rsp\n# $2 = 0x7fffffffde08  # やはり %rsp が16の倍数になっていない\n(gdb) quit",
       "languageId": "gdb_command"
+    },
+    {
+      "kind": "markdown",
+      "value": "#### 補足\n- スタックフレームが壊されて`backtrace`できないことがあります．その場合は`call`命令実行直前に`%rsp`の値が16バイト境界かどうか，確認する必要があります．\n- gdb Python APIを使うと，`check-callalign.py`のように「自動的にすべての`call`命令実行超然に`%rsp`の値が16の倍数かどうかをチェックし，そうでなかったらブレークする」というスクリプトを書けます．",
+      "languageId": "markdown"
+    },
+    {
+      "kind": "code",
+      "value": "$ gcc -g bad-printf.c\n$ gdb -q ./a.out",
+      "languageId": "shellscript"
+    },
+    {
+      "kind": "code",
+      "value": "# gdb Pythonスクリプトをgdbに読み込ませる\n(gdb) source check-callalign.py\n# gdb Pythonスクリプトで定義したコマンド check-callalignを実行（すべてのcall命令にブレークポイントを設定し，停止時に16バイト境界かをチェックする）\n(gdb) check-callalign\n# Breakpoint 1 at 0x116c\n# Breakpoint 2 at 0x1000\n# Breakpoint 3 at 0x1149: file bad-printf.c, line 4.\n# Breakpoint 4 at 0x1060\n(gdb) run\n# Breakpoint 5 at 0x55555555515f: file bad-printf.c, line 6.\n# main:\n# [!] %rsp (0x7fffffffe2b8 is not aligned to a 16-byte boundary.\n# Breakpoint 5, 0x000055555555515f in main () at bad-printf.c:6\n# 6\t    printf (\"hello\\n\");\n(gdb) p/x $rsp\n# $1 = 0x7fffffffe2b8\n(gdb) bt\n# #0  0x000055555555515f in main () at bad-printf.c:6\n\n",
+      "languageId": "gdb_command"
     }
   ]
 }

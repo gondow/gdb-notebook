@@ -23,3 +23,32 @@ set width 0
 
 set debuginfod enabled off
 とかは環境によって，出たり出なかったりする．上記の ~/.gdbinit を要求せざるを得ない．
+
+=========
+GDBノートブック
+- 仮説立案→予測→実験→検証，という体系的なデバッグプロセスの記述・記録支援
+- 失敗の記録は消去せず，なぜその仮説が棄却されたのかを記述させる
+- simulated interactive debug 機能もあると良い
+- Jupyter が科学計算で成功した理由は、 実験 結果 解釈 可視化
+- バグパターンの蓄積
+- LLM にデバッグ手順をレビューしてもらえる．flailing検出など．
+- データセット
+  - bugbench
+
+========
+IPA (in-process agent)
+fast tracepoint (int3ではなくトランポリンjmpを置く)
+uprobe/uretprobe/eBPF
+
+gdbの弱いところ
+関数出口フック
+命令種別でのブレーク (memory-read/write はデコードが必要)
+Intel XED
+条件付き計装
+任意コード注入
+
+https://github.com/mychris/gdb-ext-examples
+gdb.FinishBreakpoint
+
+リターン直前のブレークがやりにくい (Pythonを使っても)
+hook-finish/posthook-finish もダメ
