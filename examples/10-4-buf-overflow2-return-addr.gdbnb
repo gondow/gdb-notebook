@@ -32,7 +32,7 @@
     },
     {
       "kind": "markdown",
-      "value": "#### 補足\n- gdb Python APIを使うと[`check-retaddr.py`](check-rettaddr.py)のように「全ての`ret`命令実行直前に，スタック上に積まれたリターンアドレスが改変されていないか」を自動的にチェックできます",
+      "value": "#### 補足\n- gdb Python APIを使うと[`check-retaddr.py`](check-retaddr.py)のように「全ての`ret`命令実行直前に，スタック上に積まれたリターンアドレスが改変されていないか」を自動的にチェックできます",
       "languageId": "markdown"
     },
     {
